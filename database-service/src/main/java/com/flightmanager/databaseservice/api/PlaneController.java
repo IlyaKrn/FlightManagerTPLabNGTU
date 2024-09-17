@@ -23,7 +23,7 @@ public class PlaneController {
         }
     }
     @PostMapping("${mapping.plane.create}")
-    public ResponseEntity<PlaneModel> get(@RequestBody() PlaneModel data) {
+    public ResponseEntity<PlaneModel> get(@RequestBody PlaneModel data) {
         try{
             data.setId(0L);
             PlaneModel model = repo.save(data);
@@ -35,7 +35,7 @@ public class PlaneController {
     }
 
     @PostMapping("${mapping.plane.update}")
-    public ResponseEntity<PlaneModel> update(@RequestBody() PlaneModel data) {
+    public ResponseEntity<PlaneModel> update(@RequestBody PlaneModel data) {
         try{
             if(repo.findById(data.getId()).orElse(null) == null)
                 return ResponseEntity.status(400).build();
@@ -47,7 +47,7 @@ public class PlaneController {
         }
     }
 
-    @PostMapping("${mapping.plane.delete}/{id}")
+    @DeleteMapping("${mapping.plane.delete}/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
         try{
             repo.deleteById(id);

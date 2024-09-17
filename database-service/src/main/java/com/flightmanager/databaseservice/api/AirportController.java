@@ -23,7 +23,7 @@ public class AirportController {
         }
     }
     @PostMapping("${mapping.airport.create}")
-    public ResponseEntity<AirportModel> get(@RequestBody() AirportModel data) {
+    public ResponseEntity<AirportModel> get(@RequestBody AirportModel data) {
         try{
             data.setId(0L);
             AirportModel model = repo.save(data);
@@ -35,7 +35,7 @@ public class AirportController {
     }
 
     @PostMapping("${mapping.airport.update}")
-    public ResponseEntity<AirportModel> update(@RequestBody() AirportModel data) {
+    public ResponseEntity<AirportModel> update(@RequestBody AirportModel data) {
         try{
             if(repo.findById(data.getId()).orElse(null) == null)
                 return ResponseEntity.status(400).build();
@@ -47,7 +47,7 @@ public class AirportController {
         }
     }
 
-    @PostMapping("${mapping.airport.delete}/{id}")
+    @DeleteMapping("${mapping.airport.delete}/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
         try{
             repo.deleteById(id);

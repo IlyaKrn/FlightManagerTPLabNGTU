@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "dispatchers")
@@ -21,6 +22,7 @@ public class DispatcherModel {
     private String firstName;
     private String lastName;
     private String email;
-    private List<RoleModel> roles;
+    @ElementCollection
+    private Set<RoleModel> roles;
     private Boolean isBanned;
 }
