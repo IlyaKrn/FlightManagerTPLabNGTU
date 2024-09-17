@@ -1,0 +1,47 @@
+version: '2.1'
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    env_file:
+      - .env
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  gateway:
+    container_name: gateway
+    env_file:
+      - .env
+    build: gateway
+    ports:
+      - 8080:8080
+
+  database-service:
+    container_name: database-service
+    env_file:
+      - .env
+    build: ../../Desktop/database-service
+    ports:
+      - 8081:8081
+      -
+  identity-service:
+    container_name: identity-service
+    env_file:
+      - .env
+    build: ../../Desktop/identity-service
+    ports:
+      - 8084:8084
+
+  plane-service:
+    container_name: plane-service
+    env_file:
+      - .env
+    build: plane-service
+    ports:
+      - 8085:8085
+
+volumes:
+  postgres-data:
