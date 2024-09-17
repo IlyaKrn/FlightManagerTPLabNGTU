@@ -11,19 +11,11 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
-  gateway:
-    container_name: gateway
-    env_file:
-      - .env
-    build: gateway
-    ports:
-      - 8080:8080
-
   database-service:
     container_name: database-service
     env_file:
       - .env
-    build: ../../Desktop/database-service
+    build: database-service
     ports:
       - 8081:8081
       -
@@ -31,9 +23,9 @@ services:
     container_name: identity-service
     env_file:
       - .env
-    build: ../../Desktop/identity-service
+    build: identity-service
     ports:
-      - 8084:8084
+      - 8082:8082
 
   plane-service:
     container_name: plane-service
@@ -41,7 +33,15 @@ services:
       - .env
     build: plane-service
     ports:
-      - 8085:8085
+      - 8083:8083
+
+  gateway:
+    container_name: gateway
+    env_file:
+      - .env
+    build: gateway
+    ports:
+      - 8084:8084
 
 volumes:
   postgres-data:
