@@ -1,6 +1,5 @@
 package com.flightmanager.databaseservice.api;
 
-import com.flightmanager.databaseservice.models.AirportModel;
 import com.flightmanager.databaseservice.models.PlaneModel;
 import com.flightmanager.databaseservice.repos.PlaneRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @RestController
 public class PlaneController {
@@ -41,6 +41,8 @@ public class PlaneController {
     public ResponseEntity<PlaneModel> get(@RequestBody PlaneModel data) {
         try{
             data.setId(0L);
+            if(containsNullFields(data))
+                return ResponseEntity.status(400).build();
             PlaneModel model = repo.save(data);
             return ResponseEntity.ok(model);
         } catch (Exception e) {
@@ -48,12 +50,31 @@ public class PlaneController {
             return ResponseEntity.status(500).build();
         }
     }
-
     @PostMapping("${mapping.plane.update}")
-    public ResponseEntity<PlaneModel> update(@RequestBody PlaneModel data) {
+    public ResponseEntity<PlaneModel> update(@RequestBody PlaneModel data, @RequestParam("update") String update) {
         try{
-            if(repo.findById(data.getId()).orElse(null) == null)
+            if(data.getId() == null)
                 return ResponseEntity.status(400).build();
+            PlaneModel fromDB = repo.findById(data.getId()).orElse(null);
+            if(fromDB == null)
+                return ResponseEntity.status(400).build();
+
+            ArrayList<String> fields = new ArrayList<>(Arrays.asList(update.split(",")));
+            if(!fields.contains("name"))
+                data.setName(fromDB.getName());
+            if(!fields.contains("pilot"))
+                data.setPilot(fromDB.getPilot());
+            if(!fields.contains("builtYear"))
+                data.setBuiltYear(fromDB.getBuiltYear());
+            if(!fields.contains("brokenPercentage"))
+                data.setBrokenPercentage(fromDB.getBrokenPercentage());
+            if(!fields.contains("speed"))
+                data.setSpeed(fromDB.getSpeed());
+            if(!fields.contains("minAirportSize"))
+                data.setMinAirportSize(fromDB.getMinAirportSize());
+            if(containsNullFields(data))
+                return ResponseEntity.status(400).build();
+
             PlaneModel model = repo.save(data);
             return ResponseEntity.ok(model);
         } catch (Exception e) {
@@ -71,6 +92,15 @@ public class PlaneController {
             e.printStackTrace();
             return ResponseEntity.status(500).build();
         }
+    }
+
+    private boolean containsNullFields(PlaneModel data){
+        return data.getName() == null ||
+                data.getPilot() == null ||
+                data.getBuiltYear() == null ||
+                data.getBrokenPercentage() != null ||
+                data.getSpeed() == null ||
+                data.getMinAirportSize() == null;
     }
 
 }

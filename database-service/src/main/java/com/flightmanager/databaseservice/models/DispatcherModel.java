@@ -22,7 +22,8 @@ public class DispatcherModel {
     private String firstName;
     private String lastName;
     private String email;
+    private String password;
+    private Boolean isBanned;
     @ElementCollection
     private Set<RoleModel> roles;
-    private Boolean isBanned;
 }

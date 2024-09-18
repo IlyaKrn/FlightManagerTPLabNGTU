@@ -1,12 +1,16 @@
 package com.flightmanager.databaseservice.api;
 
 import com.flightmanager.databaseservice.models.AirportModel;
+import com.flightmanager.databaseservice.models.AirportModel;
+import com.flightmanager.databaseservice.models.AirportModel;
+import com.flightmanager.databaseservice.models.DispatcherModel;
 import com.flightmanager.databaseservice.repos.AirportRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @RestController
 public class AirportController {
@@ -40,6 +44,8 @@ public class AirportController {
     public ResponseEntity<AirportModel> get(@RequestBody AirportModel data) {
         try{
             data.setId(0L);
+            if(containsNullFields(data))
+                return ResponseEntity.status(400).build();
             AirportModel model = repo.save(data);
             return ResponseEntity.ok(model);
         } catch (Exception e) {
@@ -49,10 +55,26 @@ public class AirportController {
     }
 
     @PostMapping("${mapping.airport.update}")
-    public ResponseEntity<AirportModel> update(@RequestBody AirportModel data) {
+    public ResponseEntity<AirportModel> update(@RequestBody AirportModel data, @RequestParam("update") String update) {
         try{
-            if(repo.findById(data.getId()).orElse(null) == null)
+            if(data.getId() == null)
                 return ResponseEntity.status(400).build();
+            AirportModel fromDB = repo.findById(data.getId()).orElse(null);
+            if(fromDB == null)
+                return ResponseEntity.status(400).build();
+
+            ArrayList<String> fields = new ArrayList<>(Arrays.asList(update.split(",")));
+            if(!fields.contains("name"))
+                data.setName(fromDB.getName());
+            if(!fields.contains("x"))
+                data.setX(fromDB.getX());
+            if(!fields.contains("y"))
+                data.setY(fromDB.getY());
+            if(!fields.contains("size"))
+                data.setSize(fromDB.getSize());
+            if(containsNullFields(data))
+                return ResponseEntity.status(400).build();
+
             AirportModel model = repo.save(data);
             return ResponseEntity.ok(model);
         } catch (Exception e) {
@@ -70,6 +92,13 @@ public class AirportController {
             e.printStackTrace();
             return ResponseEntity.status(500).build();
         }
+    }
+
+    private boolean containsNullFields(AirportModel data){
+        return data.getName() == null ||
+                data.getX() == null ||
+                data.getY() == null ||
+                data.getSize() == null;
     }
 
 }
