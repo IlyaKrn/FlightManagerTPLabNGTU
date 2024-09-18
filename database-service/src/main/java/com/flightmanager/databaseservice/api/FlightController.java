@@ -1,16 +1,31 @@
 package com.flightmanager.databaseservice.api;
 
+import com.flightmanager.databaseservice.models.AirportModel;
 import com.flightmanager.databaseservice.models.FlightModel;
 import com.flightmanager.databaseservice.repos.FlightRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
 @RestController
 public class FlightController {
 
     @Autowired
     private FlightRepo repo;
+
+
+    @GetMapping("${mapping.flight.get}")
+    public ResponseEntity<ArrayList<FlightModel>> getAll() {
+        try{
+            ArrayList<FlightModel> models = (ArrayList<FlightModel>) repo.findAll();
+            return ResponseEntity.ok(models);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
 
     @GetMapping("${mapping.flight.get}/{id}")
     public ResponseEntity<FlightModel> get(@PathVariable("id") long id) {

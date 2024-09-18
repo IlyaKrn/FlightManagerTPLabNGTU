@@ -1,16 +1,31 @@
 package com.flightmanager.databaseservice.api;
 
+import com.flightmanager.databaseservice.models.AirportModel;
 import com.flightmanager.databaseservice.models.DispatcherModel;
 import com.flightmanager.databaseservice.repos.DispatcherRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
 @RestController
 public class DispatcherController {
 
     @Autowired
     private DispatcherRepo repo;
+
+
+    @GetMapping("${mapping.dispatcher.get}")
+    public ResponseEntity<ArrayList<DispatcherModel>> getAll() {
+        try{
+            ArrayList<DispatcherModel> models = (ArrayList<DispatcherModel>) repo.findAll();
+            return ResponseEntity.ok(models);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
 
     @GetMapping("${mapping.dispatcher.get}/{id}")
     public ResponseEntity<DispatcherModel> get(@PathVariable("id") long id) {

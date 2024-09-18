@@ -6,11 +6,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
 @RestController
 public class AirportController {
 
     @Autowired
     private AirportRepo repo;
+
+
+    @GetMapping("${mapping.airport.get}")
+    public ResponseEntity<ArrayList<AirportModel>> getAll() {
+        try{
+            ArrayList<AirportModel> models = (ArrayList<AirportModel>) repo.findAll();
+            return ResponseEntity.ok(models);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
 
     @GetMapping("${mapping.airport.get}/{id}")
     public ResponseEntity<AirportModel> get(@PathVariable("id") long id) {
