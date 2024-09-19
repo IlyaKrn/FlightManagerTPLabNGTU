@@ -16,6 +16,7 @@ public class UserModel {
     private String firstName;
     private String lastName;
     private String email;
-    private Set<RoleModel> roles;
+    private String password;
     private Boolean isBanned;
+    private Set<RoleModel> roles;
 }

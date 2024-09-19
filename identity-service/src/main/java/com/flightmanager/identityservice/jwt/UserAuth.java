@@ -17,8 +17,8 @@ import java.util.Set;
 @AllArgsConstructor
 public class UserAuth implements UserDetails {
     private Long id;
-    private String password;
     private String email;
+    private String password;
     private Set<RoleModel> roles;
 
     @Override
