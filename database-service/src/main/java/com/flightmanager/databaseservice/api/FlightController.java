@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class FlightController {
@@ -17,9 +19,28 @@ public class FlightController {
 
 
     @GetMapping("${mapping.flight.get}")
-    public ResponseEntity<ArrayList<FlightModel>> getAll() {
+    public ResponseEntity<List<FlightModel>> get(
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "timestampStart", required = false) Long timestampStart,
+            @RequestParam(value = "timestampEnd", required = false) Long timestampEnd,
+            @RequestParam(value = "dispatcherId", required = false) Long dispatcherId,
+            @RequestParam(value = "planeId", required = false) Long planeId,
+            @RequestParam(value = "airportId", required = false) Long airportId
+            ) {
         try{
-            ArrayList<FlightModel> models = (ArrayList<FlightModel>) repo.findAll();
+            List<FlightModel> models = repo.findAll();
+            if (id != null)
+                models = models.stream().filter(m -> m.getId().equals(id)).collect(Collectors.toList());
+            if (timestampStart != null)
+                models = models.stream().filter(m -> m.getTimestampStart().equals(timestampStart)).collect(Collectors.toList());
+            if (timestampEnd != null)
+                models = models.stream().filter(m -> m.getTimestampEnd().equals(timestampEnd)).collect(Collectors.toList());
+            if (dispatcherId != null)
+                models = models.stream().filter(m -> m.getDispatcherId().equals(dispatcherId)).collect(Collectors.toList());
+            if (planeId != null)
+                models = models.stream().filter(m -> m.getPlaneId().equals(planeId)).collect(Collectors.toList());
+            if (airportId != null)
+                models = models.stream().filter(m -> m.getAirportId().equals(airportId)).collect(Collectors.toList());
             return ResponseEntity.ok(models);
         } catch (Exception e) {
             e.printStackTrace();
@@ -27,18 +48,8 @@ public class FlightController {
         }
     }
 
-    @GetMapping("${mapping.flight.get}/{id}")
-    public ResponseEntity<FlightModel> get(@PathVariable("id") long id) {
-        try{
-            FlightModel model = repo.findById(id).orElse(null);
-            return ResponseEntity.ok(model);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).build();
-        }
-    }
     @PostMapping("${mapping.flight.create}")
-    public ResponseEntity<FlightModel> get(@RequestBody FlightModel data) {
+    public ResponseEntity<FlightModel> create(@RequestBody FlightModel data) {
         try{
             data.setId(0L);
             if(containsNullFields(data))

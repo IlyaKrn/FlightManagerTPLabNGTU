@@ -10,10 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.ElementCollection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class DispatcherController {
@@ -23,9 +21,28 @@ public class DispatcherController {
 
 
     @GetMapping("${mapping.dispatcher.get}")
-    public ResponseEntity<ArrayList<DispatcherModel>> getAll() {
+    public ResponseEntity<List<DispatcherModel>> get(
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "firstName", required = false) String firstName,
+            @RequestParam(value = "lastName", required = false) String lastName,
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "password", required = false) String password,
+            @RequestParam(value = "isBanned", required = false) Boolean isBanned
+    ) {
         try{
-            ArrayList<DispatcherModel> models = (ArrayList<DispatcherModel>) repo.findAll();
+            List<DispatcherModel> models =  repo.findAll();
+            if (id != null)
+                models = models.stream().filter(m -> m.getId().equals(id)).collect(Collectors.toList());
+            if (firstName != null)
+                models = models.stream().filter(m -> m.getFirstName().equals(firstName)).collect(Collectors.toList());
+            if (lastName != null)
+                models = models.stream().filter(m -> m.getLastName().equals(lastName)).collect(Collectors.toList());
+            if (email != null)
+                models = models.stream().filter(m -> m.getEmail().equals(email)).collect(Collectors.toList());
+            if (password != null)
+                models = models.stream().filter(m -> m.getPassword().equals(password)).collect(Collectors.toList());
+            if (isBanned != null)
+                models = models.stream().filter(m -> m.getIsBanned().equals(isBanned)).collect(Collectors.toList());
             return ResponseEntity.ok(models);
         } catch (Exception e) {
             e.printStackTrace();
@@ -33,28 +50,8 @@ public class DispatcherController {
         }
     }
 
-    @GetMapping("${mapping.dispatcher.get}/{id}")
-    public ResponseEntity<DispatcherModel> get(@PathVariable("id") long id) {
-        try{
-            DispatcherModel model = repo.findById(id).orElse(null);
-            return ResponseEntity.ok(model);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).build();
-        }
-    }
-    @GetMapping("${mapping.dispatcher.get}/{email}")
-    public ResponseEntity<DispatcherModel> get(@PathVariable("email") String email) {
-        try{
-            DispatcherModel model = repo.findByEmail(email).orElse(null);
-            return ResponseEntity.ok(model);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).build();
-        }
-    }
     @PostMapping("${mapping.dispatcher.create}")
-    public ResponseEntity<DispatcherModel> get(@RequestBody DispatcherModel data) {
+    public ResponseEntity<DispatcherModel> create(@RequestBody DispatcherModel data) {
         try{
             data.setId(0L);
             if(containsNullFields(data))

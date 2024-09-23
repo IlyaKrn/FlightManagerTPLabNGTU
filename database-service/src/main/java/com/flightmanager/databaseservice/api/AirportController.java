@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class AirportController {
@@ -20,9 +22,25 @@ public class AirportController {
 
 
     @GetMapping("${mapping.airport.get}")
-    public ResponseEntity<ArrayList<AirportModel>> getAll() {
+    public ResponseEntity<List<AirportModel>> get(
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "x", required = false) Integer x,
+            @RequestParam(value = "y", required = false) Integer y,
+            @RequestParam(value = "size", required = false) Integer size
+    ) {
         try{
-            ArrayList<AirportModel> models = (ArrayList<AirportModel>) repo.findAll();
+            List<AirportModel> models = repo.findAll();
+            if (id != null)
+                models = models.stream().filter(m -> m.getId().equals(id)).collect(Collectors.toList());
+            if (name != null)
+                models = models.stream().filter(m -> m.getName().equals(name)).collect(Collectors.toList());
+            if (x != null)
+                models = models.stream().filter(m -> m.getX().equals(x)).collect(Collectors.toList());
+            if (y != null)
+                models = models.stream().filter(m -> m.getY().equals(y)).collect(Collectors.toList());
+            if (size != null)
+                models = models.stream().filter(m -> m.getSize().equals(size)).collect(Collectors.toList());
             return ResponseEntity.ok(models);
         } catch (Exception e) {
             e.printStackTrace();
@@ -30,18 +48,8 @@ public class AirportController {
         }
     }
 
-    @GetMapping("${mapping.airport.get}/{id}")
-    public ResponseEntity<AirportModel> get(@PathVariable("id") long id) {
-        try{
-            AirportModel model = repo.findById(id).orElse(null);
-            return ResponseEntity.ok(model);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).build();
-        }
-    }
     @PostMapping("${mapping.airport.create}")
-    public ResponseEntity<AirportModel> get(@RequestBody AirportModel data) {
+    public ResponseEntity<AirportModel> create(@RequestBody AirportModel data) {
         try{
             data.setId(0L);
             if(containsNullFields(data))

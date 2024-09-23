@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class PlaneController {
@@ -17,9 +19,31 @@ public class PlaneController {
 
 
     @GetMapping("${mapping.plane.get}")
-    public ResponseEntity<ArrayList<PlaneModel>> getAll() {
+    public ResponseEntity<List<PlaneModel>> get(
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "pilot", required = false) String pilot,
+            @RequestParam(value = "builtYear", required = false) Integer builtYear,
+            @RequestParam(value = "brokenPercentage", required = false) Integer brokenPercentage,
+            @RequestParam(value = "speed", required = false) Integer speed,
+            @RequestParam(value = "minAirportSize", required = false) Integer minAirportSize
+        ) {
         try{
-            ArrayList<PlaneModel> models = (ArrayList<PlaneModel>) repo.findAll();
+            List<PlaneModel> models = repo.findAll();
+            if (id != null)
+                models = models.stream().filter(m -> m.getId().equals(id)).collect(Collectors.toList());
+            if (name != null)
+                models = models.stream().filter(m -> m.getName().equals(name)).collect(Collectors.toList());
+            if (pilot != null)
+                models = models.stream().filter(m -> m.getPilot().equals(pilot)).collect(Collectors.toList());
+            if (builtYear != null)
+                models = models.stream().filter(m -> m.getBuiltYear().equals(builtYear)).collect(Collectors.toList());
+            if (brokenPercentage != null)
+                models = models.stream().filter(m -> m.getBrokenPercentage().equals(brokenPercentage)).collect(Collectors.toList());
+            if (speed != null)
+                models = models.stream().filter(m -> m.getSpeed().equals(speed)).collect(Collectors.toList());
+            if (minAirportSize != null)
+                models = models.stream().filter(m -> m.getMinAirportSize().equals(minAirportSize)).collect(Collectors.toList());
             return ResponseEntity.ok(models);
         } catch (Exception e) {
             e.printStackTrace();
@@ -27,18 +51,8 @@ public class PlaneController {
         }
     }
 
-    @GetMapping("${mapping.plane.get}/{id}")
-    public ResponseEntity<PlaneModel> get(@PathVariable("id") long id) {
-        try{
-            PlaneModel model = repo.findById(id).orElse(null);
-            return ResponseEntity.ok(model);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).build();
-        }
-    }
     @PostMapping("${mapping.plane.create}")
-    public ResponseEntity<PlaneModel> get(@RequestBody PlaneModel data) {
+    public ResponseEntity<PlaneModel> create(@RequestBody PlaneModel data) {
         try{
             data.setId(0L);
             if(containsNullFields(data))
