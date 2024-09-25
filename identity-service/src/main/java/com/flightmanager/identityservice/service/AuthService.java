@@ -22,7 +22,10 @@ public class AuthService {
     private JwtUtil jwt;
 
     public TokenResponse login(String email, String password) {
-        UserModel u = userRepo.getByEmail(email);
+        List<UserModel> us = userRepo.getByEmail(email);
+        UserModel u = null;
+        if (us != null && !us.isEmpty())
+            u = us.get(0);
         if (u == null)
             return null;
         if (!password.equals(u.getPassword()))
@@ -31,9 +34,15 @@ public class AuthService {
     }
 
     public TokenResponse register(UserModel data) {
-        UserModel u = userRepo.create(data);
-        u.setRoles(Collections.singleton(RoleModel.DISPATCHER));
-        u.setIsBanned(false);
+        List<UserModel> us = userRepo.getByEmail(data.getEmail());
+        UserModel u = null;
+        if (us != null && !us.isEmpty())
+            u = us.get(0);
+        if (u != null)
+            return null;
+        data.setRoles(Collections.singleton(RoleModel.DISPATCHER));
+        data.setIsBanned(false);
+        u = userRepo.create(data);
         return new TokenResponse(u.getId(), jwt.generateToken(new UserAuth(u.getId(), u.getEmail(), u.getPassword(), u.getRoles())));
     }
 

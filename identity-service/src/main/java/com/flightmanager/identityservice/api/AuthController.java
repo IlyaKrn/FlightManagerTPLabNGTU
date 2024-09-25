@@ -22,8 +22,12 @@ public class AuthController {
     @PostMapping("${mapping.auth.login}")
     public ResponseEntity<TokenResponse> login(@RequestBody TokenRequest tokenRequest) {
         try {
-            if (tokenRequest == null || tokenRequest.getEmail() == null || tokenRequest.getEmail().isEmpty() || tokenRequest.getPassword() == null || tokenRequest.getPassword().isEmpty())
-                return ResponseEntity.status(400).build();
+            if (tokenRequest == null ||
+                    tokenRequest.getEmail() == null ||
+                    tokenRequest.getEmail().isEmpty() ||
+                    tokenRequest.getPassword() == null ||
+                    tokenRequest.getPassword().isEmpty()
+            ) return ResponseEntity.status(400).build();
             TokenResponse response = authService.login(tokenRequest.getEmail(), tokenRequest.getPassword());
             if (response == null)
                 return ResponseEntity.status(401).build();
@@ -39,7 +43,7 @@ public class AuthController {
         try {
             TokenResponse response = authService.register(data);
             if (response == null)
-                return ResponseEntity.status(400).build();
+                return ResponseEntity.status(401).build();
             return ResponseEntity.ok(response);
         } catch (HTTP400Exception e){
             return ResponseEntity.status(400).build();

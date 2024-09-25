@@ -1,5 +1,6 @@
-package com.flightmanager.identityservice.config;
+package com.flightmanager.identityservice.security;
 
+import com.flightmanager.identityservice.config.PropertiesConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
