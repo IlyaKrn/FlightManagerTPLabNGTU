@@ -18,15 +18,15 @@ public class UserRepo {
     private PropertiesConfig properties;
 
     public List<UserModel> getAll() throws HTTPException {
-        return (ArrayList<UserModel>) restTemplate.getForObject(properties.getDatabaseServiceUrl() + properties.getUserGet(), ArrayList.class);
+        return (ArrayList<UserModel>) restTemplate.getForObject(properties.getDatabaseServiceUrl() + properties.getUserGet(), List.class);
     }
 
-    public UserModel getById(long id) throws HTTPException {
-        return restTemplate.getForObject(properties.getDatabaseServiceUrl() + properties.getUserGet() + "/" + id, UserModel.class);
+    public List<UserModel> getById(long id) throws HTTPException {
+        return restTemplate.getForObject(properties.getDatabaseServiceUrl() + properties.getUserGet() + "/?id=" + id, List.class);
     }
 
-    public UserModel getByEmail(String email) throws HTTPException {
-        return restTemplate.getForObject(properties.getDatabaseServiceUrl() + properties.getUserGet() + "/" + email, UserModel.class);
+    public List<UserModel> getByEmail(String email) throws HTTPException {
+        return restTemplate.getForObject(properties.getDatabaseServiceUrl() + properties.getUserGet() + "/?email=" + email, List.class);
     }
 
     public UserModel create(UserModel data) throws HTTPException {
