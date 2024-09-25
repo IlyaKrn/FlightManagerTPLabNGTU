@@ -46,6 +46,7 @@ public class ServiceTokenFilter extends GenericFilterBean {
         try {
             fc.doFilter(request, response);
         } catch (Exception e) {
+            e.printStackTrace();
             ((HttpServletResponse) response).setStatus(400);
         }
     }
