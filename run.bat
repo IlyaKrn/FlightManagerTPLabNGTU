@@ -1,5 +1,5 @@
 docker compose down
-docker system prune -a --volumes
+echo y|docker system prune -a --volumes
 
 cd identity-service/
 call gradlew clean
