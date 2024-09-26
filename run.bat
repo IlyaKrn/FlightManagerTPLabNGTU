@@ -52,6 +52,9 @@ echo ==============================
 for /f "tokens=*" %%a in (.env) do (
     set %%a
 )
+for /f "tokens=*" %%a in (docker-less.env) do (
+    set %%a
+)
 start java -jar ./database-service/build/libs/database-service-1.jar
 start java -jar ./identity-service/build/libs/identity-service-1.jar
 @rem TODO: run plain-service executing file
