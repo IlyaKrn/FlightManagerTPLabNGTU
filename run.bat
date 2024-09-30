@@ -19,10 +19,17 @@ call gradlew clean
 call gradlew bootJar
 cd ../
 
-@rem echo ==============================
-@rem echo     plain-service COMPILING
-@rem echo ==============================
-@rem TODO: clean and rebuild plain-service executing file
+echo ==============================
+echo     plain-service COMPILING
+echo ==============================
+cd plane-service/
+echo rmdir build
+call cmake -G "MinGW Makefiles" -B ./build
+cd build/
+call make
+cd ../
+cd ../
+
 
 @rem echo ==============================
 @rem echo        gateway COMPILING
@@ -57,7 +64,7 @@ for /f "tokens=*" %%a in (docker-less.env) do (
 )
 start java -jar ./database-service/build/libs/database-service-1.jar
 start java -jar ./identity-service/build/libs/identity-service-1.jar
-@rem TODO: run plain-service executing file
+start plane-service/build/main.exe
 @rem TODO: run gateway executing file
 goto end
 
