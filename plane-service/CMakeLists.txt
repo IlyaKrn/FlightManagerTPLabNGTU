@@ -8,4 +8,7 @@ execute_process(
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/libs)
 
-add_executable(main main.cpp)
+add_executable(main src/main.cpp)
+if(WIN32)
+    target_link_libraries(main wsock32 ws2_32)
+endif()
