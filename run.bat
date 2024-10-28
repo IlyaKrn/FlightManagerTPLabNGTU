@@ -2,6 +2,7 @@
 
 
 if "%1" EQU "-help" goto help
+if "%2" EQU "-sc" goto skip-compile
 
 echo ==============================
 echo   database-service COMPILING
@@ -31,6 +32,8 @@ cd build/
 call make
 cd ../
 cd ../
+
+:skip-compile
 
 
 @rem echo ==============================
@@ -71,10 +74,13 @@ start plane-service/build/main.exe
 goto end
 
 :help
-echo run types:
+echo run types (first arg):
 echo [-c]   compile without run (must be installed: Java Development Kit (JDK) 8 or later + Java Runtime Environment (JRE) 8 or later)
 echo [-d]   compile and run with docker (must be installed: Java Development Kit (JDK) 8 or later + Java Runtime Environment (JRE) 8 or later + docker)
 echo [-dl]  compile and run without docker (must be installed: Java Development Kit (JDK) 8 or later + Java Runtime Environment (JRE) 8 or later)
+
+echo other (second arg):
+echo [-sc]  skip compile
 goto end
 
 :end
