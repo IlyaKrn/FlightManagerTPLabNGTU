@@ -3,6 +3,8 @@
 
 #include <json/single_include/nlohmann/json.hpp>
 
+#include "../../header/repos/AirportRepository.h"
+
 using namespace nlohmann;
 using namespace httplib;
 using namespace std;
@@ -14,6 +16,8 @@ void AirportController::configure(Server* server)
     {
         try
         {
+
+            cout << AirportRepository().getAirports(1, "dff").size() << endl;
             //TODO("replace to here service method invocation and writing result to list")
             json result;
             result["name"] = "some name";

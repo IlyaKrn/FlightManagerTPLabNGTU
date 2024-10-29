@@ -17,6 +17,8 @@ add_executable(main src/main.cpp
         src/cpp/controllers/AirportController.cpp
         src/header/controllers/AirportController.h
         src/header/Config.h
+        src/cpp/repos/AirportRepository.cpp
+        src/header/repos/AirportRepository.h
 )
 if(WIN32)
     target_link_libraries(main wsock32 ws2_32)
