@@ -2,7 +2,12 @@
 
 
 if "%1" EQU "-help" goto help
-if "%2" EQU "-sc" goto skip-compile
+if "%1" EQU "-c" goto compile
+if "%1" EQU "-d" goto docker
+if "%1" EQU "-dl" goto docker-less
+
+
+:compile
 
 echo ==============================
 echo   database-service COMPILING
@@ -31,18 +36,12 @@ call make
 cd ../
 cd ../
 
-:skip-compile
-
-
 @rem echo ==============================
 @rem echo        gateway COMPILING
 @rem echo ==============================
 @rem TODO: clean and rebuild gateway executing file
 
-
-if "%1" EQU "-c" goto end
-if "%1" EQU "-d" goto docker
-if "%1" EQU "-dl" goto docker-less
+goto end
 
 :docker
 echo ==============================
@@ -59,6 +58,7 @@ echo ==============================
 echo       RUNNING SERVICES
 echo        WITHOUT DOCKER
 echo ==============================
+
 for /f "tokens=*" %%a in (.env) do (
     set %%a
 )
@@ -73,9 +73,9 @@ goto end
 
 :help
 echo run types (first arg):
-echo [-c]   compile without run (must be installed: Java Development Kit (JDK) 8 or later + Java Runtime Environment (JRE) 8 or later)
-echo [-d]   compile and run with docker (must be installed: Java Development Kit (JDK) 8 or later + Java Runtime Environment (JRE) 8 or later + docker)
-echo [-dl]  compile and run without docker (must be installed: Java Development Kit (JDK) 8 or later + Java Runtime Environment (JRE) 8 or later)
+echo [-c]   compile without run (must be installed: JDK 8 or later + JRE 8 or later + cmake + make + gcc)
+echo [-d]   compile and run with docker (must be installed: docker)
+echo [-dl]  compile and run without docker (must be installed: JRE 8 or later)
 
 echo other (second arg):
 echo [-sc]  skip compile
