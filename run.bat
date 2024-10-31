@@ -24,8 +24,6 @@ echo ==============================
 echo     plain-service COMPILING
 echo ==============================
 cd plane-service/
-echo y|rmdir build
-echo y|rmdir cmake-build-debug
 mkdir build
 call cmake -G "MinGW Makefiles" -B ./build
 cd build/
