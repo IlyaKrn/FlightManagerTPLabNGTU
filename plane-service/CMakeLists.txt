@@ -12,11 +12,10 @@ execute_process(
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/libs)
 
 add_executable(main src/main.cpp
-        src/cpp/controllers/IController.cpp
         src/header/controllers/IController.h
         src/cpp/controllers/AirportController.cpp
         src/header/controllers/AirportController.h
-        src/header/Config.h
+        src/Config.h
         src/cpp/repos/AirportRepository.cpp
         src/header/repos/AirportRepository.h
 )
