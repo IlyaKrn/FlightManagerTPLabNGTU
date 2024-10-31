@@ -76,9 +76,6 @@ echo run types (first arg):
 echo [-c]   compile without run (must be installed: JDK 8 or later + JRE 8 or later + cmake + make + gcc)
 echo [-d]   compile and run with docker (must be installed: docker)
 echo [-dl]  compile and run without docker (must be installed: JRE 8 or later)
-
-echo other (second arg):
-echo [-sc]  skip compile
 goto end
 
 :end
