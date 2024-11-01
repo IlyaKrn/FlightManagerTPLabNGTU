@@ -15,7 +15,6 @@ void AirportController::configure(Server* server)
         try
         {
 
-            cout << AirportRepository().getAirports().size() << endl;
             json result;
             response.set_content(result.dump(), "application/json");
         }

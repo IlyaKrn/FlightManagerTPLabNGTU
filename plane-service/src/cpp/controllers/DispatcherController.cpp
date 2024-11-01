@@ -16,7 +16,7 @@ void DispatcherController::configure(Server* server)
         try
         {
 
-            cout << DispatcherRepository().getDispatchers().size() << endl;
+
             json result;
             response.set_content(result.dump(), "application/json");
         }

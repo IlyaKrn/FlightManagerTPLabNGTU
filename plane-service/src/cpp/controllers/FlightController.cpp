@@ -16,7 +16,7 @@ void FlightController::configure(Server* server)
         try
         {
 
-            cout << FlightRepository().getAllFlights().size() << endl;
+
             json result;
             response.set_content(result.dump(), "application/json");
         }

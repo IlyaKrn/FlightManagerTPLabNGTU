@@ -16,7 +16,7 @@ void PlaneController::configure(Server* server)
         try
         {
 
-            cout << PlaneRepository().getPlanes().size() << endl;
+
             json result;
             response.set_content(result.dump(), "application/json");
         }
