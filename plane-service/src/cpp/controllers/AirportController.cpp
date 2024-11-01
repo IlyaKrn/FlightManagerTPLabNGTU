@@ -1,9 +1,7 @@
 #include "../../header/controllers/AirportController.h"
 #include "../../header/Config.h"
-
 #include <json/single_include/nlohmann/json.hpp>
 
-#include "../../header/repos/AirportRepository.h"
 
 using namespace nlohmann;
 using namespace httplib;
@@ -12,17 +10,13 @@ using namespace std;
 void AirportController::configure(Server* server)
 {
     // sample request handlers
-    server->Get(SAMPLE_MAPPING, [this](const Request&, Response& response)
+    server->Get(AIRPORT_GET_MAPPING, [this](const Request&, Response& response)
     {
         try
         {
 
-            cout << AirportRepository().getAirports(1, "dff").size() << endl;
-            //TODO("replace to here service method invocation and writing result to list")
+            cout << AirportRepository().getAirports().size() << endl;
             json result;
-            result["name"] = "some name";
-            result["id"] = "some id";
-
             response.set_content(result.dump(), "application/json");
         }
         catch (...)
@@ -32,7 +26,7 @@ void AirportController::configure(Server* server)
         }
     });
 
-    server->Post(SAMPLE_MAPPING, [&](const Request& request, Response& response)
+    server->Post(AIRPORT_CREATE_MAPPING, [&](const Request& request, Response& response)
     {
         try
         {
@@ -48,5 +42,40 @@ void AirportController::configure(Server* server)
         }
     });
 
-    //TODO("write here other api handlers with airports")
+    server->Post(AIRPORT_UPDATE_MAPPING, [&](const Request& request, Response& response)
+    {
+        try
+        {
+
+        }
+        catch (...)
+        {
+            cout << "AirportController::AirportController: exception occured" << endl;
+            response.status = 500;
+        }
+    });
+    server->Get(AIRPORT_GET_MAPPING, [&](const Request& request, Response& response)
+    {
+        try
+        {
+
+        }
+        catch (...)
+        {
+            cout << "AirportController::AirportController: exception occured" << endl;
+            response.status = 500;
+        }
+    });
+    server->Delete(AIRPORT_DELETE_MAPPING, [&](const Request& request, Response& response)
+    {
+        try
+        {
+
+        }
+        catch (...)
+        {
+            cout << "AirportController::AirportController: exception occured" << endl;
+            response.status = 500;
+        }
+    });
 }

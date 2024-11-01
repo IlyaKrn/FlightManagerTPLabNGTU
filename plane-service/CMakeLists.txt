@@ -19,6 +19,36 @@ add_executable(main src/main.cpp
         src/header/Config.h
         src/cpp/repos/AirportRepository.cpp
         src/header/repos/AirportRepository.h
+        src/header/models/AirportModel.h
+        src/header/models/PlaneModel.h
+        src/header/models/DispatcherModel.h
+        src/header/models/FlightModel.h
+        src/header/repos/PlaneRepository.h
+        src/header/repos/DispatcherRepository.h
+        src/header/repos/FlightRepository.h
+        src/header/services/AirportService.h
+        src/header/services/PlaneService.h
+        src/header/services/DispatcherService.h
+        src/header/services/FlightService.h
+        src/header/controllers/PlaneController.h
+        src/header/controllers/DispatcherController.h
+        src/cpp/models/AirportModel.cpp
+        src/cpp/models/PlaneModel.cpp
+        src/cpp/models/DispatcherModel.cpp
+        src/cpp/models/FlightModel.cpp
+        src/header/controllers/FlightController.h
+        src/cpp/repos/PlaneRepository.cpp
+        src/cpp/repos/DispatcherRepository.cpp
+        src/cpp/repos/FlightRepository.cpp
+        src/cpp/services/AirportService.cpp
+        src/cpp/services/PlaneService.cpp
+        src/cpp/services/FlightService.cpp
+        src/cpp/services/DispatcherService.cpp
+        src/cpp/controllers/PlaneController.cpp
+        src/cpp/controllers/DispatcherController.cpp
+        src/cpp/controllers/FlightController.cpp
+
+
 )
 if(WIN32)
     target_link_libraries(main wsock32 ws2_32)
