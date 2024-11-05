@@ -32,7 +32,7 @@ cd plane-service/
 mkdir build
 call cmake -G "MinGW Makefiles" -B ./build
 cd build/
-call make
+call mingw32-make
 cd ../
 cd ../
 

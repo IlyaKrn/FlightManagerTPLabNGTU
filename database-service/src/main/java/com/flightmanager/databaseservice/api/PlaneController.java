@@ -112,7 +112,7 @@ public class PlaneController {
         return data.getName() == null ||
                 data.getPilot() == null ||
                 data.getBuiltYear() == null ||
-                data.getBrokenPercentage() != null ||
+                data.getBrokenPercentage() == null ||
                 data.getSpeed() == null ||
                 data.getMinAirportSize() == null;
     }

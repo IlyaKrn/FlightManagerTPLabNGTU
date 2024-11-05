@@ -5,14 +5,15 @@
 class FlightModel
 {
 private:
-    int _id;
-    long int _timstampstart;
-    long int _timestampend;
-    int _dispatcherId;
-    int _planeId;
-    int _airportId;
+    int _id = 0;
+    long int _timstampstart = 0;
+    long int _timestampend = 0;
+    int _dispatcherId = 0;
+    int _planeId = 0;
+    int _airportId = 0;
 public:
     FlightModel(int id, long int timestampstart, long int timestampend, int dispatcherId, int planeId, int airportId);
+    FlightModel() = default;
 
     int getId();
     long int getTimestampStart();

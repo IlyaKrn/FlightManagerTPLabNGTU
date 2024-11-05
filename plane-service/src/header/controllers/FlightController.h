@@ -4,6 +4,8 @@
 
 class FlightController : public IController
 {
+private:
+    FlightService serv;
 public:
     void configure(httplib::Server* server) override;
 };

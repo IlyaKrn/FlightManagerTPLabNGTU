@@ -10,7 +10,7 @@ class FlightService
 private:
     FlightRepository repo;
 public:
-    std::pmr::list<std::string> getAllFlights();
-    std::string getFlightById(int id);
+    std::pmr::list<FlightModel> getAllFlights();
+    FlightModel getFlightById(int id);
     bool createFlight(FlightModel flight);
 };
