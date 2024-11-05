@@ -1,8 +1,8 @@
 #pragma once
 #include "IController.h"
-#include "../services/AirportService.h"
+#include "../services/PlaneService.h"
 
-class AirportController : public IController {
+class PlaneController : public IController {
 public:
     void configure(httplib::Server* server) override;
 
