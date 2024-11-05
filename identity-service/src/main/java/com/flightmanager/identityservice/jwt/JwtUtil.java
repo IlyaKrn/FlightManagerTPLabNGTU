@@ -38,15 +38,27 @@ public class JwtUtil {
     }
 
     public boolean isTokenExpired(String token) {
-        return extractAllClaims(token).getExpiration().before(new Date());
+        try{
+            return extractAllClaims(token).getExpiration().before(new Date());
+        } catch (NullPointerException e){
+            return false;
+        }
     }
     public String extractId(String token) {
-        return extractAllClaims(token).get("id").toString();
+        try{
+            return extractAllClaims(token).get("id").toString();
+        } catch (NullPointerException e){
+            return null;
+        }
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(getSigningKey()).parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parser().setSigningKey(getSigningKey()).parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private Key getSigningKey() {

@@ -47,7 +47,7 @@ public class AuthService {
     }
 
     public boolean authorize(String token, Set<String> permissions) {
-        return !jwt.isTokenExpired(token) && userRepo.getById(Long.parseLong(jwt.extractId(token))) != null;
+        return token != null && jwt.extractId(token) != null && !jwt.isTokenExpired(token) && userRepo.getById(Long.parseLong(jwt.extractId(token))) != null;
     }
 
     public Long getIdFromToken(String token) {
