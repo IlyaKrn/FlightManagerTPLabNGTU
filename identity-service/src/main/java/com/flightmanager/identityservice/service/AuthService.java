@@ -51,7 +51,7 @@ public class AuthService {
     }
 
     public Long getIdFromToken(String token) {
-        if (jwt.isTokenExpired(token))
+        if (jwt.isTokenExpired(token) || jwt.extractId(token) == null)
             return null;
         return Long.parseLong(jwt.extractId(token));
     }

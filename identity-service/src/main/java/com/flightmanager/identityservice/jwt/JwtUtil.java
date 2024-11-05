@@ -41,7 +41,7 @@ public class JwtUtil {
         return extractAllClaims(token).getExpiration().before(new Date());
     }
     public String extractId(String token) {
-        return extractAllClaims(token).getId();
+        return extractAllClaims(token).get("id").toString();
     }
 
     private Claims extractAllClaims(String token) {
