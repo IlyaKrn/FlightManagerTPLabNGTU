@@ -59,6 +59,10 @@ void PlaneModel::setBuiltYear(int builtYear)
 {
     _builtYear = builtYear;
 }
+void PlaneModel::setSpeed(int speed)
+{
+    _speed = speed;
+}
 void PlaneModel::setMinAirportSize(int minAirportSize)
 {
     _minAirportSize = minAirportSize;

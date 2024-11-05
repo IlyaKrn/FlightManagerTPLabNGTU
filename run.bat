@@ -29,7 +29,7 @@ echo y|rmdir cmake-build-debug
 mkdir build
 call cmake -G "MinGW Makefiles" -B ./build
 cd build/
-call make
+call mingw32-make
 cd ../
 cd ../
 

@@ -5,15 +5,16 @@
 class PlaneModel
 {
 private:
-    int _id;
+    int _id = 0;
     std::string _name;
     std::string _pilot;
-    int _builtYear;
-    int _brokenPercentage;
-    int _speed;
-    int _minAirportSize;
+    int _builtYear = 0;
+    int _brokenPercentage = 0;
+    int _speed = 0;
+    int _minAirportSize = 0;
 public:
     PlaneModel(int id, std::string name, std::string pilot, int builtYear, int brokenPercentage, int speed, int minAirportSize);
+    PlaneModel() = default;
 
     int getId();
     std::string getName();

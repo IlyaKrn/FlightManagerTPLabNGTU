@@ -8,10 +8,10 @@ class PlaneService
 private:
     PlaneRepository repo;
 public:
-    std::pmr::list<std::string> getAllPlanes();
-    std::string getPlaneById(int id);
+    std::pmr::list<PlaneModel> getAllPlanes();
+    PlaneModel getPlaneById(int id);
     bool createPlane(PlaneModel plane);
     bool deletePlane(int id);
-    bool updatePlane(PlaneModel plane);
+    bool updatePlane(PlaneModel plane, std::string update);
 
 };

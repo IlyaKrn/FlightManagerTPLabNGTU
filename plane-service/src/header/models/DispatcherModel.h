@@ -5,7 +5,7 @@
 class DispatcherModel
 {
 private:
-    int _id;
+    int _id = 0;
     std::string _name;
     std::string _firstname;
     std::string _lastname;
@@ -14,6 +14,7 @@ private:
     bool _isBanned;
 public:
     DispatcherModel(int id, std::string name, std::string firstname, std::string lastname, std::string email, std::string password, bool isBanned);
+    DispatcherModel() = default;
 
     int getId();
     std::string getName();

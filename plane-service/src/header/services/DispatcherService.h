@@ -7,7 +7,7 @@ class DispatcherService
 private:
     DispatcherRepository repo;
 public:
-    std::list<std::string> getAllDispatchers();
-    std::string getDispatcherById(int id);
-    bool editDispatcher(DispatcherModel dispatcher);
+    std::pmr::list<DispatcherModel> getAllDispatchers();
+    DispatcherModel getDispatcherById(int id);
+    bool editDispatcher(DispatcherModel dispatcher, std::string update);
 };

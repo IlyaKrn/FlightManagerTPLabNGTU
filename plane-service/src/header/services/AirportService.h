@@ -7,9 +7,9 @@ class AirportService
 private:
     AirportRepository repo;
 public:
-    std::pmr::list<std::string> getAllAirports();
-    std::string getAirportById(int id);
-    bool editAirport(AirportModel airport);
+    std::pmr::list<AirportModel> getAllAirports();
+    AirportModel getAirportById(int id);
+    bool editAirport(AirportModel airport, std::string update);
     bool createAirport(AirportModel airport);
-    bool deleteAirport(AirportModel airport);
+    bool deleteAirport(int id);
 };

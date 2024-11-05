@@ -9,8 +9,6 @@ const std::string SERVICE_TOKEN_VALUE = "123";
 
 constexpr int DATABASE_SERVICE_PORT = 8081;
 const std::string DATABASE_SERVICE_HOST = "127.0.0.1";
-const std::string DATABASE_SERVICE_GET_AIRPORTS = "/api/airport/get";
-
 
 const std::string AIRPORT_GET_MAPPING = "/api/airport/get";
 const std::string AIRPORT_CREATE_MAPPING = "/api/airport/create";
