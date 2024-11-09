@@ -1,6 +1,6 @@
 #include "../../header/repos/FlightRepository.h"
 #include <cpp-httplib/httplib.h>
-#include "../../header/Config.h"
+#include "../../Config.h"
 std::pmr::list<FlightModel> FlightRepository::getFlights(std::string id)
 {
     httplib::Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);

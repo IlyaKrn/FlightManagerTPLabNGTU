@@ -1,5 +1,5 @@
 #include "../../header/controllers/AirportController.h"
-#include "../../header/Config.h"
+#include "../../Config.h"
 #include <json/single_include/nlohmann/json.hpp>
 #include <string>
 
@@ -14,7 +14,9 @@ void AirportController::configure(Server* server)
     {
         try
         {
-            pmr::list<AirportModel> airports = serv.getAllAirports();
+            auto header = req.get_header_value("User-Token");
+            std::set<std::string> permissions = std::set<std::string>();
+            pmr::list<AirportModel> airports = serv.getAllAirports(header, permissions);
             if (!airports.empty())
             {
                 json airports_json = json::array();
@@ -34,6 +36,10 @@ void AirportController::configure(Server* server)
                 res.status = 404;
                 res.set_content("Аэропорты не найдены", "text/plain");
             }
+        } catch (const runtime_error& e)
+        {
+            res.status = 401;
+            res.set_content(e.what(), "text/plain");
         } catch (const std::exception& e)
         {
             cout << "AirportController::AirportController: exception occured" << e.what() << endl;
@@ -45,8 +51,10 @@ void AirportController::configure(Server* server)
     {
         try
         {
+            auto header = req.get_header_value("User-Token");
+            std::set<std::string> permissions = std::set<std::string>();
             json result = json::parse(req.body);
-            bool created = serv.createAirport(AirportModel(result["id"], result["name"], result["size"],  result["x"], result["y"]));
+            bool created = serv.createAirport(AirportModel(result["id"], result["name"], result["size"],  result["x"], result["y"]), header, permissions);
             if (created)
             {
                 res.status = 201;
@@ -56,6 +64,10 @@ void AirportController::configure(Server* server)
                 res.status = 400;
                 res.set_content("Не удалось создать аэропорт", "text/plane");
             }
+        } catch (const runtime_error& e)
+        {
+            res.status = 401;
+            res.set_content(e.what(), "text/plain");
         } catch (const std::exception& e)
         {
             cout << "AirportController::AirportController: exception occured" << e.what() << endl;
@@ -67,10 +79,12 @@ void AirportController::configure(Server* server)
     {
         try
         {
+            auto header = req.get_header_value("User-Token");
+            std::set<std::string> permissions = std::set<std::string>();
             string fields = req.get_param_value("update");
             json result = json::parse(req.body);
             AirportModel airport(result["id"], result["name"], result["size"], result["x"], result["y"]);
-            bool edited = serv.editAirport(airport, fields);
+            bool edited = serv.editAirport(airport, fields, header, permissions);
             if (edited)
             {
                 res.status = 201;
@@ -80,6 +94,10 @@ void AirportController::configure(Server* server)
                 res.status = 404;
                 res.set_content("Не удалось обновить аэропорт", "text/plane");
             }
+        } catch (const runtime_error& e)
+        {
+            res.status = 401;
+            res.set_content(e.what(), "text/plain");
         } catch (const std::exception& e)
         {
             cout << "AirportController::AirportController: exception occured" << e.what() << endl;
@@ -91,8 +109,10 @@ void AirportController::configure(Server* server)
 {
     try
     {
+        auto header = req.get_header_value("User-Token");
+        std::set<std::string> permissions = std::set<std::string>();
         int id = stoi(req.matches[1]);
-        bool deleted = serv.deleteAirport(id);
+        bool deleted = serv.deleteAirport(id, header, permissions);
         if (deleted)
         {
             res.status = 200;
@@ -101,6 +121,10 @@ void AirportController::configure(Server* server)
             res.status = 404;
             res.set_content("Аэропорт с таким id не найден", "text/plain");
         }
+    } catch (const runtime_error& e)
+    {
+        res.status = 401;
+        res.set_content(e.what(), "text/plain");
     } catch (const std::exception& e)
     {
         cout << "AirportController::AirportController: exception occured" << e.what() << endl;
@@ -111,9 +135,11 @@ void AirportController::configure(Server* server)
     {
         try
         {
+            auto header = req.get_header_value("User-Token");
+            std::set<std::string> permissions = std::set<std::string>();
             int id = stoi(req.get_param_value("id"));
             cout << id << endl;
-            AirportModel airport = serv.getAirportById(id);
+            AirportModel airport = serv.getAirportById(id, header, permissions);
             AirportModel empty_airport;
             if (airport.getId() != empty_airport.getId())
             {
@@ -130,6 +156,10 @@ void AirportController::configure(Server* server)
                 res.status = 404;
                 res.set_content("Не найден аэропорт с таким id", "text/plane");
             }
+        } catch (const runtime_error& e)
+        {
+            res.status = 401;
+            res.set_content(e.what(), "text/plain");
         } catch(const std::exception& e)
         {
             cout << "AirportController::AirportController: exception occured" << e.what() << endl;

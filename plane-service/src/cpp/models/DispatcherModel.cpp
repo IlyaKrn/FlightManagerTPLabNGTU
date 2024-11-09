@@ -1,8 +1,7 @@
 #include "../../header/models/DispatcherModel.h"
-DispatcherModel::DispatcherModel(int id, std::string name, std::string firstname, std::string lastname, std::string email, std::string password, bool isBanned, std::set<RoleModel> roles)
+DispatcherModel::DispatcherModel(int id, std::string firstname, std::string lastname, std::string email, std::string password, bool isBanned, std::set<RoleModel> roles)
 {
     _id = id;
-    _name = name;
     _firstname = firstname;
     _lastname = lastname;
     _email = email;
@@ -14,10 +13,6 @@ DispatcherModel::DispatcherModel(int id, std::string name, std::string firstname
 int DispatcherModel::getId()
 {
     return _id;
-}
-std::string DispatcherModel::getName()
-{
-    return _name;
 }
 std::string DispatcherModel::getFirstname()
 {
@@ -48,10 +43,6 @@ std::set<RoleModel> DispatcherModel::getRoles()
 void DispatcherModel::setId(int id)
 {
     _id = id;
-}
-void DispatcherModel::setName(std::string name)
-{
-    _name = name;
 }
 void DispatcherModel::setFirstname(std::string firstname)
 {

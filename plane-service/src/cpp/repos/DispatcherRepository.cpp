@@ -1,5 +1,5 @@
 #include "../../header/repos/DispatcherRepository.h"
-#include "../../header/Config.h"
+#include "../../Config.h"
 #include <cpp-httplib/httplib.h>
 std::pmr::list<DispatcherModel> DispatcherRepository::getDispatchers(std::string id)
 {
@@ -18,7 +18,18 @@ std::pmr::list<DispatcherModel> DispatcherRepository::getDispatchers(std::string
         std::pmr::list<DispatcherModel> result;
         for (auto item : dispatcher_json)
         {
-            DispatcherModel dispatcher(item["id"], item["name"], item["firstname"], item["lastname"], item["emal"], item["password"], item["isBanned"], item["roles"]);
+            std::set<RoleModel> roles;
+            for (auto role : item["roles"])
+            {
+                if (role == "ADMIN")
+                {
+                    roles.insert(RoleModel::ADMIN);
+                } else if (role == "DISPATCHER")
+                {
+                    roles.insert(RoleModel::DISPATCHER);
+                }
+            }
+            DispatcherModel dispatcher(item["id"], item["firstName"], item["lastName"], item["email"], item["password"], item["isBanned"], roles);
             result.push_back(dispatcher);
         }
         return result;
@@ -34,13 +45,20 @@ bool DispatcherRepository::updateDispatchers(DispatcherModel dispatcher, std::st
     };
     nlohmann::json dispatcher_json;
     dispatcher_json["id"] = dispatcher.getId();
-    dispatcher_json["name"] = dispatcher.getName();
-    dispatcher_json["firstname"] = dispatcher.getFirstname();
-    dispatcher_json["lastname"] = dispatcher.getLastname();
+    dispatcher_json["firstName"] = dispatcher.getFirstname();
+    dispatcher_json["lastName"] = dispatcher.getLastname();
     dispatcher_json["email"] = dispatcher.getEmail();
     dispatcher_json["password"] = dispatcher.getPassword();
     dispatcher_json["isBanned"] = dispatcher.getIsBanned();
-    dispatcher_json["roles"] = dispatcher.getRoles();
+    dispatcher_json["roles"] = nlohmann::json::array();
+    for (auto role : dispatcher.getRoles())
+    {
+        switch (role)
+        {
+            case RoleModel::ADMIN: dispatcher_json["roles"].push_back("ADMIN");
+            case RoleModel::DISPATCHER: dispatcher_json["roles"].push_back("DISPATCHER");
+        }
+    }
     auto res = cli.Post(DISPATCHER_UPDATE_MAPPING + "?update" + update, headers, dispatcher_json.dump(), "application/json");
     if (res->status == 200)
     {

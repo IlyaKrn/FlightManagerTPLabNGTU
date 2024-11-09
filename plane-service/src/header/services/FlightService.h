@@ -1,16 +1,15 @@
 #pragma once
-#include <string>
 #include <list>
-#include <json/single_include/nlohmann/json.hpp>
-
+#include <string>
 #include "../repos/FlightRepository.h"
-
+#include "../repos/IdentityRepository.h"
 class FlightService
 {
 private:
     FlightRepository repo;
+    IdentityRepository ident;
 public:
-    std::pmr::list<FlightModel> getAllFlights();
-    FlightModel getFlightById(int id);
-    bool createFlight(FlightModel flight);
+    std::pmr::list<FlightModel> getAllFlights(std::string token, std::set<std::string> permissions);
+    FlightModel getFlightById(int id, std::string token, std::set<std::string> permissions);
+    bool createFlight(FlightModel flight, std::string token, std::set<std::string> permissions);
 };

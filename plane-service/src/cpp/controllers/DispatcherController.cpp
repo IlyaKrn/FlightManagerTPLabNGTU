@@ -1,5 +1,5 @@
 #include "../../header/controllers/DispatcherController.h"
-#include "../../header/Config.h"
+#include "../../Config.h"
 #include <json/single_include/nlohmann/json.hpp>
 
 
@@ -15,7 +15,9 @@ void DispatcherController::configure(Server* server)
     {
         try
         {
-            std::pmr::list<DispatcherModel> dispatchers = serv.getAllDispatchers();
+            auto header = req.get_header_value("User-Token");
+            std::set<std::string> permissions = std::set<std::string>();
+            std::pmr::list<DispatcherModel> dispatchers = serv.getAllDispatchers(header, permissions);
             if (!dispatchers.empty())
             {
                 json result = json::array();
@@ -23,9 +25,8 @@ void DispatcherController::configure(Server* server)
                 {
                     json dispatcher_json;
                     dispatcher_json["id"] = dispatcher.getId();
-                    dispatcher_json["name"] = dispatcher.getName();
-                    dispatcher_json["firstname"] = dispatcher.getFirstname();
-                    dispatcher_json["lastname"] = dispatcher.getLastname();
+                    dispatcher_json["firstName"] = dispatcher.getFirstname();
+                    dispatcher_json["lastName"] = dispatcher.getLastname();
                     dispatcher_json["email"] = dispatcher.getEmail();
                     dispatcher_json["password"] = dispatcher.getPassword();
                     dispatcher_json["isBanned"] = dispatcher.getIsBanned();
@@ -47,8 +48,11 @@ void DispatcherController::configure(Server* server)
                 res.set_content("Диспетчеры не найдены", "text/plain");
                 res.status = 404;
             }
-        }
-        catch (const std::exception &e)
+        } catch (const runtime_error& e)
+        {
+            res.status = 401;
+            res.set_content(e.what(), "text/plain");
+        } catch (const std::exception &e)
         {
             cout << "DispatcherController::DispatcherController: exception occured" << e.what() << endl;
             res.status = 500;
@@ -58,6 +62,8 @@ void DispatcherController::configure(Server* server)
     {
         try
         {
+            auto header = req.get_header_value("User-Token");
+            std::set<std::string> permissions = std::set<std::string>();
             std::string fields = req.get_param_value("update");
             json result = json::parse(req.body);
             std::set<RoleModel> roles;
@@ -66,25 +72,28 @@ void DispatcherController::configure(Server* server)
                 if (role == "ADMIN")
                 {
                     roles.insert(RoleModel::ADMIN);
-                }
-                if (role == "DISPATCHER")
+                } else if (role == "DISPATCHER")
                 {
                     roles.insert(RoleModel::DISPATCHER);
                 }
             }
-            DispatcherModel dispatcher(result["id"], result["name"], result["firstname"], result["lastname"], result["email"], result["password"], result["isBanned"], roles);
-            bool updated = serv.editDispatcher(dispatcher, fields);
+            bool isBanned = result["isBanned"];
+            DispatcherModel dispatcher(result["id"], result["firstName"], result["lastName"], result["email"], result["password"], isBanned, roles);
+            bool updated = serv.editDispatcher(dispatcher, fields, header, permissions);
             if (updated)
             {
                 res.status = 200;
                 res.set_content(result.dump(), "application/json");
             } else
             {
-                res.status = 404;
+                res.status = 400;
                 res.set_content("Не удалось обновить диспетчера", "text/plain");
             }
-        }
-        catch (const std::exception& e)
+        } catch (const runtime_error& e)
+        {
+            res.status = 401;
+            res.set_content(e.what(), "text/plain");
+        } catch (const std::exception& e)
         {
             cout << "DispatcherController::DispatcherController: exception occured" << e.what() << endl;
             res.status = 500;
@@ -94,16 +103,17 @@ void DispatcherController::configure(Server* server)
     {
         try
         {
+            auto header = req.get_header_value("User-Token");
+            std::set<std::string> permissions = std::set<std::string>();
             int id = stoi(req.get_param_value("id"));
-            DispatcherModel dispatcher = serv.getDispatcherById(id);
+            DispatcherModel dispatcher = serv.getDispatcherById(id, header, permissions);
             DispatcherModel empty_dispatcher;
             if (dispatcher.getId() != empty_dispatcher.getId())
             {
                 json result;
                 result["id"] = dispatcher.getId();
-                result["name"] = dispatcher.getName();
-                result["firstname"] = dispatcher.getFirstname();
-                result["lastname"] = dispatcher.getLastname();
+                result["firstName"] = dispatcher.getFirstname();
+                result["lastName"] = dispatcher.getLastname();
                 result["email"] = dispatcher.getEmail();
                 result["password"] = dispatcher.getPassword();
                 result["isBanned"] = dispatcher.getIsBanned();
@@ -123,8 +133,11 @@ void DispatcherController::configure(Server* server)
                 res.status = 404;
                 res.set_content("Не найден диспетчер с таким id", "text/plain");
             }
-        }
-        catch (const std::exception& e)
+        } catch (const runtime_error& e)
+        {
+            res.status = 401;
+            res.set_content(e.what(), "text/plain");
+        } catch (const std::exception& e)
         {
             cout << "DispatcherController::DispatcherController: exception occured" << e.what() << endl;
             res.status = 500;

@@ -1,7 +1,12 @@
 #include "../../header/services/AirportService.h"
-
-std::pmr::list<AirportModel> AirportService::getAllAirports()
+#include <stdexcept>
+std::pmr::list<AirportModel> AirportService::getAllAirports(std::string token, std::set<std::string> permissions)
 {
+    bool isAllowed = ident.authorize(permissions ,token);
+    if (!isAllowed)
+    {
+        throw std::runtime_error("Отказано в доступе");
+    }
     std::pmr::list<AirportModel> airports = repo.getAirports("");
     if (!airports.empty())
     {
@@ -10,8 +15,13 @@ std::pmr::list<AirportModel> AirportService::getAllAirports()
     return std::pmr::list<AirportModel>();
 }
 
-AirportModel AirportService::getAirportById(int id)
+AirportModel AirportService::getAirportById(int id, std::string token, std::set<std::string> permissions)
 {
+    bool isAllowed = ident.authorize(permissions ,token);
+    if (!isAllowed)
+    {
+        throw std::runtime_error("Отказано в доступе");
+    }
     std::pmr::list<AirportModel> airports = repo.getAirports(std::to_string(id));
     AirportModel empty_airport;
     for (auto airport : airports)
@@ -24,8 +34,13 @@ AirportModel AirportService::getAirportById(int id)
     return empty_airport;
 }
 
-bool AirportService::createAirport(AirportModel airport)
+bool AirportService::createAirport(AirportModel airport, std::string token, std::set<std::string> permissions)
 {
+    bool isAllowed = ident.authorize(permissions ,token);
+    if (!isAllowed)
+    {
+        throw std::runtime_error("Отказано в доступе");
+    }
     bool res = repo.createAirport(airport);
     if (res)
     {
@@ -33,9 +48,14 @@ bool AirportService::createAirport(AirportModel airport)
     }
     return false;
 }
-bool AirportService::editAirport(AirportModel airport, std::string update)
+bool AirportService::editAirport(AirportModel airport, std::string update, std::string token, std::set<std::string> permissions)
 {
-    AirportModel n_airport = getAirportById(airport.getId());
+    bool isAllowed = ident.authorize(permissions ,token);
+    if (!isAllowed)
+    {
+        throw std::runtime_error("Отказано в доступе");
+    }
+    AirportModel n_airport = getAirportById(airport.getId(), token, permissions);
     if (update.find("name") != std::string::npos)
     {
         n_airport.setName(airport.getName());
@@ -59,8 +79,13 @@ bool AirportService::editAirport(AirportModel airport, std::string update)
     }
     return false;
 }
-bool AirportService::deleteAirport(int id)
+bool AirportService::deleteAirport(int id, std::string token, std::set<std::string> permissions)
 {
+    bool isAllowed = ident.authorize(permissions ,token);
+    if (!isAllowed)
+    {
+        throw std::runtime_error("Отказано в доступе");
+    }
     bool res = repo.deleteAirport(id);
     if (res)
     {

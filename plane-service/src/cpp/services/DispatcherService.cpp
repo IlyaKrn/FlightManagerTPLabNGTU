@@ -1,7 +1,13 @@
 #include "../../header/services/DispatcherService.h"
+#include <stdexcept>
 
-std::pmr::list<DispatcherModel> DispatcherService::getAllDispatchers()
+std::pmr::list<DispatcherModel> DispatcherService::getAllDispatchers(std::string token, std::set<std::string> permissions)
 {
+    bool isAllowed = ident.authorize(permissions ,token);
+    if (!isAllowed)
+    {
+        throw std::runtime_error("Отказано в доступе");
+    }
     std::pmr::list<DispatcherModel> dispatchers = repo.getDispatchers("");
     if (!dispatchers.empty())
     {
@@ -9,8 +15,13 @@ std::pmr::list<DispatcherModel> DispatcherService::getAllDispatchers()
     }
     return std::pmr::list<DispatcherModel>();
 }
-DispatcherModel DispatcherService::getDispatcherById(int id)
+DispatcherModel DispatcherService::getDispatcherById(int id, std::string token, std::set<std::string> permissions)
 {
+    bool isAllowed = ident.authorize(permissions ,token);
+    if (!isAllowed)
+    {
+        throw std::runtime_error("Отказано в доступе");
+    }
     std::pmr::list<DispatcherModel> dispatchers = repo.getDispatchers(std::to_string(id));
     DispatcherModel empty_dispatcher;
     for (auto dispatcher : dispatchers)
@@ -22,18 +33,19 @@ DispatcherModel DispatcherService::getDispatcherById(int id)
     }
     return empty_dispatcher;
 }
-bool DispatcherService::editDispatcher(DispatcherModel dispatcher, std::string update)
+bool DispatcherService::editDispatcher(DispatcherModel dispatcher, std::string update, std::string token, std::set<std::string> permissions)
 {
-    DispatcherModel n_dispatcher = getDispatcherById(dispatcher.getId());
-    if (update.find("name") != std::string::npos)
+    bool isAllowed = ident.authorize(permissions ,token);
+    if (!isAllowed)
     {
-        n_dispatcher.setName(dispatcher.getName());
+        throw std::runtime_error("Отказано в доступе");
     }
-    if (update.find("firstname") != std::string::npos)
+    DispatcherModel n_dispatcher = getDispatcherById(dispatcher.getId(), token, permissions);
+    if (update.find("firstName") != std::string::npos)
     {
         n_dispatcher.setFirstname(dispatcher.getFirstname());
     }
-    if (update.find("lastname") != std::string::npos)
+    if (update.find("lastName") != std::string::npos)
     {
         n_dispatcher.setLastname(dispatcher.getLastname());
     }

@@ -1,5 +1,5 @@
 #include "../../header/repos/AirportRepository.h"
-#include "../../header/Config.h"
+#include "../../Config.h"
 #include <cpp-httplib/httplib.h>
 
 std::pmr::list<AirportModel> AirportRepository::getAirports(std::string id)

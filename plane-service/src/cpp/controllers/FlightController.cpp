@@ -1,5 +1,5 @@
 #include "../../header/controllers/FlightController.h"
-#include "../../header/Config.h"
+#include "../../Config.h"
 #include <json/single_include/nlohmann/json.hpp>
 
 
@@ -15,7 +15,9 @@ void FlightController::configure(Server* server)
     {
         try
         {
-            std::pmr::list<FlightModel> flights = serv.getAllFlights();
+            auto header = req.get_header_value("User-Token");
+            std::set<std::string> permissions = std::set<std::string>();
+            std::pmr::list<FlightModel> flights = serv.getAllFlights(header, permissions);
             if (!flights.empty())
             {
                 json result = json::array();
@@ -34,11 +36,14 @@ void FlightController::configure(Server* server)
                 res.set_content(result.dump(), "application/json");
             } else
             {
-                res.status = 400;
+                res.status = 404;
                 res.set_content("Полеты не найдены", "text/plain");
             }
-        }
-        catch (const std::exception& e)
+        } catch (const runtime_error& e)
+        {
+            res.status = 401;
+            res.set_content(e.what(), "text/plain");
+        } catch (const std::exception& e)
         {
             cout << "FlightController::FlightController: exception occured" << e.what() << endl;
             res.status = 500;
@@ -48,9 +53,11 @@ void FlightController::configure(Server* server)
     {
         try
         {
+            auto header = req.get_header_value("User-Token");
+            std::set<std::string> permissions = std::set<std::string>();
             json flight_json = json::parse(req.body);
             FlightModel flight(flight_json["id"], flight_json["timestampStart"], flight_json["timestampEnd"], flight_json["dispatcherId"], flight_json["planeId"], flight_json["airportId"]);
-            bool created = serv.createFlight(flight);
+            bool created = serv.createFlight(flight, header, permissions);
             if (created)
             {
                 res.status = 201;
@@ -60,8 +67,11 @@ void FlightController::configure(Server* server)
                 res.status = 400;
                 res.set_content("Не удалось создать полет", "text/plain");
             }
-        }
-        catch (const std::exception& e)
+        } catch (const runtime_error& e)
+        {
+            res.status = 401;
+            res.set_content(e.what(), "text/plain");
+        } catch (const std::exception& e)
         {
             cout << "FlightController::FlightController: exception occured" << e.what() << endl;
             res.status = 500;
@@ -71,8 +81,10 @@ void FlightController::configure(Server* server)
     {
         try
         {
+            auto header = req.get_header_value("User-Token");
+            std::set<std::string> permissions = std::set<std::string>();
             int id = stoi(req.get_param_value("id"));
-            FlightModel flight = serv.getFlightById(id);
+            FlightModel flight = serv.getFlightById(id, header, permissions);
             FlightModel empty_flight;
             if (flight.getId() != empty_flight.getId())
             {
@@ -90,8 +102,11 @@ void FlightController::configure(Server* server)
                 res.status = 404;
                 res.set_content("Полет с таким id не найден", "text/plain");
             }
-        }
-        catch (const std::exception& e)
+        } catch (const runtime_error& e)
+        {
+            res.status = 401;
+            res.set_content(e.what(), "text/plain");
+        } catch (const std::exception& e)
         {
             cout << "FlightController::FlightController: exception occured" << e.what() << endl;
             res.status = 500;

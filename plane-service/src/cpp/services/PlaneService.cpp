@@ -1,7 +1,13 @@
 #include "../../header/services/PlaneService.h"
+#include <stdexcept>
 
-std::pmr::list<PlaneModel> PlaneService::getAllPlanes()
+std::pmr::list<PlaneModel> PlaneService::getAllPlanes(std::string token, std::set<std::string> permissions)
 {
+    bool isAllowed = ident.authorize(permissions ,token);
+    if (!isAllowed)
+    {
+        throw std::runtime_error("Отказано в доступе");
+    }
     std::pmr::list<PlaneModel> planes = repo.getPlanes("");
     if (!planes.empty())
     {
@@ -9,8 +15,13 @@ std::pmr::list<PlaneModel> PlaneService::getAllPlanes()
     }
     return std::pmr::list<PlaneModel>();
 }
-PlaneModel PlaneService::getPlaneById(int id)
+PlaneModel PlaneService::getPlaneById(int id, std::string token, std::set<std::string> permissions)
 {
+    bool isAllowed = ident.authorize(permissions ,token);
+    if (!isAllowed)
+    {
+        throw std::runtime_error("Отказано в доступе");
+    }
     std::pmr::list<PlaneModel> planes = repo.getPlanes(std::to_string(id));
     PlaneModel empty_plane;
     for (auto plane : planes)
@@ -22,8 +33,13 @@ PlaneModel PlaneService::getPlaneById(int id)
     }
     return empty_plane;
 }
-bool PlaneService::createPlane(PlaneModel plane)
+bool PlaneService::createPlane(PlaneModel plane, std::string token, std::set<std::string> permissions)
 {
+    bool isAllowed = ident.authorize(permissions ,token);
+    if (!isAllowed)
+    {
+        throw std::runtime_error("Отказано в доступе");
+    }
     bool res = repo.createPlane(plane);
     if (res)
     {
@@ -31,8 +47,13 @@ bool PlaneService::createPlane(PlaneModel plane)
     }
     return false;
 }
-bool PlaneService::deletePlane(int id)
+bool PlaneService::deletePlane(int id, std::string token, std::set<std::string> permissions)
 {
+    bool isAllowed = ident.authorize(permissions ,token);
+    if (!isAllowed)
+    {
+        throw std::runtime_error("Отказано в доступе");
+    }
     bool res = repo.deletePlane(id);
     if (res)
     {
@@ -40,9 +61,14 @@ bool PlaneService::deletePlane(int id)
     }
     return false;
 }
-bool PlaneService::updatePlane(PlaneModel plane, std::string update)
+bool PlaneService::updatePlane(PlaneModel plane, std::string update, std::string token, std::set<std::string> permissions)
 {
-    PlaneModel n_plane = getPlaneById(plane.getId());
+    bool isAllowed = ident.authorize(permissions ,token);
+    if (!isAllowed)
+    {
+        throw std::runtime_error("Отказано в доступе");
+    }
+    PlaneModel n_plane = getPlaneById(plane.getId(), token, permissions);
     if (update.find("name") != std::string::npos)
     {
         n_plane.setName(plane.getName());
