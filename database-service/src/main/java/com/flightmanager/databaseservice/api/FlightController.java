@@ -108,7 +108,7 @@ public class FlightController {
         return data.getTimestampStart() == null ||
                 data.getTimestampEnd() == null ||
                 data.getDispatcherId() == null ||
-                data.getPlaneId() != null ||
+                data.getPlaneId() == null ||
                 data.getAirportId() == null;
     }
 

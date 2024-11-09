@@ -7,6 +7,6 @@
 class FlightRepository
 {
 public:
-    std::pmr::list<FlightModel> getAllFlights(std::string id);
+    std::pmr::list<FlightModel> getFlights(std::string id);
     bool createFlight(FlightModel flight);
 };
