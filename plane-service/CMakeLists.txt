@@ -46,6 +46,10 @@ add_executable(main src/main.cpp
         src/cpp/controllers/PlaneController.cpp
         src/cpp/controllers/DispatcherController.cpp
         src/cpp/controllers/FlightController.cpp
+        src/header/repos/IdentityRepository.h
+        src/header/services/IdentityService.h
+        src/header/controllers/IdentityController.h
+        src/header/models/RoleModel.h
 
 
 )
