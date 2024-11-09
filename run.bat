@@ -1,6 +1,5 @@
 @echo off
 
-
 if "%1" EQU "-help" goto help
 if "%1" EQU "-c" goto compile
 if "%1" EQU "-d" goto docker
@@ -65,8 +64,8 @@ for /f "tokens=*" %%a in (.env) do (
 for /f "tokens=*" %%a in (docker-less.env) do (
     set %%a
 )
-start java -jar ./database-service/build/libs/database-service-1.jar
-start java -jar ./identity-service/build/libs/identity-service-1.jar
+start java -jar ./database-service/build/libs/database-service.jar
+start java -jar ./identity-service/build/libs/identity-service.jar
 start plane-service/build/main.exe
 @rem TODO: run gateway executing file
 goto end

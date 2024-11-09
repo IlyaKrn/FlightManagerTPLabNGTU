@@ -46,6 +46,7 @@ add_executable(main src/main.cpp
         src/cpp/controllers/PlaneController.cpp
         src/cpp/controllers/DispatcherController.cpp
         src/cpp/controllers/FlightController.cpp
+        src/header/models/RoleModel.h
 
 
 )
