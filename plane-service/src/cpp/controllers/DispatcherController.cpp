@@ -44,7 +44,7 @@ void DispatcherController::configure(Server* server)
                 res.status = 200;
             } else
             {
-                res.set_content("Диспетчеры не найдены", "text/plane");
+                res.set_content("Диспетчеры не найдены", "text/plain");
                 res.status = 404;
             }
         }
@@ -81,7 +81,7 @@ void DispatcherController::configure(Server* server)
             } else
             {
                 res.status = 404;
-                res.set_content("Не удалось обновить диспетчера", "text/plane");
+                res.set_content("Не удалось обновить диспетчера", "text/plain");
             }
         }
         catch (const std::exception& e)
@@ -121,7 +121,7 @@ void DispatcherController::configure(Server* server)
             } else
             {
                 res.status = 404;
-                res.set_content("Не найден диспетчер с таким id", "text/plane");
+                res.set_content("Не найден диспетчер с таким id", "text/plain");
             }
         }
         catch (const std::exception& e)

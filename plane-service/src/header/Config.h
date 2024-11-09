@@ -27,7 +27,6 @@ const std::string DISPATCHER_GET_ALL_MAPPING = "/api/dispatcher/getAll";
 const std::string DISPATCHER_GET_BY_ID_MAPPING = "/api/dispatcher/get";
 const std::string DISPATCHER_UPDATE_MAPPING = "/api/dispatcher/update";
 
-const std::string FLIGHT_GET_ALL_MAPPING = "/api/flight/getAll";
-const std::string FLIGHT_GET_BY_ID_MAPPING = "/api/flight/get";
-const std::string FLIGHT_CREATE_MAPPING = "/api/flight/create";
-const std::string FLIGHT_UPDATE_MAPPING = "/api/flight/update";
+const std::string FLIGHT_GET_ALL_MAPPING = "/api/flights/getAll";
+const std::string FLIGHT_GET_BY_ID_MAPPING = "/api/flights/get";
+const std::string FLIGHT_CREATE_MAPPING = "/api/flights/create";

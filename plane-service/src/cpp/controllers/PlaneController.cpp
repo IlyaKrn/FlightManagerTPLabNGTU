@@ -35,7 +35,7 @@ void PlaneController::configure(Server* server)
             } else
             {
                 res.status = 404;
-                res.set_content("Аэропорты не найдены", "text/plane");
+                res.set_content("Аэропорты не найдены", "text/plain");
             }
         } catch (const std::exception& e)
         {
@@ -58,7 +58,7 @@ void PlaneController::configure(Server* server)
             } else
             {
                 res.status = 400;
-                res.set_content("Не удалось создать аэропорт", "text/plane");
+                res.set_content("Не удалось создать аэропорт", "text/plain");
             }
         } catch (const std::exception& e)
         {
@@ -81,7 +81,7 @@ void PlaneController::configure(Server* server)
             } else
             {
                 res.status = 400;
-                res.set_content("Не удалось обновить самолёт", "text/plane");
+                res.set_content("Не удалось обновить самолёт", "text/plain");
             }
         } catch (const std::exception& e)
         {
@@ -101,7 +101,7 @@ void PlaneController::configure(Server* server)
             } else
             {
                 res.status = 404;
-                res.set_content("Самолет с таким id не найден", "text/plane");
+                res.set_content("Самолет с таким id не найден", "text/plain");
             }
         } catch (const std::exception& e)
         {
@@ -131,7 +131,7 @@ void PlaneController::configure(Server* server)
             } else
             {
                 res.status = 404;
-                res.set_content("Не найден самолет с таким id", "text/plane");
+                res.set_content("Не найден самолет с таким id", "text/plain");
             }
         } catch (const std::exception& e)
         {
