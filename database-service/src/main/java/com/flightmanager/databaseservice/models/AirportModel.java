@@ -18,7 +18,7 @@ public class AirportModel {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    private Integer x;
-    private Integer y;
+    private Double x;
+    private Double y;
     private Integer size;
 }

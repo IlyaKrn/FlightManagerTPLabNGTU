@@ -24,8 +24,8 @@ create table airports
         primary key,
     name varchar(255),
     size integer,
-    x    integer,
-    y    integer
+    x    double precision,
+    y    double precision
 );
 alter table airports owner to postgres;
 
