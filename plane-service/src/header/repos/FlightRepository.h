@@ -2,11 +2,10 @@
 #include <list>
 #include <string>
 #include "../models/FlightModel.h"
-#include <json/single_include/nlohmann/json.hpp>
 
 class FlightRepository
 {
 public:
-    std::pmr::list<FlightModel> getFlights(std::string id);
+    std::list<FlightModel> getFlights(long int id, long int timestampStart, long int timestampEnd, long int dispatcherId, long int planeId, long int airportId);
     bool createFlight(FlightModel flight);
 };

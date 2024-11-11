@@ -1,15 +1,16 @@
 #pragma once
 #include <list>
+#include <set>
 #include <string>
 #include "../models/PlaneModel.h"
-#include <json/single_include/nlohmann/json.hpp>
-
 
 class PlaneRepository
 {
 public:
-    std::pmr::list<PlaneModel> getPlanes(std::string id);
+    std::list<PlaneModel> getPlanes(long int id, std::string name, std::string pilot, int builtYear, int brokenPercentage, int speed, int minAirportSize);
     bool createPlane(PlaneModel plane);
-    bool deletePlane(int id);
-    bool updatePlane(PlaneModel plane, std::string update);
+    bool deletePlane(long int id);
+    bool updatePlane(PlaneModel plane, std::set<std::string> update);
+
+
 };

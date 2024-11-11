@@ -1,17 +1,19 @@
 #pragma once
-#include <string>
 #include <list>
+#include <set>
+#include <string>
 #include "../repos/AirportRepository.h"
 #include "../../header/repos/IdentityRepository.h"
+
+
 class AirportService
 {
-private:
     AirportRepository repo;
     IdentityRepository ident;
 public:
-    std::pmr::list<AirportModel> getAllAirports(std::string token, std::set<std::string> permissions);
-    AirportModel getAirportById(int id, std::string token, std::set<std::string> permissions);
-    bool editAirport(AirportModel airport, std::string update, std::string token, std::set<std::string> permissions);
+    std::list<AirportModel> getAllAirports(std::string token, std::set<std::string> permissions);
+    AirportModel getAirportById(long int id, std::string token, std::set<std::string> permissions);
+    bool editAirport(AirportModel airport, std::set<std::string> update, std::string token, std::set<std::string> permissions);
     bool createAirport(AirportModel airport, std::string token, std::set<std::string> permissions);
-    bool deleteAirport(int id, std::string token, std::set<std::string> permissions);
+    bool deleteAirport(long int id, std::string token, std::set<std::string> permissions);
 };

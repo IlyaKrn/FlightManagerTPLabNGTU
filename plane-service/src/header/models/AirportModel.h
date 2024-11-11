@@ -4,23 +4,21 @@
 
 class AirportModel
 {
-private:
-    int _id = 0;
+    long int _id;
     std::string _name;
-    int _size = 0;
-    double _x = 0;
-    double _y = 0;
+    int _size;
+    double _x;
+    double _y;
 public:
     AirportModel(int id, std::string name, int size, double x, double y);
-    AirportModel() = default;
 
-    int getId();
+    long int getId();
     std::string getName();
     int getSize();
     double getX();
     double getY();
 
-    void setId(int id);
+    void setId(long int id);
     void setName(std::string name);
     void setSize(int size);
     void setX(double x);

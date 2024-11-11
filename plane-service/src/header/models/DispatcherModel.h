@@ -3,10 +3,10 @@
 #include <string>
 #include <set>
 #include "RoleModel.h"
+
 class DispatcherModel
 {
-private:
-    int _id = 0;
+    long int _id;
     std::string _firstname;
     std::string _lastname;
     std::string _email;
@@ -15,9 +15,8 @@ private:
     std::set<RoleModel> _roles;
 public:
     DispatcherModel(int id, std::string firstname, std::string lastname, std::string email, std::string password, bool isBanned, std::set<RoleModel> roles);
-    DispatcherModel() = default;
 
-    int getId();
+    long int getId();
     std::string getFirstname();
     std::string getLastname();
     std::string getEmail();
@@ -25,7 +24,7 @@ public:
     bool getIsBanned();
     std::set<RoleModel> getRoles();
 
-    void setId(int id);
+    void setId(long int id);
     void setFirstname(std::string firstname);
     void setLastname(std::string lastname);
     void setEmail(std::string email);
