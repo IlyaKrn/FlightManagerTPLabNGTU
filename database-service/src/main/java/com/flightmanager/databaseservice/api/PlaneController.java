@@ -58,8 +58,10 @@ public class PlaneController {
     public ResponseEntity<PlaneModel> create(@RequestBody PlaneModel data) {
         try{
             data.setId(0L);
-            if(containsNullFields(data))
+            if(containsNullFields(data)) {
+                log.warn("create plane failed: invalid data");
                 return ResponseEntity.status(400).build();
+            }
             PlaneModel model = repo.save(data);
             log.info("create plane successful: id=" + model.getId());
             return ResponseEntity.ok(model);
@@ -71,11 +73,15 @@ public class PlaneController {
     @PostMapping("${mapping.plane.update}")
     public ResponseEntity<PlaneModel> update(@RequestBody PlaneModel data, @RequestParam("update") String update) {
         try{
-            if(data.getId() == null)
+            if(data.getId() == null) {
+                log.warn("update plane failed: id not provided");
                 return ResponseEntity.status(400).build();
+            }
             PlaneModel fromDB = repo.findById(data.getId()).orElse(null);
-            if(fromDB == null)
+            if(fromDB == null) {
+                log.warn("update plane failed: plane not found");
                 return ResponseEntity.status(400).build();
+            }
 
             ArrayList<String> fields = new ArrayList<>(Arrays.asList(update.split(",")));
             if(!fields.contains("name"))
@@ -90,8 +96,10 @@ public class PlaneController {
                 data.setSpeed(fromDB.getSpeed());
             if(!fields.contains("minAirportSize"))
                 data.setMinAirportSize(fromDB.getMinAirportSize());
-            if(containsNullFields(data))
+            if(containsNullFields(data)) {
+                log.warn("update plane failed: invalid data");
                 return ResponseEntity.status(400).build();
+            }
 
             PlaneModel model = repo.save(data);
             log.info("update plane successful: id=" + model.getId());

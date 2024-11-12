@@ -46,7 +46,7 @@ public class AirportController {
             log.info("get airports successful (" + models.size() + " entities)");
             return ResponseEntity.ok(models);
         } catch (Exception e) {
-             log.warn("get airports failed: " + e.getMessage());
+            log.warn("get airports failed: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -55,8 +55,10 @@ public class AirportController {
     public ResponseEntity<AirportModel> create(@RequestBody AirportModel data) {
         try{
             data.setId(0L);
-            if(containsNullFields(data))
+            if(containsNullFields(data)) {
+                log.warn("create airport failed: invalid data");
                 return ResponseEntity.status(400).build();
+            }
             AirportModel model = repo.save(data);
             log.info("create airport successful: id=" + model.getId());
             return ResponseEntity.ok(model);
@@ -69,11 +71,15 @@ public class AirportController {
     @PostMapping("${mapping.airport.update}")
     public ResponseEntity<AirportModel> update(@RequestBody AirportModel data, @RequestParam("update") String update) {
         try{
-            if(data.getId() == null)
+            if(data.getId() == null) {
+                log.warn("update airport failed: id not provided");
                 return ResponseEntity.status(400).build();
+            }
             AirportModel fromDB = repo.findById(data.getId()).orElse(null);
-            if(fromDB == null)
+            if(fromDB == null) {
+                log.warn("update airport failed: airport not found");
                 return ResponseEntity.status(400).build();
+            }
 
             ArrayList<String> fields = new ArrayList<>(Arrays.asList(update.split(",")));
             if(!fields.contains("name"))
@@ -84,8 +90,10 @@ public class AirportController {
                 data.setY(fromDB.getY());
             if(!fields.contains("size"))
                 data.setSize(fromDB.getSize());
-            if(containsNullFields(data))
+            if(containsNullFields(data)) {
+                log.warn("update airport failed: invalid data");
                 return ResponseEntity.status(400).build();
+            }
 
             AirportModel model = repo.save(data);
             log.info("update airport successful: id=" + model.getId());
@@ -103,7 +111,7 @@ public class AirportController {
             log.info("delete airport successful: id=" + id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-           log.warn("delete airport failed: " + e.getMessage());
+            log.warn("delete airport failed: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }

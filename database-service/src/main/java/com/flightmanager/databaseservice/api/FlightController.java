@@ -43,7 +43,7 @@ public class FlightController {
                 models = models.stream().filter(m -> m.getPlaneId().equals(planeId)).collect(Collectors.toList());
             if (airportId != null)
                 models = models.stream().filter(m -> m.getAirportId().equals(airportId)).collect(Collectors.toList());
-             log.info("get flight successful (" + models.size() + " entities)");
+            log.info("get flight successful (" + models.size() + " entities)");
             return ResponseEntity.ok(models);
         } catch (Exception e) {
             log.warn("get flight failed: " + e.getMessage());
@@ -55,8 +55,10 @@ public class FlightController {
     public ResponseEntity<FlightModel> create(@RequestBody FlightModel data) {
         try{
             data.setId(0L);
-            if(containsNullFields(data))
+            if(containsNullFields(data)) {
+                log.warn("create flight failed: invalid data");
                 return ResponseEntity.status(400).build();
+            }
             FlightModel model = repo.save(data);
             log.info("create flight successful: id=" + model.getId());
             return ResponseEntity.ok(model);
@@ -69,11 +71,15 @@ public class FlightController {
     @PostMapping("${mapping.flight.update}")
     public ResponseEntity<FlightModel> update(@RequestBody FlightModel data, @RequestParam("update") String update) {
         try{
-            if(data.getId() == null)
+            if(data.getId() == null) {
+                log.warn("update flight failed: id not provided");
                 return ResponseEntity.status(400).build();
+            }
             FlightModel fromDB = repo.findById(data.getId()).orElse(null);
-            if(fromDB == null)
+            if(fromDB == null) {
+                log.warn("update flight failed: flight not found");
                 return ResponseEntity.status(400).build();
+            }
 
             ArrayList<String> fields = new ArrayList<>(Arrays.asList(update.split(",")));
             if(!fields.contains("timestampStart"))
@@ -86,8 +92,10 @@ public class FlightController {
                 data.setPlaneId(fromDB.getPlaneId());
             if(!fields.contains("airportId"))
                 data.setAirportId(fromDB.getAirportId());
-            if(containsNullFields(data))
+            if(containsNullFields(data)) {
+                log.warn("update flight failed: invalid data");
                 return ResponseEntity.status(400).build();
+            }
 
             FlightModel model = repo.save(data);
             log.info("update flight successful: id=" + model.getId());

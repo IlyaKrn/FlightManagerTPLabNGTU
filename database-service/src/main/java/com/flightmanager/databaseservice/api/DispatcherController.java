@@ -57,8 +57,10 @@ public class DispatcherController {
     public ResponseEntity<DispatcherModel> create(@RequestBody DispatcherModel data) {
         try{
             data.setId(0L);
-            if(containsNullFields(data))
+            if(containsNullFields(data)) {
+                log.warn("create dispatcher failed: invalid data");
                 return ResponseEntity.status(400).build();
+            }
             DispatcherModel model = repo.save(data);
             log.info("create dispatcher successful: id=" + model.getId());
             return ResponseEntity.ok(model);
@@ -71,11 +73,15 @@ public class DispatcherController {
     @PostMapping("${mapping.dispatcher.update}")
     public ResponseEntity<DispatcherModel> update(@RequestBody DispatcherModel data, @RequestParam("update") String update) {
         try{
-            if(data.getId() == null)
+            if(data.getId() == null) {
+                log.warn("update dispatcher failed: id not provided");
                 return ResponseEntity.status(400).build();
+            }
             DispatcherModel fromDB = repo.findById(data.getId()).orElse(null);
-            if(fromDB == null)
+            if(fromDB == null) {
+                log.warn("update dispatcher failed: dispatcher not found");
                 return ResponseEntity.status(400).build();
+            }
 
             ArrayList<String> fields = new ArrayList<>(Arrays.asList(update.split(",")));
             if(!fields.contains("firstName"))
@@ -90,8 +96,10 @@ public class DispatcherController {
                 data.setIsBanned(fromDB.getIsBanned());
             if(!fields.contains("roles"))
                 data.setRoles(fromDB.getRoles());
-            if(containsNullFields(data))
+            if(containsNullFields(data)) {
+                log.warn("update dispatcher failed: invalid data");
                 return ResponseEntity.status(400).build();
+            }
 
             DispatcherModel model = repo.save(data);
             log.info("update dispatcher successful: id=" + model.getId());
