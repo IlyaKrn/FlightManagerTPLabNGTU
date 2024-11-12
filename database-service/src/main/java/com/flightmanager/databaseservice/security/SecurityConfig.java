@@ -26,7 +26,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests(
-                        authz -> authz
+                        auth -> auth
                                 .antMatchers(
                                         "/v2/api-docs",
                                         "/swagger-resources",

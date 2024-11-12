@@ -37,10 +37,10 @@ public class AuthController {
                 log.warn("login auth failed: invalid login data");
                 return ResponseEntity.status(401).build();
             }
-            log.info("login auth successful: id=" + response.getId());
+            log.info("login auth successful: id={}", response.getId());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            log.warn("login auth failed: " + e.getMessage());
+            log.warn("login auth failed: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -53,13 +53,13 @@ public class AuthController {
                 log.warn("register auth failed: user already exists");
                 return ResponseEntity.status(401).build();
             }
-            log.info("register auth successful: id=" + response.getId());
+            log.info("register auth successful: id={}", response.getId());
             return ResponseEntity.ok(response);
         } catch (HTTP400Exception e) {
             log.warn("register auth failed: invalid register data");
             return ResponseEntity.status(400).build();
         } catch (Exception e) {
-            log.warn("register auth failed: " + e.getMessage());
+            log.warn("register auth failed: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -68,10 +68,10 @@ public class AuthController {
     public ResponseEntity<Boolean> authorize(@RequestBody AuthorizeRequest authorizeRequest) {
         try {
             boolean authorize = authService.authorize(authorizeRequest.getToken(), authorizeRequest.getPermissions());
-            log.info("authorize auth successful: value=" + authorize);
+            log.info("authorize auth successful: value={}", authorize);
             return ResponseEntity.ok(authorize);
         } catch (Exception e) {
-            log.warn("authorize auth failed: " + e.getMessage());
+            log.warn("authorize auth failed: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -84,10 +84,10 @@ public class AuthController {
                 log.warn("id-by-token auth failed: invalid token or user not exists");
                 return ResponseEntity.status(401).build();
             }
-            log.info("id-by-token successful: id=" + id);
+            log.info("id-by-token successful: id={}", id);
             return ResponseEntity.ok(id);
         } catch (Exception e) {
-            log.warn("id-by-token auth failed: " + e.getMessage());
+            log.warn("id-by-token auth failed: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }

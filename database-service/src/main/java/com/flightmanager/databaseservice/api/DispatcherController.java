@@ -43,10 +43,10 @@ public class DispatcherController {
                 models = models.stream().filter(m -> m.getPassword().equals(password)).collect(Collectors.toList());
             if (isBanned != null)
                 models = models.stream().filter(m -> m.getIsBanned().equals(isBanned)).collect(Collectors.toList());
-            log.info("get dispatcher successful (" + models.size() + " entities)");
+            log.info("get dispatcher successful ({} entities)", models.size());
             return ResponseEntity.ok(models);
         } catch (Exception e) {
-            log.warn("get dispatcher failed: " + e.getMessage());
+            log.warn("get dispatcher failed: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -60,10 +60,10 @@ public class DispatcherController {
                 return ResponseEntity.status(400).build();
             }
             DispatcherModel model = repo.save(data);
-            log.info("create dispatcher successful: id=" + model.getId());
+            log.info("create dispatcher successful: id={}", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
-            log.warn("create dispatcher failed: " + e.getMessage());
+            log.warn("create dispatcher failed: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -100,10 +100,10 @@ public class DispatcherController {
             }
 
             DispatcherModel model = repo.save(data);
-            log.info("update dispatcher successful: id=" + model.getId());
+            log.info("update dispatcher successful: id={}", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
-            log.warn("update dispatcher failed: " + e.getMessage());
+            log.warn("update dispatcher failed: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -112,10 +112,10 @@ public class DispatcherController {
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
         try {
             repo.deleteById(id);
-            log.info("delete dispatcher successful: id=" + id);
+            log.info("delete dispatcher successful: id={}", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            log.warn("delete dispatcher failed: " + e.getMessage());
+            log.warn("delete dispatcher failed: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }

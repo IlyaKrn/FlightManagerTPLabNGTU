@@ -10,14 +10,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 @Slf4j
 @Component
@@ -30,7 +26,7 @@ public class ServiceTokenFilter extends GenericFilterBean {
     private ServiceAuthorizer authorizer;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain fc) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain fc) {
         final String token = getTokenFromRequest((HttpServletRequest) request);
         try {
             if (token != null && authorizer.authorize(token)) {
@@ -40,13 +36,12 @@ public class ServiceTokenFilter extends GenericFilterBean {
                 SecurityContextHolder.getContext().setAuthentication(appInfoToken);
             }
         } catch (Exception e) {
-            StringWriter errors = new StringWriter();
-            e.printStackTrace(new PrintWriter(errors));
+            log.warn(e.getMessage());
         }
         try {
             fc.doFilter(request, response);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn(e.getMessage());
             ((HttpServletResponse) response).setStatus(400);
         }
     }

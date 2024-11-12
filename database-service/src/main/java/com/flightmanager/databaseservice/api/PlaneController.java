@@ -46,10 +46,10 @@ public class PlaneController {
                 models = models.stream().filter(m -> m.getSpeed().equals(speed)).collect(Collectors.toList());
             if (minAirportSize != null)
                 models = models.stream().filter(m -> m.getMinAirportSize().equals(minAirportSize)).collect(Collectors.toList());
-            log.info("get plane successful (" + models.size() + " entities)");
+            log.info("get plane successful ({} entities)", models.size());
             return ResponseEntity.ok(models);
         } catch (Exception e) {
-            log.warn("get plane failed: " + e.getMessage());
+            log.warn("get plane failed: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -63,10 +63,10 @@ public class PlaneController {
                 return ResponseEntity.status(400).build();
             }
             PlaneModel model = repo.save(data);
-            log.info("create plane successful: id=" + model.getId());
+            log.info("create plane successful: id={}", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
-            log.warn("create plane failed: " + e.getMessage());
+            log.warn("create plane failed: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -103,10 +103,10 @@ public class PlaneController {
             }
 
             PlaneModel model = repo.save(data);
-            log.info("update plane successful: id=" + model.getId());
+            log.info("update plane successful: id={}", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
-            log.warn("update plane failed: " + e.getMessage());
+            log.warn("update plane failed: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -115,10 +115,10 @@ public class PlaneController {
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
         try {
             repo.deleteById(id);
-            log.info("delete plane successful: id=" + id);
+            log.info("delete plane successful: id={}", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            log.warn("delete plane failed: " + e.getMessage());
+            log.warn("delete plane failed: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
