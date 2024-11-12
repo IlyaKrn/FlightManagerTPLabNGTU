@@ -5,6 +5,7 @@ import com.flightmanager.databaseservice.models.AirportModel;
 import com.flightmanager.databaseservice.models.AirportModel;
 import com.flightmanager.databaseservice.models.DispatcherModel;
 import com.flightmanager.databaseservice.repos.AirportRepo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,7 @@ public class AirportController {
                 models = models.stream().filter(m -> m.getY().equals(y)).collect(Collectors.toList());
             if (size != null)
                 models = models.stream().filter(m -> m.getSize().equals(size)).collect(Collectors.toList());
-            log.info("get airports successful (" + models.size() + " entities)")
+            log.info("get airports successful (" + models.size() + " entities)");
             return ResponseEntity.ok(models);
         } catch (Exception e) {
              log.warn("get airports failed: " + e.getMessage());

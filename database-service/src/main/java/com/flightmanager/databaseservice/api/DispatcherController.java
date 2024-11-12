@@ -5,6 +5,7 @@ import com.flightmanager.databaseservice.models.DispatcherModel;
 import com.flightmanager.databaseservice.models.PlaneModel;
 import com.flightmanager.databaseservice.models.RoleModel;
 import com.flightmanager.databaseservice.repos.DispatcherRepo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

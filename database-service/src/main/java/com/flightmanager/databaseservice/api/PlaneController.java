@@ -2,6 +2,7 @@ package com.flightmanager.databaseservice.api;
 
 import com.flightmanager.databaseservice.models.PlaneModel;
 import com.flightmanager.databaseservice.repos.PlaneRepo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
