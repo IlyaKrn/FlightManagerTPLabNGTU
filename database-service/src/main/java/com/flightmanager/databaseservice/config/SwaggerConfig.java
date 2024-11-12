@@ -34,6 +34,7 @@ public class SwaggerConfig extends WebMvcConfigurerAdapter {
                 .paths(PathSelectors.any())
                 .build();
     }
+
     @Bean
     public InternalResourceViewResolver defaultViewResolver() {
         return new InternalResourceViewResolver();

@@ -28,8 +28,8 @@ public class FlightController {
             @RequestParam(value = "dispatcherId", required = false) Long dispatcherId,
             @RequestParam(value = "planeId", required = false) Long planeId,
             @RequestParam(value = "airportId", required = false) Long airportId
-            ) {
-        try{
+    ) {
+        try {
             List<FlightModel> models = repo.findAll();
             if (id != null)
                 models = models.stream().filter(m -> m.getId().equals(id)).collect(Collectors.toList());
@@ -53,9 +53,9 @@ public class FlightController {
 
     @PostMapping("${mapping.flight.create}")
     public ResponseEntity<FlightModel> create(@RequestBody FlightModel data) {
-        try{
+        try {
             data.setId(0L);
-            if(containsNullFields(data)) {
+            if (containsNullFields(data)) {
                 log.warn("create flight failed: invalid data");
                 return ResponseEntity.status(400).build();
             }
@@ -70,29 +70,29 @@ public class FlightController {
 
     @PostMapping("${mapping.flight.update}")
     public ResponseEntity<FlightModel> update(@RequestBody FlightModel data, @RequestParam("update") String update) {
-        try{
-            if(data.getId() == null) {
+        try {
+            if (data.getId() == null) {
                 log.warn("update flight failed: id not provided");
                 return ResponseEntity.status(400).build();
             }
             FlightModel fromDB = repo.findById(data.getId()).orElse(null);
-            if(fromDB == null) {
+            if (fromDB == null) {
                 log.warn("update flight failed: flight not found");
                 return ResponseEntity.status(400).build();
             }
 
             ArrayList<String> fields = new ArrayList<>(Arrays.asList(update.split(",")));
-            if(!fields.contains("timestampStart"))
+            if (!fields.contains("timestampStart"))
                 data.setTimestampStart(fromDB.getTimestampStart());
-            if(!fields.contains("timestampEnd"))
+            if (!fields.contains("timestampEnd"))
                 data.setTimestampEnd(fromDB.getTimestampEnd());
-            if(!fields.contains("dispatcherId"))
+            if (!fields.contains("dispatcherId"))
                 data.setDispatcherId(fromDB.getDispatcherId());
-            if(!fields.contains("planeId"))
+            if (!fields.contains("planeId"))
                 data.setPlaneId(fromDB.getPlaneId());
-            if(!fields.contains("airportId"))
+            if (!fields.contains("airportId"))
                 data.setAirportId(fromDB.getAirportId());
-            if(containsNullFields(data)) {
+            if (containsNullFields(data)) {
                 log.warn("update flight failed: invalid data");
                 return ResponseEntity.status(400).build();
             }
@@ -108,7 +108,7 @@ public class FlightController {
 
     @DeleteMapping("${mapping.flight.delete}/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
-        try{
+        try {
             repo.deleteById(id);
             log.info("delete flight successful: id=" + id);
             return ResponseEntity.ok().build();
@@ -118,7 +118,7 @@ public class FlightController {
         }
     }
 
-    private boolean containsNullFields(FlightModel data){
+    private boolean containsNullFields(FlightModel data) {
         return data.getTimestampStart() == null ||
                 data.getTimestampEnd() == null ||
                 data.getDispatcherId() == null ||

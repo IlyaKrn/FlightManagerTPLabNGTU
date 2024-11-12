@@ -29,8 +29,8 @@ public class PlaneController {
             @RequestParam(value = "brokenPercentage", required = false) Integer brokenPercentage,
             @RequestParam(value = "speed", required = false) Integer speed,
             @RequestParam(value = "minAirportSize", required = false) Integer minAirportSize
-        ) {
-        try{
+    ) {
+        try {
             List<PlaneModel> models = repo.findAll();
             if (id != null)
                 models = models.stream().filter(m -> m.getId().equals(id)).collect(Collectors.toList());
@@ -56,9 +56,9 @@ public class PlaneController {
 
     @PostMapping("${mapping.plane.create}")
     public ResponseEntity<PlaneModel> create(@RequestBody PlaneModel data) {
-        try{
+        try {
             data.setId(0L);
-            if(containsNullFields(data)) {
+            if (containsNullFields(data)) {
                 log.warn("create plane failed: invalid data");
                 return ResponseEntity.status(400).build();
             }
@@ -70,33 +70,34 @@ public class PlaneController {
             return ResponseEntity.status(500).build();
         }
     }
+
     @PostMapping("${mapping.plane.update}")
     public ResponseEntity<PlaneModel> update(@RequestBody PlaneModel data, @RequestParam("update") String update) {
-        try{
-            if(data.getId() == null) {
+        try {
+            if (data.getId() == null) {
                 log.warn("update plane failed: id not provided");
                 return ResponseEntity.status(400).build();
             }
             PlaneModel fromDB = repo.findById(data.getId()).orElse(null);
-            if(fromDB == null) {
+            if (fromDB == null) {
                 log.warn("update plane failed: plane not found");
                 return ResponseEntity.status(400).build();
             }
 
             ArrayList<String> fields = new ArrayList<>(Arrays.asList(update.split(",")));
-            if(!fields.contains("name"))
+            if (!fields.contains("name"))
                 data.setName(fromDB.getName());
-            if(!fields.contains("pilot"))
+            if (!fields.contains("pilot"))
                 data.setPilot(fromDB.getPilot());
-            if(!fields.contains("builtYear"))
+            if (!fields.contains("builtYear"))
                 data.setBuiltYear(fromDB.getBuiltYear());
-            if(!fields.contains("brokenPercentage"))
+            if (!fields.contains("brokenPercentage"))
                 data.setBrokenPercentage(fromDB.getBrokenPercentage());
-            if(!fields.contains("speed"))
+            if (!fields.contains("speed"))
                 data.setSpeed(fromDB.getSpeed());
-            if(!fields.contains("minAirportSize"))
+            if (!fields.contains("minAirportSize"))
                 data.setMinAirportSize(fromDB.getMinAirportSize());
-            if(containsNullFields(data)) {
+            if (containsNullFields(data)) {
                 log.warn("update plane failed: invalid data");
                 return ResponseEntity.status(400).build();
             }
@@ -112,7 +113,7 @@ public class PlaneController {
 
     @DeleteMapping("${mapping.plane.delete}/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
-        try{
+        try {
             repo.deleteById(id);
             log.info("delete plane successful: id=" + id);
             return ResponseEntity.ok().build();
@@ -122,7 +123,7 @@ public class PlaneController {
         }
     }
 
-    private boolean containsNullFields(PlaneModel data){
+    private boolean containsNullFields(PlaneModel data) {
         return data.getName() == null ||
                 data.getPilot() == null ||
                 data.getBuiltYear() == null ||

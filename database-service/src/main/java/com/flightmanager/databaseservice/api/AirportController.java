@@ -1,9 +1,6 @@
 package com.flightmanager.databaseservice.api;
 
 import com.flightmanager.databaseservice.models.AirportModel;
-import com.flightmanager.databaseservice.models.AirportModel;
-import com.flightmanager.databaseservice.models.AirportModel;
-import com.flightmanager.databaseservice.models.DispatcherModel;
 import com.flightmanager.databaseservice.repos.AirportRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +28,7 @@ public class AirportController {
             @RequestParam(value = "y", required = false) Integer y,
             @RequestParam(value = "size", required = false) Integer size
     ) {
-        try{
+        try {
             List<AirportModel> models = repo.findAll();
             if (id != null)
                 models = models.stream().filter(m -> m.getId().equals(id)).collect(Collectors.toList());
@@ -53,9 +50,9 @@ public class AirportController {
 
     @PostMapping("${mapping.airport.create}")
     public ResponseEntity<AirportModel> create(@RequestBody AirportModel data) {
-        try{
+        try {
             data.setId(0L);
-            if(containsNullFields(data)) {
+            if (containsNullFields(data)) {
                 log.warn("create airport failed: invalid data");
                 return ResponseEntity.status(400).build();
             }
@@ -70,27 +67,27 @@ public class AirportController {
 
     @PostMapping("${mapping.airport.update}")
     public ResponseEntity<AirportModel> update(@RequestBody AirportModel data, @RequestParam("update") String update) {
-        try{
-            if(data.getId() == null) {
+        try {
+            if (data.getId() == null) {
                 log.warn("update airport failed: id not provided");
                 return ResponseEntity.status(400).build();
             }
             AirportModel fromDB = repo.findById(data.getId()).orElse(null);
-            if(fromDB == null) {
+            if (fromDB == null) {
                 log.warn("update airport failed: airport not found");
                 return ResponseEntity.status(400).build();
             }
 
             ArrayList<String> fields = new ArrayList<>(Arrays.asList(update.split(",")));
-            if(!fields.contains("name"))
+            if (!fields.contains("name"))
                 data.setName(fromDB.getName());
-            if(!fields.contains("x"))
+            if (!fields.contains("x"))
                 data.setX(fromDB.getX());
-            if(!fields.contains("y"))
+            if (!fields.contains("y"))
                 data.setY(fromDB.getY());
-            if(!fields.contains("size"))
+            if (!fields.contains("size"))
                 data.setSize(fromDB.getSize());
-            if(containsNullFields(data)) {
+            if (containsNullFields(data)) {
                 log.warn("update airport failed: invalid data");
                 return ResponseEntity.status(400).build();
             }
@@ -106,7 +103,7 @@ public class AirportController {
 
     @DeleteMapping("${mapping.airport.delete}/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
-        try{
+        try {
             repo.deleteById(id);
             log.info("delete airport successful: id=" + id);
             return ResponseEntity.ok().build();
@@ -116,7 +113,7 @@ public class AirportController {
         }
     }
 
-    private boolean containsNullFields(AirportModel data){
+    private boolean containsNullFields(AirportModel data) {
         return data.getName() == null ||
                 data.getX() == null ||
                 data.getY() == null ||
