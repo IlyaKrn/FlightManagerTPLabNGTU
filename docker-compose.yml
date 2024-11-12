@@ -39,13 +39,13 @@ services:
     ports:
       - 8083:8083
 
- # gateway:
- #   container_name: gateway
- #   env_file:
- #     - .env
- #   build: gateway
- #   ports:
- #     - 8084:8084
+  gateway:
+    container_name: gateway
+    env_file:
+      - .env
+    build: gateway
+    ports:
+      - 8080:8080
 
 volumes:
   postgres-data:
