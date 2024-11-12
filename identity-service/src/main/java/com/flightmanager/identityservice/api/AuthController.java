@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 public class AuthController {
 
@@ -31,9 +32,10 @@ public class AuthController {
             TokenResponse response = authService.login(tokenRequest.getEmail(), tokenRequest.getPassword());
             if (response == null)
                 return ResponseEntity.status(401).build();
+            log.info("login auth successful: id=" + model.getId());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("login auth failed: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -46,9 +48,10 @@ public class AuthController {
                 return ResponseEntity.status(401).build();
             return ResponseEntity.ok(response);
         } catch (HTTP400Exception e){
+            log.info("register auth successful: id=" + model.getId());
             return ResponseEntity.status(400).build();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("register auth failed: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -56,9 +59,10 @@ public class AuthController {
     @PostMapping("${mapping.auth.authorize}")
     public ResponseEntity<Boolean> authorize(@RequestBody AuthorizeRequest authorizeRequest) {
         try {
+            log.info("authorize auth successful: id=" + model.getId());
             return ResponseEntity.ok(authService.authorize(authorizeRequest.getToken(), authorizeRequest.getPermissions()));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("authorize auth failed: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -69,9 +73,10 @@ public class AuthController {
             Long id = authService.getIdFromToken(token);
             if (id == null)
                 return ResponseEntity.status(401).build();
+            log.info("id-by-token successful: id=" + model.getId());
             return ResponseEntity.ok(id);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("id-by-token auth failed: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }

@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 public class AirportController {
 
@@ -41,9 +42,10 @@ public class AirportController {
                 models = models.stream().filter(m -> m.getY().equals(y)).collect(Collectors.toList());
             if (size != null)
                 models = models.stream().filter(m -> m.getSize().equals(size)).collect(Collectors.toList());
+            log.info("get airports successful (" + models.size() + " entities)")
             return ResponseEntity.ok(models);
         } catch (Exception e) {
-            e.printStackTrace();
+             log.warn("get airports failed: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -55,9 +57,10 @@ public class AirportController {
             if(containsNullFields(data))
                 return ResponseEntity.status(400).build();
             AirportModel model = repo.save(data);
+            log.info("create airport successful: id=" + model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("create airport failed: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -84,9 +87,10 @@ public class AirportController {
                 return ResponseEntity.status(400).build();
 
             AirportModel model = repo.save(data);
+            log.info("update airport successful: id=" + model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("update airport failed: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -95,9 +99,10 @@ public class AirportController {
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
         try{
             repo.deleteById(id);
+            log.info("delete airport successful: id=" + id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            e.printStackTrace();
+           log.warn("delete airport failed: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }

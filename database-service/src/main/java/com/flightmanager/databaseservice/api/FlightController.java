@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 public class FlightController {
 
@@ -41,9 +42,10 @@ public class FlightController {
                 models = models.stream().filter(m -> m.getPlaneId().equals(planeId)).collect(Collectors.toList());
             if (airportId != null)
                 models = models.stream().filter(m -> m.getAirportId().equals(airportId)).collect(Collectors.toList());
+             log.info("get flight successful (" + models.size() + " entities)");
             return ResponseEntity.ok(models);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("get flight failed: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -55,9 +57,10 @@ public class FlightController {
             if(containsNullFields(data))
                 return ResponseEntity.status(400).build();
             FlightModel model = repo.save(data);
+            log.info("create flight successful: id=" + model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("create flight failed: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -86,9 +89,10 @@ public class FlightController {
                 return ResponseEntity.status(400).build();
 
             FlightModel model = repo.save(data);
+            log.info("update flight successful: id=" + model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("update flight failed: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -97,9 +101,10 @@ public class FlightController {
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
         try{
             repo.deleteById(id);
+            log.info("delete flight successful: id=" + id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("delete flight failed: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
