@@ -1,6 +1,7 @@
 package com.flightmanager.databaseservice.api;
 
 import com.flightmanager.databaseservice.models.DispatcherModel;
+import com.flightmanager.databaseservice.models.RoleModel;
 import com.flightmanager.databaseservice.repos.DispatcherRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +29,8 @@ public class DispatcherController {
             @RequestParam(value = "lastName", required = false) String lastName,
             @RequestParam(value = "email", required = false) String email,
             @RequestParam(value = "password", required = false) String password,
-            @RequestParam(value = "isBanned", required = false) Boolean isBanned
+            @RequestParam(value = "isBanned", required = false) Boolean isBanned,
+            @RequestParam(value = "roles", required = false) String roles
     ) {
         try {
             List<DispatcherModel> models = repo.findAll();
@@ -43,6 +46,22 @@ public class DispatcherController {
                 models = models.stream().filter(m -> m.getPassword().equals(password)).collect(Collectors.toList());
             if (isBanned != null)
                 models = models.stream().filter(m -> m.getIsBanned().equals(isBanned)).collect(Collectors.toList());
+            if (roles != null && !roles.isEmpty()) {
+                HashSet<RoleModel> rolesSet = new HashSet<>();
+                for (String role : roles.split(",")) {
+                    final boolean[] fl = {false};
+                    Arrays.stream(RoleModel.values()).forEach(roleModel -> {
+                        if (role.equals(roleModel.name()))
+                            fl[0] = true;
+                    });
+                    if (!fl[0]) {
+                        log.warn("get dispatcher failed: wrong roles");
+                        return ResponseEntity.status(400).build();
+                    }
+                    rolesSet.add(RoleModel.valueOf(role));
+                }
+                models = models.stream().filter(m -> m.getRoles().containsAll(rolesSet) && rolesSet.containsAll(m.getRoles())).collect(Collectors.toList());
+            }
             log.info("get dispatcher successful ({} entities)", models.size());
             return ResponseEntity.ok(models);
         } catch (Exception e) {
