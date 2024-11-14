@@ -1,13 +1,14 @@
 package com.flightmanager.identityservice.jwt;
 
 import com.flightmanager.identityservice.config.PropertiesConfig;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
-import io.jsonwebtoken.*;
 
 import java.security.Key;
 import java.util.Date;
@@ -38,16 +39,17 @@ public class JwtUtil {
     }
 
     public boolean isTokenExpired(String token) {
-        try{
+        try {
             return extractAllClaims(token).getExpiration().before(new Date());
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return false;
         }
     }
+
     public String extractId(String token) {
-        try{
+        try {
             return extractAllClaims(token).get("id").toString();
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return null;
         }
     }

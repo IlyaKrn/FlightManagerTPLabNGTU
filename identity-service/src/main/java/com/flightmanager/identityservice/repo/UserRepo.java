@@ -19,22 +19,6 @@ public class UserRepo {
     @Autowired
     private PropertiesConfig properties;
 
-    public List<UserModel> getAll() throws HTTPException {
-        String url = properties.getDatabaseServiceUrl() + properties.getUserGet();
-        ResponseEntity<UserModel[]> r = restTemplate.getForEntity(url, UserModel[].class);
-        if (r.getStatusCode().is2xxSuccessful())
-            return r.getBody() == null ? null : new ArrayList<>(Arrays.asList(r.getBody()));
-        if (r.getStatusCode().value() == 400)
-            throw new HTTP400Exception("GET '" + url + "' return code" + r.getStatusCode().value());
-        if (r.getStatusCode().value() == 401)
-            throw new HTTP401Exception("GET '" + url + "' return code" + r.getStatusCode().value());
-        if (r.getStatusCode().value() == 403)
-            throw new HTTP403Exception("GET '" + url + "' return code" + r.getStatusCode().value());
-        if (r.getStatusCode().value() == 401)
-            throw new HTTP500Exception("GET '" + url + "' return code" + r.getStatusCode().value());
-        throw new HTTP500Exception("GET '" + url + "' return unchecked code" + r.getStatusCode().value());
-    }
-
     public List<UserModel> getById(long id) throws HTTPException {
         String url = properties.getDatabaseServiceUrl() + properties.getUserGet() + "/?id=" + id;
         ResponseEntity<UserModel[]> r = restTemplate.getForEntity(url, UserModel[].class);

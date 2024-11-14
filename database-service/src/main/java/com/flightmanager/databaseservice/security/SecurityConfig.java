@@ -1,6 +1,5 @@
 package com.flightmanager.databaseservice.security;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +26,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests(
-                        authz -> authz
+                        auth -> auth
                                 .antMatchers(
                                         "/v2/api-docs",
                                         "/swagger-resources",

@@ -1,6 +1,5 @@
 package com.flightmanager.databaseservice.repos;
 
-import com.flightmanager.databaseservice.models.AirportModel;
 import com.flightmanager.databaseservice.models.FlightModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 

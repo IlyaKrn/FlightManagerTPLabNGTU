@@ -1,5 +1,5 @@
 #include "../../header/repos/AirportRepository.h"
-#include "../../header/Config.h"
+#include "../../Config.h"
 #include <cpp-httplib/httplib.h>
 
 std::pmr::list<AirportModel> AirportRepository::getAirports(std::string id)
@@ -12,7 +12,7 @@ std::pmr::list<AirportModel> AirportRepository::getAirports(std::string id)
     httplib::Params params = {
         {"id", id }
     };
-    auto res = cli.Get(AIRPORT_GET_MAPPING, params, headers);
+    auto res = cli.Get(AIRPORT_GET_BY_ID_MAPPING, params, headers);
     if (res->status == 200)
     {
         nlohmann::json airports = nlohmann::json::parse(res->body);
