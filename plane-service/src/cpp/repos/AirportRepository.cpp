@@ -14,13 +14,27 @@ list<AirportModel> AirportRepository::getAirports(long int* id, string* name, in
     Headers headers = {
         {SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE}
     };
-    Params params = {
-        {"id", to_string(*id)},
-        {"name", *name},
-        {"size", to_string(*size)},
-        {"x", to_string(*x)},
-        {"y", to_string(*y)}
-    };
+    Params params;
+    if (id)
+    {
+        params.insert(make_pair("id", to_string(*id)));
+    }
+    if (name)
+    {
+        params.insert(make_pair("name", *name));
+    }
+    if (size)
+    {
+        params.insert(make_pair("size", to_string(*size)));
+    }
+    if (x)
+    {
+        params.insert(make_pair("x", to_string(*x)));
+    }
+    if (y)
+    {
+        params.insert(make_pair("y", to_string(*y)));
+    }
     auto res = cli.Get(AIRPORT_GET_BY_ID_MAPPING, params, headers);
     if (res->status == 200)
     {

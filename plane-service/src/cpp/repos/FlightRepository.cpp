@@ -13,16 +13,31 @@ list<FlightModel> FlightRepository::getFlights(long int* id, long int* timestamp
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
-    Params params = {
-        {"id", to_string(*id) },
-        {"timestampStart", to_string(*timestampStart)},
-        {"timestampEnd", to_string(*timestampEnd) },
-        {"dispatcherId", to_string(*dispatcherId) },
-        {"planeId", to_string(*planeId) },
-        {"airportId", to_string(*airportId) }
-
-
-    };
+    Params params;
+    if (id)
+    {
+        params.insert(make_pair("id", to_string(*id)));
+    }
+    if (timestampStart)
+    {
+        params.insert(make_pair("timestampStart", to_string(*timestampStart)));
+    }
+    if (timestampEnd)
+    {
+        params.insert(make_pair("timestampEnd", to_string(*timestampEnd)));
+    }
+    if (dispatcherId)
+    {
+        params.insert(make_pair("dispatcherId", to_string(*dispatcherId)));
+    }
+    if (planeId)
+    {
+        params.insert(make_pair("planeId", to_string(*planeId)));
+    }
+    if (airportId)
+    {
+        params.insert(make_pair("airportId", to_string(*airportId)));
+    }
     auto res = cli.Get(FLIGHT_GET_BY_ID_MAPPING, params, headers);
     if (res->status == 200)
     {

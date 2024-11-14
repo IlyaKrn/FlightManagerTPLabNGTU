@@ -13,15 +13,35 @@ list<PlaneModel> PlaneRepository::getPlanes(long int* id, string* name, string* 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
-    Params params = {
-        {"id", to_string(*id) },
-        {"name", *name},
-        {"pilot", *pilot},
-        {"builtYear", to_string(*builtYear)},
-        {"brokenPercentage", to_string(*brokenPercentage)},
-        {"speed", to_string(*speed)},
-        {"minAirportSize", to_string(*minAirportSize)}
-    };
+    Params params;
+    if (id)
+    {
+        params.insert(make_pair("id", to_string(*id)));
+    }
+    if (name)
+    {
+        params.insert(make_pair("name", *name));
+    }
+    if (pilot)
+    {
+        params.insert(make_pair("pilot", *pilot));
+    }
+    if (builtYear)
+    {
+        params.insert(make_pair("builtYear", to_string(*builtYear)));
+    }
+    if (brokenPercentage)
+    {
+        params.insert(make_pair("brokenPercentage", to_string(*brokenPercentage)));
+    }
+    if (speed)
+    {
+        params.insert(make_pair("speed", to_string(*speed)));
+    }
+    if (minAirportSize)
+    {
+        params.insert(make_pair("minAirportSize", to_string(*minAirportSize)));
+    }
     auto res = cli.Get(PLANE_GET_BY_ID_MAPPING, params, headers);
     if (res->status == 200)
     {

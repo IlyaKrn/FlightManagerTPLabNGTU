@@ -37,15 +37,35 @@ list<DispatcherModel> DispatcherRepository::getDispatchers(long int* id, string*
             }
         }
     }
-    Params params = {
-        {"id", to_string(*id) },
-        {"firstName", *firstName },
-        {"lastName", *lastName},
-        {"email", *email},
-        {"password", *password},
-        {"isBanned", to_string(*isBanned)},
-        {"roles", role}
-    };
+    Params params;
+    if (id)
+    {
+        params.insert(make_pair("id", to_string(*id)));
+    }
+    if (firstName)
+    {
+        params.insert(make_pair("firstName", *firstName));
+    }
+    if (lastName)
+    {
+        params.insert(make_pair("lastName", *lastName));
+    }
+    if (email)
+    {
+        params.insert(make_pair("email", *email));
+    }
+    if (password)
+    {
+        params.insert(make_pair("password", *password));
+    }
+    if (isBanned)
+    {
+        params.insert(make_pair("isBanned", to_string(*isBanned)));
+    }
+    if (roles)
+    {
+        params.insert(make_pair("roles", role));
+    }
     auto res = cli.Get(DISPATCHER_GET_BY_ID_MAPPING, params, headers);
     if (res->status == 200)
     {
@@ -53,18 +73,18 @@ list<DispatcherModel> DispatcherRepository::getDispatchers(long int* id, string*
         list<DispatcherModel> result;
         for (auto item : dispatcher_json)
         {
-            set<RoleModel> roles;
-            for (auto role : item["roles"])
+            set<RoleModel> Roles;
+            for (auto Role : item["roles"])
             {
-                if (role == "ADMIN")
+                if (Role == "ADMIN")
                 {
-                    roles.insert(RoleModel::ADMIN);
-                } else if (role == "DISPATCHER")
+                    Roles.insert(RoleModel::ADMIN);
+                } else if (Role == "DISPATCHER")
                 {
-                    roles.insert(RoleModel::DISPATCHER);
+                    Roles.insert(RoleModel::DISPATCHER);
                 }
             }
-            DispatcherModel dispatcher(item["id"], item["firstName"], item["lastName"], item["email"], item["password"], item["isBanned"], roles);
+            DispatcherModel dispatcher(item["id"], item["firstName"], item["lastName"], item["email"], item["password"], item["isBanned"], Roles);
             result.push_back(dispatcher);
         }
         return result;
