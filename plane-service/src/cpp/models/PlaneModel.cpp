@@ -10,7 +10,7 @@ PlaneModel::PlaneModel(int id, std::string name, std::string pilot, int builtYea
     _minAirportSize = minAirportSize;
 }
 
-int PlaneModel::getId()
+long int PlaneModel::getId()
 {
     return _id;
 }
@@ -39,7 +39,7 @@ int PlaneModel::getMinAirportSize()
     return _minAirportSize;
 }
 
-void PlaneModel::setId(int id)
+void PlaneModel::setId(long int id)
 {
     _id = id;
 }

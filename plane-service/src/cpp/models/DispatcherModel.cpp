@@ -10,7 +10,7 @@ DispatcherModel::DispatcherModel(int id, std::string firstname, std::string last
     _roles = roles;
 }
 
-int DispatcherModel::getId()
+long int DispatcherModel::getId()
 {
     return _id;
 }
@@ -40,7 +40,7 @@ std::set<RoleModel> DispatcherModel::getRoles()
 }
 
 
-void DispatcherModel::setId(int id)
+void DispatcherModel::setId(long int id)
 {
     _id = id;
 }

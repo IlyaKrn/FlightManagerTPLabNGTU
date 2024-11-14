@@ -1,21 +1,33 @@
 #include "../../header/repos/FlightRepository.h"
 #include <cpp-httplib/httplib.h>
 #include "../../Config.h"
-std::pmr::list<FlightModel> FlightRepository::getFlights(std::string id)
-{
-    httplib::Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+#include <json/single_include/nlohmann/json.hpp>
 
-    httplib::Headers headers = {
+using namespace std;
+using namespace httplib;
+using namespace nlohmann;
+list<FlightModel> FlightRepository::getFlights(long int* id, long int* timestampStart, long int* timestampEnd, long int* dispatcherId, long int* planeId, long int* airportId)
+{
+    Client cli(SERVER_HOST, DATABASE_SERVICE_PORT);
+
+    Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
-    httplib::Params params = {
-        {"id", id }
+    Params params = {
+        {"id", to_string(*id) },
+        {"timestampStart", to_string(*timestampStart)},
+        {"timestampEnd", to_string(*timestampEnd) },
+        {"dispatcherId", to_string(*dispatcherId) },
+        {"planeId", to_string(*planeId) },
+        {"airportId", to_string(*airportId) }
+
+
     };
     auto res = cli.Get(FLIGHT_GET_BY_ID_MAPPING, params, headers);
     if (res->status == 200)
     {
-        nlohmann::json flights_json = nlohmann::json::parse(res->body);
-        std::pmr::list<FlightModel> flights;
+        json flights_json = json::parse(res->body);
+        list<FlightModel> flights;
         for (auto item : flights_json)
         {
             FlightModel flight(item["id"], item["timestampStart"], item["timestampEnd"], item["dispatcherId"], item["planeId"], item["airportId"]);
@@ -23,17 +35,21 @@ std::pmr::list<FlightModel> FlightRepository::getFlights(std::string id)
         }
         return flights;
     }
-    return std::pmr::list<FlightModel>();
+    if (res->status == 400)
+    {
+        throw string("400");
+    }
+    throw string("500");
 }
 
 bool FlightRepository::createFlight(FlightModel flight)
 {
-    httplib::Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Client cli(SERVER_HOST, DATABASE_SERVICE_PORT);
 
-    httplib::Headers headers = {
+    Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
-    nlohmann::json flight_json;
+    json flight_json;
     flight_json["id"] = flight.getId();
     flight_json["timestampStart"] = flight.getTimestampStart();
     flight_json["timestampEnd"] = flight.getTimestampEnd();
@@ -45,6 +61,10 @@ bool FlightRepository::createFlight(FlightModel flight)
     {
         return true;
     }
-    return false;
+    if (res->status == 400)
+    {
+        throw string("400");
+    }
+    throw string("500");
 }
 

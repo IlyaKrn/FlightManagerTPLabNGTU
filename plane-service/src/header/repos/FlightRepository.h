@@ -6,6 +6,6 @@
 class FlightRepository
 {
 public:
-    std::list<FlightModel> getFlights(long int id, long int timestampStart, long int timestampEnd, long int dispatcherId, long int planeId, long int airportId);
+    std::list<FlightModel> getFlights(long int* id = nullptr, long int* timestampStart = nullptr, long int* timestampEnd = nullptr, long int* dispatcherId = nullptr, long int* planeId = nullptr, long int* airportId = nullptr);
     bool createFlight(FlightModel flight);
 };

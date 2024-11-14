@@ -3,32 +3,43 @@
 #include <cpp-httplib/httplib.h>
 #include <json/single_include/nlohmann/json.hpp>
 
-int IdentityRepository::getIdByToken(std::string token)
+using namespace std;
+using namespace httplib;
+using namespace nlohmann;
+int IdentityRepository::getIdByToken(string token)
 {
-    httplib::Client cli(DATABASE_SERVICE_HOST, IDENTITY_SERVICE_PORT);
+    Client cli(SERVER_HOST, IDENTITY_SERVICE_PORT);
 
-    httplib::Headers headers = {
+    Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
 
     auto res = cli.Post(GET_ID_BY_TOKEN_MAPPING ,headers, token,  "application/json");
     if (res->status == 200)
     {
-        int id = std::stoi(res->body);
+        int id = stoi(res->body);
         return id;
     }
-    return 0;
+    if (res->status == 400)
+    {
+        throw string("400");
+    }
+    if (res->status == 401)
+    {
+        throw string("401");
+    }
+    throw string("500");
 }
 
-bool IdentityRepository::authorize(std::set<std::string> permissions, std::string token)
+bool IdentityRepository::authorize(set<string> permissions, string token)
 {
-    httplib::Client cli(DATABASE_SERVICE_HOST, IDENTITY_SERVICE_PORT);
+    Client cli(SERVER_HOST, IDENTITY_SERVICE_PORT);
 
-    httplib::Headers headers = {
+    Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
-    nlohmann::json authorize;
-    authorize["permissions"] = nlohmann::json::array();
+    json authorize;
+    authorize["permissions"] = json::array();
     for (auto permission : permissions)
     {
         authorize["permissions"].push_back(permission);
@@ -41,7 +52,15 @@ bool IdentityRepository::authorize(std::set<std::string> permissions, std::strin
         {
             return true;
         }
+        if (res->body == "false")
+        {
+            return false;
+        }
     }
-    return false;
+    if (res->status == 400)
+    {
+        throw string("400");
+    }
+    throw string("500");
 }
 

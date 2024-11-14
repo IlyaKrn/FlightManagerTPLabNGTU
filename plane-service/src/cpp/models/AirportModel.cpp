@@ -8,7 +8,7 @@ AirportModel::AirportModel(int id, std::string name, int size, double x, double 
     _y = y;
 }
 
-int AirportModel::getId()
+long int AirportModel::getId()
 {
     return _id;
 }
@@ -29,7 +29,7 @@ double AirportModel::getY()
     return _y;
 }
 
-void AirportModel::setId(int id)
+void AirportModel::setId(long int id)
 {
     _id = id;
 }
