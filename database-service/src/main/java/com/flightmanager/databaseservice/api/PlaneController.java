@@ -118,7 +118,7 @@ public class PlaneController {
             repo.deleteById(id);
             log.info("delete plane successful: id={} [code 200]", id);
             return ResponseEntity.ok().build();
-        } catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             log.warn("delete plane failed: id={} not exists [code 200]", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
@@ -134,7 +134,7 @@ public class PlaneController {
                 data.getBrokenPercentage() == null ||
                 data.getSpeed() == null ||
                 data.getMinAirportSize() == null ||
-                data.getName().isEmpty()||
+                data.getName().isEmpty() ||
                 data.getPilot().isEmpty();
     }
 

@@ -48,7 +48,7 @@ public class AuthController {
     @PostMapping("${mapping.auth.register}")
     public ResponseEntity<TokenResponse> register(@RequestBody UserModel data) {
         try {
-            if(data.getEmail() == null || data.getEmail().isEmpty()) {
+            if (data.getEmail() == null || data.getEmail().isEmpty()) {
                 log.warn("register failed: invalid register data [code 400]");
                 return ResponseEntity.status(400).build();
             }

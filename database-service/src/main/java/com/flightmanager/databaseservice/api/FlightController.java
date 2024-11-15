@@ -113,7 +113,7 @@ public class FlightController {
             repo.deleteById(id);
             log.info("delete flight successful: id={} [code 200]", id);
             return ResponseEntity.ok().build();
-        } catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             log.warn("delete flight failed: id={} not exists [code 200]", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {

@@ -134,7 +134,7 @@ public class DispatcherController {
             repo.deleteById(id);
             log.info("delete dispatcher successful: id={} [code 200]", id);
             return ResponseEntity.ok().build();
-        } catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             log.warn("delete dispatcher failed: id={} not exists [code 200]", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
