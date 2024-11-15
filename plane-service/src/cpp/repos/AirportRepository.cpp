@@ -1,22 +1,34 @@
 #include "../../header/repos/AirportRepository.h"
 #include "../../Config.h"
 #include <cpp-httplib/httplib.h>
+#include <json/single_include/nlohmann/json.hpp>
 
-std::pmr::list<AirportModel> AirportRepository::getAirports(std::string id)
+using namespace std;
+using namespace nlohmann;
+using namespace httplib;
+list<AirportModel> AirportRepository::getAirports(long int* id, string* name, int* size, double* x, double* y)
 {
-    httplib::Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
 
-    httplib::Headers headers = {
-        { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
+    Headers headers = {
+        {SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE}
     };
-    httplib::Params params = {
-        {"id", id }
-    };
+    Params params;
+    if (id != nullptr)
+        params.insert({"id", to_string(*id)});
+    if (name != nullptr)
+        params.insert({"name", *name});
+    if (size != nullptr)
+        params.insert({"size", to_string(*size)});
+    if (x != nullptr)
+        params.insert({"x", to_string(*x)});
+    if (y != nullptr)
+        params.insert({"y", to_string(*y)});
     auto res = cli.Get(AIRPORT_GET_BY_ID_MAPPING, params, headers);
     if (res->status == 200)
     {
-        nlohmann::json airports = nlohmann::json::parse(res->body);
-        std::pmr::list<AirportModel> result;
+        json airports = json::parse(res->body);
+        list<AirportModel> result;
         for (auto& item : airports)
         {
             AirportModel airport(item["id"], item["name"], item["size"], item["x"], item["y"]);
@@ -24,17 +36,16 @@ std::pmr::list<AirportModel> AirportRepository::getAirports(std::string id)
         }
         return result;
     }
-    return std::pmr::list<AirportModel>();
-
+    throw string("500");
 }
 bool AirportRepository::createAirport(AirportModel airport)
 {
-    httplib::Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
 
-    httplib::Headers headers = {
-            { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
+    Headers headers = {
+        { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
-    nlohmann::json airport_json;
+    json airport_json;
     airport_json["id"] = airport.getId();
     airport_json["name"] = airport.getName();
     airport_json["size"] = airport.getSize();
@@ -42,46 +53,49 @@ bool AirportRepository::createAirport(AirportModel airport)
     airport_json["y"] = airport.getY();
 
     auto res = cli.Post(AIRPORT_CREATE_MAPPING, headers, airport_json.dump(), "application/json");
-    if (res->status == 200){
+    if (res->status == 200)
         return true;
-    }
-    return false;
+    throw string("500");
 }
-bool AirportRepository::updateAirport(AirportModel airport, std::string update)
+bool AirportRepository::updateAirport(AirportModel airport, set<string> updates)
 {
-    httplib::Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
-
-    httplib::Headers headers = {
+    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
 
-    nlohmann::json airport_json;
+    json airport_json;
     airport_json["id"] = airport.getId();
     airport_json["name"] = airport.getName();
     airport_json["size"] = airport.getSize();
     airport_json["x"] = airport.getX();
     airport_json["y"] = airport.getY();
-
+    string update;
+    for (auto item : updates)
+    {
+        if (update.empty())
+            update = item;
+        else
+            update += "," + item;
+    }
     auto res = cli.Post((AIRPORT_UPDATE_MAPPING + "?update=" + update), headers, airport_json.dump(), "application/json");
     if (res->status == 200)
-    {
         return true;
-    }
-    return false;
+    if (res->status == 400)
+        throw string("400");
+    throw string("500");
 }
 
 
-bool AirportRepository::deleteAirport(int id)
+bool AirportRepository::deleteAirport(long int id)
 {
-    httplib::Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
 
-    httplib::Headers headers = {
-        { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
+    Headers headers = {
+    { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
-    auto res = cli.Delete(AIRPORT_DELETE_MAPPING + "/" + std::to_string(id), headers);
+    auto res = cli.Delete(AIRPORT_DELETE_MAPPING + "/" + to_string(id), headers);
     if (res->status == 200)
-    {
         return true;
-    }
-    return false;
+    throw string("500");
 }
