@@ -31,21 +31,21 @@ services:
     ports:
       - 8082:8082
 
-#  plane-service:
-#    container_name: plane-service
-#    env_file:
-#      - .env
-#    build: plane-service
-#    ports:
-#      - 8083:8083
+  plane-service:
+    container_name: plane-service
+    env_file:
+      - .env
+    build: plane-service
+    ports:
+      - 8083:8083
 
-#  gateway:
-#    container_name: gateway
-#    env_file:
-#      - .env
-#    build: gateway
-#    ports:
-#      - 8080:8080
+  gateway:
+    container_name: gateway
+    env_file:
+      - .env
+    build: gateway
+    ports:
+      - 8080:8080
 
 volumes:
   postgres-data:
