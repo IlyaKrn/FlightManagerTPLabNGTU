@@ -1,5 +1,5 @@
 #include "../../header/models/PlaneModel.h"
-PlaneModel::PlaneModel(int id, std::string name, std::string pilot, int builtYear, int brokenPercentage, int speed, int minAirportSize)
+PlaneModel::PlaneModel(long int id, std::string name, std::string pilot, int builtYear, int brokenPercentage, int speed, int minAirportSize)
 {
     _id = id;
     _name = name;
