@@ -8,36 +8,24 @@ using namespace httplib;
 using namespace nlohmann;
 list<FlightModel> FlightRepository::getFlights(long int* id, long int* timestampStart, long int* timestampEnd, long int* dispatcherId, long int* planeId, long int* airportId)
 {
-    Client cli(SERVER_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
     Params params;
-    if (id)
-    {
+    if (id != nullptr)
         params.insert(make_pair("id", to_string(*id)));
-    }
-    if (timestampStart)
-    {
+    if (timestampStart != nullptr)
         params.insert(make_pair("timestampStart", to_string(*timestampStart)));
-    }
-    if (timestampEnd)
-    {
+    if (timestampEnd != nullptr)
         params.insert(make_pair("timestampEnd", to_string(*timestampEnd)));
-    }
-    if (dispatcherId)
-    {
+    if (dispatcherId != nullptr)
         params.insert(make_pair("dispatcherId", to_string(*dispatcherId)));
-    }
-    if (planeId)
-    {
+    if (planeId != nullptr)
         params.insert(make_pair("planeId", to_string(*planeId)));
-    }
-    if (airportId)
-    {
+    if (airportId != nullptr)
         params.insert(make_pair("airportId", to_string(*airportId)));
-    }
     auto res = cli.Get(FLIGHT_GET_BY_ID_MAPPING, params, headers);
     if (res->status == 200)
     {
@@ -50,16 +38,12 @@ list<FlightModel> FlightRepository::getFlights(long int* id, long int* timestamp
         }
         return flights;
     }
-    if (res->status == 400)
-    {
-        throw string("400");
-    }
     throw string("500");
 }
 
 bool FlightRepository::createFlight(FlightModel flight)
 {
-    Client cli(SERVER_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
@@ -73,13 +57,9 @@ bool FlightRepository::createFlight(FlightModel flight)
     flight_json["airportId"] = flight.getAirportId();
     auto res = cli.Post(FLIGHT_CREATE_MAPPING, headers, flight_json.dump(), "application/json");
     if (res->status == 200)
-    {
         return true;
-    }
     if (res->status == 400)
-    {
         throw string("400");
-    }
     throw string("500");
 }
 

@@ -8,40 +8,26 @@ using namespace httplib;
 using namespace nlohmann;
 list<PlaneModel> PlaneRepository::getPlanes(long int* id, string* name, string* pilot, int* builtYear, int* brokenPercentage, int* speed, int* minAirportSize)
 {
-    Client cli(SERVER_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
     Params params;
-    if (id)
-    {
+    if (id != nullptr)
         params.insert(make_pair("id", to_string(*id)));
-    }
-    if (name)
-    {
+    if (name != nullptr)
         params.insert(make_pair("name", *name));
-    }
-    if (pilot)
-    {
+    if (pilot != nullptr)
         params.insert(make_pair("pilot", *pilot));
-    }
-    if (builtYear)
-    {
+    if (builtYear != nullptr)
         params.insert(make_pair("builtYear", to_string(*builtYear)));
-    }
-    if (brokenPercentage)
-    {
+    if (brokenPercentage != nullptr)
         params.insert(make_pair("brokenPercentage", to_string(*brokenPercentage)));
-    }
-    if (speed)
-    {
+    if (speed != nullptr)
         params.insert(make_pair("speed", to_string(*speed)));
-    }
-    if (minAirportSize)
-    {
+    if (minAirportSize != nullptr)
         params.insert(make_pair("minAirportSize", to_string(*minAirportSize)));
-    }
     auto res = cli.Get(PLANE_GET_BY_ID_MAPPING, params, headers);
     if (res->status == 200)
     {
@@ -54,15 +40,11 @@ list<PlaneModel> PlaneRepository::getPlanes(long int* id, string* name, string* 
         }
         return result;
     }
-    if (res->status == 400)
-    {
-        throw string("400");
-    }
     throw string("500");
 }
 bool PlaneRepository::createPlane(PlaneModel plane)
 {
-    Client cli(SERVER_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
@@ -78,18 +60,14 @@ bool PlaneRepository::createPlane(PlaneModel plane)
 
     auto res = cli.Post(PLANE_CREATE_MAPPING, headers, plane_json.dump(), "application/json");
     if (res->status == 200)
-    {
         return true;
-    }
     if (res->status == 400)
-    {
         throw string("400");
-    }
     throw string("500");
 }
 bool PlaneRepository::deletePlane(long int id)
 {
-    Client cli(SERVER_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
@@ -97,18 +75,12 @@ bool PlaneRepository::deletePlane(long int id)
 
     auto res = cli.Delete(PLANE_DELETE_MAPPING + "/" + to_string(id), headers);
     if (res->status == 200)
-    {
         return true;
-    }
-    if (res->status == 400)
-    {
-        throw string("400");
-    }
     throw string("500");
 }
 bool PlaneRepository::updatePlane(PlaneModel plane, set<string> updates)
 {
-    Client cli(SERVER_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
@@ -125,22 +97,15 @@ bool PlaneRepository::updatePlane(PlaneModel plane, set<string> updates)
     for (auto item: update)
     {
         if (update.empty())
-        {
             update = item;
-        } else
-        {
+        else
             update += "," + item;
-        }
     }
     auto res = cli.Post(PLANE_UPDATE_MAPPING + "?update=" + update, headers, plane_json.dump(), "application/json");
     if (res->status == 200)
-    {
         return true;
-    }
     if (res->status == 400)
-    {
         throw string("400");
-    }
     throw string("500");
 }
 

@@ -8,33 +8,22 @@ using namespace nlohmann;
 using namespace httplib;
 list<AirportModel> AirportRepository::getAirports(long int* id, string* name, int* size, double* x, double* y)
 {
-
-    Client cli(SERVER_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
 
     Headers headers = {
         {SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE}
     };
     Params params;
-    if (id)
-    {
-        params.insert(make_pair("id", to_string(*id)));
-    }
-    if (name)
-    {
-        params.insert(make_pair("name", *name));
-    }
-    if (size)
-    {
-        params.insert(make_pair("size", to_string(*size)));
-    }
-    if (x)
-    {
-        params.insert(make_pair("x", to_string(*x)));
-    }
-    if (y)
-    {
-        params.insert(make_pair("y", to_string(*y)));
-    }
+    if (id != nullptr)
+        params.insert({"id", to_string(*id)});
+    if (name != nullptr)
+        params.insert({"name", *name});
+    if (size != nullptr)
+        params.insert({"size", to_string(*size)});
+    if (x != nullptr)
+        params.insert({"x", to_string(*x)});
+    if (y != nullptr)
+        params.insert({"y", to_string(*y)});
     auto res = cli.Get(AIRPORT_GET_BY_ID_MAPPING, params, headers);
     if (res->status == 200)
     {
@@ -47,18 +36,14 @@ list<AirportModel> AirportRepository::getAirports(long int* id, string* name, in
         }
         return result;
     }
-    if (res->status == 400)
-    {
-        throw string("400");
-    }
     throw string("500");
 }
 bool AirportRepository::createAirport(AirportModel airport)
 {
-    Client cli(SERVER_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
 
     Headers headers = {
-            { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
+        { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
     json airport_json;
     airport_json["id"] = airport.getId();
@@ -68,19 +53,13 @@ bool AirportRepository::createAirport(AirportModel airport)
     airport_json["y"] = airport.getY();
 
     auto res = cli.Post(AIRPORT_CREATE_MAPPING, headers, airport_json.dump(), "application/json");
-    if (res->status == 200){
+    if (res->status == 200)
         return true;
-    }
-    if (res->status == 400)
-    {
-        throw string("400");
-    }
     throw string("500");
 }
 bool AirportRepository::updateAirport(AirportModel airport, set<string> updates)
 {
-    Client cli(SERVER_HOST, DATABASE_SERVICE_PORT);
-
+    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
@@ -95,41 +74,28 @@ bool AirportRepository::updateAirport(AirportModel airport, set<string> updates)
     for (auto item : updates)
     {
         if (update.empty())
-        {
             update = item;
-        } else
-        {
+        else
             update += "," + item;
-        }
     }
     auto res = cli.Post((AIRPORT_UPDATE_MAPPING + "?update=" + update), headers, airport_json.dump(), "application/json");
     if (res->status == 200)
-    {
         return true;
-    }
     if (res->status == 400)
-    {
         throw string("400");
-    }
     throw string("500");
 }
 
 
 bool AirportRepository::deleteAirport(long int id)
 {
-    Client cli(SERVER_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
 
     Headers headers = {
-        { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
+    { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
     auto res = cli.Delete(AIRPORT_DELETE_MAPPING + "/" + to_string(id), headers);
     if (res->status == 200)
-    {
         return true;
-    }
-    if (res->status == 400)
-    {
-        throw string("400");
-    }
     throw string("500");
 }

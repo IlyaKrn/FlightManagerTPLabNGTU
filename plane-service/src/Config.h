@@ -10,12 +10,14 @@ const std::string AUTHORIZATION_HEADER_NAME = std::string(std::getenv("AUTHORIZA
 
 // database-service connection
 const int DATABASE_SERVICE_PORT = std::stoi(std::string(std::getenv("DATABASE_SERVICE_PORT")));
+const std::string DATABASE_SERVICE_HOST = "127.0.0.1";
 const std::string DATABASE_SERVICE_URL = std::string(std::getenv("DATABASE_SERVICE_URL"));
 const std::string DATABASE_SERVICE_GET_AIRPORTS = "/api/airport/get";
 
 
 // identity-service connection
 const int IDENTITY_SERVICE_PORT = std::stoi(std::string(std::getenv("IDENTITY_SERVICE_PORT")));
+const std::string IDENTITY_SERVICE_HOST = "127.0.0.1";
 const std::string IDENTITY_SERVICE_URL = std::string(std::getenv("IDENTITY_SERVICE_URL"));
 const std::string IDENTITY_SERVICE_GET_AIRPORTS = "/api/airport/get";
 
