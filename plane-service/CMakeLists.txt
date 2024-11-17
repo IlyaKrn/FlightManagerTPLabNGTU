@@ -49,6 +49,12 @@ add_executable(main src/main.cpp
         src/header/models/RoleModel.h
         src/header/repos/IdentityRepository.h
         src/cpp/repos/IdentityRepository.cpp
+        src/header/services/TimeService.h
+        src/header/models/TimeModel.h
+        src/cpp/models/TimeModel.cpp
+        src/cpp/services/TimeService.cpp
+        src/header/controllers/TimeController.h
+        src/cpp/controllers/TimeController.cpp
 
 
 )
