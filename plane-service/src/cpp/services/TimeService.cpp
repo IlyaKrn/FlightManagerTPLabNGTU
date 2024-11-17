@@ -4,11 +4,10 @@
 
 long int TimeService::getCurrentTime()
 {
-    timer.setCurrentTime(time(0));
-    return timer.getCurrentTime() + timer.getAddedTime();
+    return 0;
 }
 void TimeService::skipTime(long int addedTime)
 {
-    timer.setAddedTime(timer.getAddedTime() + addedTime);
+
 }
 
