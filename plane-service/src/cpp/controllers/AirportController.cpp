@@ -2,7 +2,7 @@
 #include "../../Config.h"
 #include <json/single_include/nlohmann/json.hpp>
 #include <string>
-
+#include <sstream>
 using namespace nlohmann;
 using namespace httplib;
 using namespace std;
@@ -14,35 +14,30 @@ void AirportController::configure(Server* server)
     {
         try
         {
-            auto header = req.get_header_value("User-Token");
-            std::set<std::string> permissions = std::set<std::string>();
-            pmr::list<AirportModel> airports = serv.getAllAirports(header, permissions);
-            if (!airports.empty())
-            {
-                json airports_json = json::array();
-                for (auto airport : airports) {
-                    json airport_json;
-                    airport_json["id"] = airport.getId();
-                    airport_json["name"] = airport.getName();
-                    airport_json["size"] = airport.getSize();
-                    airport_json["x"] = airport.getX();
-                    airport_json["y"] = airport.getY();
-                    airports_json.push_back(airport_json);
-                }
-                res.status = 200;
-                res.set_content(airports_json.dump(), "application/json");
-            } else
-            {
-                res.status = 404;
-                res.set_content("Аэропорты не найдены", "text/plain");
+            auto header = req.get_header_value("Authorization");
+            list<AirportModel> airports = serv.getAllAirports(header);
+            json airports_json = json::array();
+            for (auto airport : airports) {
+                json airport_json;
+                airport_json["id"] = airport.getId();
+                airport_json["name"] = airport.getName();
+                airport_json["size"] = airport.getSize();
+                airport_json["x"] = airport.getX();
+                airport_json["y"] = airport.getY();
+                airports_json.push_back(airport_json);
             }
-        } catch (const runtime_error& e)
+            res.status = 200;
+            res.set_content(airports_json.dump(), "application/json");
+        } catch (const string& e)
         {
-            res.status = 401;
-            res.set_content(e.what(), "text/plain");
-        } catch (const std::exception& e)
+            if (e == "401")
+            {
+                cout << "Access denied" << endl;
+                res.status = 401;
+            }
+        } catch (const exception& err)
         {
-            cout << "AirportController::AirportController: exception occured" << e.what() << endl;
+            cout << "AirportController::AirportController: exception occured" << err.what() << endl;
             res.status = 500;
         }
     });
@@ -51,26 +46,29 @@ void AirportController::configure(Server* server)
     {
         try
         {
-            auto header = req.get_header_value("User-Token");
-            std::set<std::string> permissions = std::set<std::string>();
+            auto header = req.get_header_value("Authorization");
             json result = json::parse(req.body);
-            bool created = serv.createAirport(AirportModel(result["id"], result["name"], result["size"],  result["x"], result["y"]), header, permissions);
+            bool created = serv.createAirport(AirportModel(result["id"], result["name"], result["size"],  result["x"], result["y"]), header);
             if (created)
             {
                 res.status = 201;
                 res.set_content(result.dump(), "application/json");
-            } else
-            {
-                res.status = 400;
-                res.set_content("Не удалось создать аэропорт", "text/plane");
             }
-        } catch (const runtime_error& e)
+        } catch (const string& e)
         {
-            res.status = 401;
-            res.set_content(e.what(), "text/plain");
-        } catch (const std::exception& e)
+            if (e == "400")
+            {
+                cout << "Bad Request" << endl;
+                res.status = 400;
+            }
+            if (e == "401")
+            {
+                cout << "Access denied" << endl;
+                res.status = 401;
+            }
+        } catch (const exception& err)
         {
-            cout << "AirportController::AirportController: exception occured" << e.what() << endl;
+            cout << "AirportController::AirportController: exception occured" << err.what() << endl;
             res.status = 500;
         }
     });
@@ -79,28 +77,42 @@ void AirportController::configure(Server* server)
     {
         try
         {
-            auto header = req.get_header_value("User-Token");
-            std::set<std::string> permissions = std::set<std::string>();
+            auto header = req.get_header_value("Authorization");
             string fields = req.get_param_value("update");
+            stringstream ss(fields);
+            string item;
+            set<string> updates;
+            while (getline(ss, item, ','))
+            {
+                item.erase(0, item.find_first_not_of(" \n\r\t"));
+                item.erase(item.find_last_not_of(" \n\r\t") + 1);
+                if (!item.empty())
+                    updates.insert(item);
+            }
             json result = json::parse(req.body);
             AirportModel airport(result["id"], result["name"], result["size"], result["x"], result["y"]);
-            bool edited = serv.editAirport(airport, fields, header, permissions);
-            if (edited)
+            bool updated = serv.updateAirport(airport, updates, header);
+            updates.clear();
+            if (updated)
             {
                 res.status = 201;
-                res.set_content("Обновлены поля " + fields + " у аэропорта с id" + to_string(airport.getId()), "text/plane");
-            } else
-            {
-                res.status = 404;
-                res.set_content("Не удалось обновить аэропорт", "text/plane");
+                res.set_content(result.dump(), "application/json");
             }
-        } catch (const runtime_error& e)
+        } catch (const string& e)
         {
-            res.status = 401;
-            res.set_content(e.what(), "text/plain");
-        } catch (const std::exception& e)
+            if (e == "400")
+            {
+                cout << "Bad Request" << endl;
+                res.status = 400;
+            }
+            if (e == "401")
+            {
+                cout << "Access denied" << endl;
+                res.status = 401;
+            }
+        } catch (const exception& err)
         {
-            cout << "AirportController::AirportController: exception occured" << e.what() << endl;
+            cout << "AirportController::AirportController: exception occured " << err.what() << endl;
             res.status = 500;
         }
     });
@@ -109,25 +121,16 @@ void AirportController::configure(Server* server)
 {
     try
     {
-        auto header = req.get_header_value("User-Token");
-        std::set<std::string> permissions = std::set<std::string>();
-        int id = stoi(req.matches[1]);
-        bool deleted = serv.deleteAirport(id, header, permissions);
+        auto header = req.get_header_value("Authorization");
+        long int id = stol(req.matches[1]);
+        bool deleted = serv.deleteAirport(id, header);
         if (deleted)
         {
             res.status = 200;
-        } else
-        {
-            res.status = 404;
-            res.set_content("Аэропорт с таким id не найден", "text/plain");
         }
-    } catch (const runtime_error& e)
+    } catch (const exception& err)
     {
-        res.status = 401;
-        res.set_content(e.what(), "text/plain");
-    } catch (const std::exception& e)
-    {
-        cout << "AirportController::AirportController: exception occured" << e.what() << endl;
+        cout << "AirportController::AirportController: exception occured" << err.what() << endl;
         res.status = 500;
     }
 });
@@ -135,34 +138,28 @@ void AirportController::configure(Server* server)
     {
         try
         {
-            auto header = req.get_header_value("User-Token");
-            std::set<std::string> permissions = std::set<std::string>();
+            auto header = req.get_header_value("Authorization");
             int id = stoi(req.get_param_value("id"));
-            cout << id << endl;
-            AirportModel airport = serv.getAirportById(id, header, permissions);
-            AirportModel empty_airport;
-            if (airport.getId() != empty_airport.getId())
+            AirportModel airport = serv.getAirportById(id, header);
+            json airport_json;
+            airport_json["id"] = airport.getId();
+            airport_json["name"] = airport.getName();
+            airport_json["size"] = airport.getSize();
+            airport_json["x"] = airport.getX();
+            airport_json["y"] = airport.getY();
+            res.status = 200;
+            res.set_content(airport_json.dump(), "application/json");
+
+        } catch (const string& e)
+        {
+            if (e == "401")
             {
-                json airport_json;
-                airport_json["id"] = airport.getId();
-                airport_json["name"] = airport.getName();
-                airport_json["size"] = airport.getSize();
-                airport_json["x"] = airport.getX();
-                airport_json["y"] = airport.getY();
-                res.status = 200;
-                res.set_content(airport_json.dump(), "application/json");
-            } else
-            {
-                res.status = 404;
-                res.set_content("Не найден аэропорт с таким id", "text/plane");
+                cout << "Access denied" << endl;
+                res.status = 401;
             }
-        } catch (const runtime_error& e)
+        } catch(const exception& err)
         {
-            res.status = 401;
-            res.set_content(e.what(), "text/plain");
-        } catch(const std::exception& e)
-        {
-            cout << "AirportController::AirportController: exception occured" << e.what() << endl;
+            cout << "AirportController::AirportController: exception occured" << err.what() << endl;
             res.status = 500;
         }
     });
