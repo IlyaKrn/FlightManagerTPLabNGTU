@@ -1,5 +1,5 @@
 #include "../../header/models/DispatcherModel.h"
-DispatcherModel::DispatcherModel(int id, std::string firstname, std::string lastname, std::string email, std::string password, bool isBanned, std::set<RoleModel> roles)
+DispatcherModel::DispatcherModel(long int id, std::string firstname, std::string lastname, std::string email, std::string password, bool isBanned, std::set<RoleModel> roles)
 {
     _id = id;
     _firstname = firstname;

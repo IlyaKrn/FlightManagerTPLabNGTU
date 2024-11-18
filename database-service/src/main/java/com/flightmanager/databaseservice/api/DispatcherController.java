@@ -5,6 +5,7 @@ import com.flightmanager.databaseservice.models.RoleModel;
 import com.flightmanager.databaseservice.repos.DispatcherRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,17 +56,17 @@ public class DispatcherController {
                             fl[0] = true;
                     });
                     if (!fl[0]) {
-                        log.warn("get dispatcher failed: wrong roles");
+                        log.warn("get dispatcher failed: wrong roles [code 400]");
                         return ResponseEntity.status(400).build();
                     }
                     rolesSet.add(RoleModel.valueOf(role));
                 }
                 models = models.stream().filter(m -> m.getRoles().containsAll(rolesSet) && rolesSet.containsAll(m.getRoles())).collect(Collectors.toList());
             }
-            log.info("get dispatcher successful ({} entities)", models.size());
+            log.info("get dispatcher successful ({} entities) [code 200]", models.size());
             return ResponseEntity.ok(models);
         } catch (Exception e) {
-            log.warn("get dispatcher failed: {}", e.getMessage());
+            log.warn("get dispatcher failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -75,14 +76,14 @@ public class DispatcherController {
         try {
             data.setId(0L);
             if (containsNullFields(data)) {
-                log.warn("create dispatcher failed: invalid data");
+                log.warn("create dispatcher failed: invalid data [code 400]");
                 return ResponseEntity.status(400).build();
             }
             DispatcherModel model = repo.save(data);
-            log.info("create dispatcher successful: id={}", model.getId());
+            log.info("create dispatcher successful: id={} [code 200]", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
-            log.warn("create dispatcher failed: {}", e.getMessage());
+            log.warn("create dispatcher failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -91,12 +92,12 @@ public class DispatcherController {
     public ResponseEntity<DispatcherModel> update(@RequestBody DispatcherModel data, @RequestParam("update") String update) {
         try {
             if (data.getId() == null) {
-                log.warn("update dispatcher failed: id not provided");
+                log.warn("update dispatcher failed: id not provided [code 400]");
                 return ResponseEntity.status(400).build();
             }
             DispatcherModel fromDB = repo.findById(data.getId()).orElse(null);
             if (fromDB == null) {
-                log.warn("update dispatcher failed: dispatcher not found");
+                log.warn("update dispatcher failed: dispatcher not found [code 400]");
                 return ResponseEntity.status(400).build();
             }
 
@@ -114,15 +115,15 @@ public class DispatcherController {
             if (!fields.contains("roles"))
                 data.setRoles(fromDB.getRoles());
             if (containsNullFields(data)) {
-                log.warn("update dispatcher failed: invalid data");
+                log.warn("update dispatcher failed: invalid data [code 400]");
                 return ResponseEntity.status(400).build();
             }
 
             DispatcherModel model = repo.save(data);
-            log.info("update dispatcher successful: id={}", model.getId());
+            log.info("update dispatcher successful: id={} [code 200]", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
-            log.warn("update dispatcher failed: {}", e.getMessage());
+            log.warn("update dispatcher failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -131,10 +132,13 @@ public class DispatcherController {
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
         try {
             repo.deleteById(id);
-            log.info("delete dispatcher successful: id={}", id);
+            log.info("delete dispatcher successful: id={} [code 200]", id);
+            return ResponseEntity.ok().build();
+        } catch (EmptyResultDataAccessException e) {
+            log.warn("delete dispatcher failed: id={} not exists [code 200]", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            log.warn("delete dispatcher failed: {}", e.getMessage());
+            log.warn("delete dispatcher failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -145,7 +149,11 @@ public class DispatcherController {
                 data.getEmail() == null ||
                 data.getPassword() == null ||
                 data.getIsBanned() == null ||
-                data.getRoles() == null;
+                data.getRoles() == null ||
+                data.getFirstName().isEmpty() ||
+                data.getLastName().isEmpty() ||
+                data.getEmail().isEmpty() ||
+                data.getPassword().isEmpty();
     }
 
 }

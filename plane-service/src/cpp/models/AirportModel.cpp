@@ -1,5 +1,5 @@
 #include "../../header/models/AirportModel.h"
-AirportModel::AirportModel(int id, std::string name, int size, double x, double y)
+AirportModel::AirportModel(long int id, std::string name, int size, double x, double y)
 {
     _id = id;
     _name = name;
