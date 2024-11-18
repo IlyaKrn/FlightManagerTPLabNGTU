@@ -10,7 +10,7 @@ class FlightService
     FlightRepository repo;
     IdentityRepository ident;
 public:
-    std::list<FlightModel> getAllFlights(std::string token, std::set<std::string> permissions);
-    FlightModel getFlightById(long int id, std::string token, std::set<std::string> permissions);
-    bool createFlight(FlightModel flight, std::string token, std::set<std::string> permissions);
+    std::list<FlightModel> getAllFlights(std::string token);
+    FlightModel getFlightById(long int id, std::string token);
+    bool createFlight(FlightModel flight, std::string token);
 };

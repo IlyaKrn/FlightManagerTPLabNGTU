@@ -1,52 +1,59 @@
 #include "../../header/services/FlightService.h"
-#include <stdexcept>
 
-std::pmr::list<FlightModel> FlightService::getAllFlights(std::string token, std::set<std::string> permissions)
+using namespace std;
+list<FlightModel> FlightService::getAllFlights(string token)
 {
-    bool isAllowed = ident.authorize(permissions ,token);
-    if (!isAllowed)
-    {
-        throw std::runtime_error("Отказано в доступе");
-    }
-    std::pmr::list<FlightModel> flights = repo.getFlights("");
-    if (!flights.empty())
-    {
-        return flights;
-    }
-    return std::pmr::list<FlightModel>();
-}
-
-FlightModel FlightService::getFlightById(int id, std::string token, std::set<std::string> permissions)
-{
-    bool isAllowed = ident.authorize(permissions ,token);
-    if (!isAllowed)
-    {
-        throw std::runtime_error("Отказано в доступе");
-    }
-    std::pmr::list<FlightModel> flights = repo.getFlights(std::to_string(id));
-    FlightModel empty_flight;
-    for (auto flight : flights)
-    {
-        if (flight.getId() != empty_flight.getId())
+    try {
+        set<string> permissions;
+        permissions.insert("getAllFlights");
+        bool isAllowed = ident.authorize(permissions ,token);
+        if (!isAllowed)
         {
-            return flight;
+            throw string("401");
         }
+        list<FlightModel> flights = repo.getFlights();
+        return flights;
+    } catch (const string& e)
+    {
+        throw string(e);
     }
-    return empty_flight;
 }
-bool FlightService::createFlight(FlightModel flight, std::string token, std::set<std::string> permissions)
+
+FlightModel FlightService::getFlightById(long int id, string token)
 {
-    bool isAllowed = ident.authorize(permissions ,token);
-    if (!isAllowed)
+    try
     {
-        throw std::runtime_error("Отказано в доступе");
-    }
-    bool res = repo.createFlight(flight);
-    if (res)
+        set<string> permissions;
+        permissions.insert("getFlightById");
+        bool isAllowed = ident.authorize(permissions ,token);
+        if (!isAllowed)
+        {
+            throw string("401");
+        }
+        list<FlightModel> flights = repo.getFlights(&id);
+        return flights.front();
+    } catch (const string& e)
     {
-        return true;
+        throw string(e);
     }
-    return false;
+}
+bool FlightService::createFlight(FlightModel flight, string token)
+{
+    try
+    {
+        set<string> permissions;
+        permissions.insert("createFlight");
+        bool isAllowed = ident.authorize(permissions ,token);
+        if (!isAllowed)
+        {
+            throw string("401");
+        }
+        bool res = repo.createFlight(flight);
+        return res;
+    } catch (const string& e)
+    {
+        throw string(e);
+    }
 }
 
 

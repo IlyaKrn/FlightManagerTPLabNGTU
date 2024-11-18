@@ -1,95 +1,113 @@
 #include "../../header/services/AirportService.h"
-#include <stdexcept>
-std::pmr::list<AirportModel> AirportService::getAllAirports(std::string token, std::set<std::string> permissions)
-{
-    bool isAllowed = ident.authorize(permissions ,token);
-    if (!isAllowed)
-    {
-        throw std::runtime_error("Отказано в доступе");
-    }
-    std::pmr::list<AirportModel> airports = repo.getAirports("");
-    if (!airports.empty())
-    {
-        return airports;
-    }
-    return std::pmr::list<AirportModel>();
-}
 
-AirportModel AirportService::getAirportById(int id, std::string token, std::set<std::string> permissions)
+using namespace std;
+list<AirportModel> AirportService::getAllAirports(string token)
 {
-    bool isAllowed = ident.authorize(permissions ,token);
-    if (!isAllowed)
+    try
     {
-        throw std::runtime_error("Отказано в доступе");
-    }
-    std::pmr::list<AirportModel> airports = repo.getAirports(std::to_string(id));
-    AirportModel empty_airport;
-    for (auto airport : airports)
-    {
-        if (airport.getId() != empty_airport.getId())
+        set<string> permissions;
+        permissions.insert("getAllAirports");
+        bool isAllowed = ident.authorize(permissions, token);
+        if (!isAllowed)
         {
-            return airport;
+            throw string("401");
         }
+        list<AirportModel> airports = repo.getAirports();
+        return airports;
+    } catch (const string& e)
+    {
+        throw string(e);
     }
-    return empty_airport;
 }
 
-bool AirportService::createAirport(AirportModel airport, std::string token, std::set<std::string> permissions)
+AirportModel AirportService::getAirportById(long int id, string token)
 {
-    bool isAllowed = ident.authorize(permissions ,token);
-    if (!isAllowed)
+    try
     {
-        throw std::runtime_error("Отказано в доступе");
-    }
-    bool res = repo.createAirport(airport);
-    if (res)
+        set<string> permissions;
+        permissions.insert("getAirportById");
+        bool isAllowed = ident.authorize(permissions ,token);
+        if (!isAllowed)
+        {
+            throw string("401");
+        }
+        list<AirportModel> airports = repo.getAirports(&id);
+        return airports.front();
+
+    } catch (const string& e)
     {
-        return true;
+        throw string(e);
     }
-    return false;
 }
-bool AirportService::editAirport(AirportModel airport, std::string update, std::string token, std::set<std::string> permissions)
+
+bool AirportService::createAirport(AirportModel airport, string token)
 {
-    bool isAllowed = ident.authorize(permissions ,token);
-    if (!isAllowed)
+    try
     {
-        throw std::runtime_error("Отказано в доступе");
-    }
-    AirportModel n_airport = getAirportById(airport.getId(), token, permissions);
-    if (update.find("name") != std::string::npos)
+        set<string> permissions;
+        permissions.insert("createAirport");
+        bool isAllowed = ident.authorize(permissions ,token);
+        if (!isAllowed)
+        {
+            throw string("401");
+        }
+        bool res = repo.createAirport(airport);
+        return res;
+    } catch (const string& e)
     {
-        n_airport.setName(airport.getName());
+        throw string(e);
     }
-    if (update.find("size") != std::string::npos)
-    {
-        n_airport.setSize(airport.getSize());
-    }
-    if (update.find("x") != std::string::npos)
-    {
-        n_airport.setX(airport.getX());
-    }
-    if (update.find("y") != std::string::npos)
-    {
-        n_airport.setY(airport.getY());
-    }
-    bool res = repo.updateAirport(n_airport, update);
-    if (res)
-    {
-        return true;
-    }
-    return false;
 }
-bool AirportService::deleteAirport(int id, std::string token, std::set<std::string> permissions)
+bool AirportService::updateAirport(AirportModel airport, set<string> update, string token)
 {
-    bool isAllowed = ident.authorize(permissions ,token);
-    if (!isAllowed)
+    try
     {
-        throw std::runtime_error("Отказано в доступе");
-    }
-    bool res = repo.deleteAirport(id);
-    if (res)
+        set<string> permissions;
+        permissions.insert("updateAirport");
+        bool isAllowed = ident.authorize(permissions ,token);
+        if (!isAllowed)
+        {
+            throw string("401");
+        }
+        AirportModel n_airport = getAirportById(airport.getId(), token);
+        if (update.count("name") > 0)
+        {
+            n_airport.setName(airport.getName());
+        }
+        if (update.count("size") > 0)
+        {
+            n_airport.setSize(airport.getSize());
+        }
+        if (update.count("x") > 0)
+        {
+            n_airport.setX(airport.getX());
+        }
+        if (update.count("y") > 0)
+        {
+            n_airport.setY(airport.getY());
+        }
+        bool res = repo.updateAirport(n_airport, update);
+        return res;
+    } catch (const string& e)
     {
-        return true;
+        throw string(e);
     }
-    return false;
+}
+bool AirportService::deleteAirport(long int id, string token)
+{
+    try
+    {
+        set<string> permissions;
+        permissions.insert("deleteAirport");
+        bool isAllowed = ident.authorize(permissions ,token);
+        if (!isAllowed)
+        {
+            throw string("401");
+        }
+        bool res = repo.deleteAirport(id);
+        return res;
+    } catch (const string& e)
+    {
+        throw string(e);
+    }
 }
