@@ -25,7 +25,7 @@ list<AirportModel> AirportRepository::getAirports(long int* id, string* name, in
     if (y != nullptr)
         params.insert({"y", to_string(*y)});
     auto res = cli.Get(AIRPORT_GET_BY_ID_MAPPING, params, headers);
-    if (res->status == 200)
+    if (res->status >= 200 && res->status < 300)
     {
         json airports = json::parse(res->body);
         list<AirportModel> result;
@@ -36,7 +36,7 @@ list<AirportModel> AirportRepository::getAirports(long int* id, string* name, in
         }
         return result;
     }
-    throw string("500");
+    throw res->status;
 }
 bool AirportRepository::createAirport(AirportModel airport)
 {
@@ -53,9 +53,9 @@ bool AirportRepository::createAirport(AirportModel airport)
     airport_json["y"] = airport.getY();
 
     auto res = cli.Post(AIRPORT_CREATE_MAPPING, headers, airport_json.dump(), "application/json");
-    if (res->status == 200)
+    if (res->status >= 200 && res->status < 300)
         return true;
-    throw string("500");
+    throw res->status;
 }
 bool AirportRepository::updateAirport(AirportModel airport, set<string> updates)
 {
@@ -79,11 +79,9 @@ bool AirportRepository::updateAirport(AirportModel airport, set<string> updates)
             update += "," + item;
     }
     auto res = cli.Post((AIRPORT_UPDATE_MAPPING + "?update=" + update), headers, airport_json.dump(), "application/json");
-    if (res->status == 200)
+    if (res->status >= 200 && res->status < 300)
         return true;
-    if (res->status == 400)
-        throw string("400");
-    throw string("500");
+    throw res->status;
 }
 
 
@@ -95,7 +93,7 @@ bool AirportRepository::deleteAirport(long int id)
     { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
     auto res = cli.Delete(AIRPORT_DELETE_MAPPING + "/" + to_string(id), headers);
-    if (res->status == 200)
+    if (res->status >= 200 && res->status < 300)
         return true;
-    throw string("500");
+    throw res->status;
 }

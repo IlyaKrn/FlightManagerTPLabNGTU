@@ -15,14 +15,12 @@ int IdentityRepository::getIdByToken(string token)
     };
 
     auto res = cli.Post(GET_ID_BY_TOKEN_MAPPING ,headers, token,  "application/json");
-    if (res->status == 200)
+    if (res->status >= 200 && res->status < 300)
     {
         int id = stoi(res->body);
         return id;
     }
-    if (res->status == 401)
-        throw string("401");
-    throw string("500");
+    throw res->status;
 }
 
 bool IdentityRepository::authorize(set<string> permissions, string token)
@@ -35,16 +33,18 @@ bool IdentityRepository::authorize(set<string> permissions, string token)
     json authorize;
     authorize["permissions"] = json::array();
     for (auto permission : permissions)
+    {
         authorize["permissions"].push_back(permission);
+    }
     authorize["token"] = token;
     auto res = cli.Post(AUTHORIZE_MAPPING, headers, authorize.dump(), "application/json");
-    if (res->status == 200)
+    if (res->status >= 200 && res->status < 300)
     {
         if (res->body == "true")
             return true;
         if (res->body == "false")
             return false;
     }
-    throw string("500");
+    throw res->status;
 }
 

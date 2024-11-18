@@ -27,7 +27,7 @@ list<FlightModel> FlightRepository::getFlights(long int* id, long int* timestamp
     if (airportId != nullptr)
         params.insert(make_pair("airportId", to_string(*airportId)));
     auto res = cli.Get(FLIGHT_GET_BY_ID_MAPPING, params, headers);
-    if (res->status == 200)
+    if (res->status >= 200 && res->status < 300)
     {
         json flights_json = json::parse(res->body);
         list<FlightModel> flights;
@@ -38,7 +38,7 @@ list<FlightModel> FlightRepository::getFlights(long int* id, long int* timestamp
         }
         return flights;
     }
-    throw string("500");
+    throw res->status;
 }
 
 bool FlightRepository::createFlight(FlightModel flight)
@@ -56,10 +56,8 @@ bool FlightRepository::createFlight(FlightModel flight)
     flight_json["planeId"] = flight.getPlaneId();
     flight_json["airportId"] = flight.getAirportId();
     auto res = cli.Post(FLIGHT_CREATE_MAPPING, headers, flight_json.dump(), "application/json");
-    if (res->status == 200)
+    if (res->status >= 200 && res->status < 300)
         return true;
-    if (res->status == 400)
-        throw string("400");
-    throw string("500");
+    throw res->status;
 }
 
