@@ -40,16 +40,13 @@ void DispatcherController::configure(Server* server)
             }
             res.set_content(result.dump(), "application/json");
             res.status = 200;
-        } catch (const string& e)
+        }  catch (int& e)
         {
-            if (e == "401")
-            {
-                cout << "Access denied" << endl;
-                res.status = 401;
-            }
-        } catch (const exception& err)
+            cout << "exception occured " << e << endl;
+            res.status = e;
+        } catch (const exception& e)
         {
-            cout << "DispatcherController::DispatcherController: exception occured" << err.what() << endl;
+            cout << "exception occured" << e.what() << endl;
             res.status = 500;
         }
     });
@@ -87,24 +84,16 @@ void DispatcherController::configure(Server* server)
             updates.clear();
             if (updated)
             {
-                res.status = 201;
+                res.status = 200;
                 res.set_content(result.dump(), "application/json");
             }
-        } catch (const string& e)
+        }  catch (int& e)
         {
-            if (e == "400")
-            {
-                cout << "Bad Request" << endl;
-                res.status = 400;
-            }
-            if (e == "401")
-            {
-                cout << "Access denied" << endl;
-                res.status = 401;
-            }
-        } catch (const exception& err)
+            cout << "exception occured " << e << endl;
+            res.status = e;
+        } catch (const exception& e)
         {
-            cout << "DispatcherController::DispatcherController: exception occured" << err.what() << endl;
+            cout << "exception occured" << e.what() << endl;
             res.status = 500;
         }
     });
@@ -133,16 +122,13 @@ void DispatcherController::configure(Server* server)
             }
             res.status = 200;
             res.set_content(result.dump(), "application/json");
-        } catch (const string& e)
+        }  catch (int& e)
         {
-            if (e == "401")
-            {
-                cout << "Access denied" << endl;
-                res.status = 401;
-            }
-        } catch (const exception& err)
+            cout << "exception occured " << e << endl;
+            res.status = e;
+        } catch (const exception& e)
         {
-            cout << "DispatcherController::DispatcherController: exception occured" << err.what() << endl;
+            cout << "exception occured" << e.what() << endl;
             res.status = 500;
         }
     });

@@ -12,9 +12,13 @@ void TimeController::configure(Server* server)
             long int time = serv.getCurrentTime();
             res.status = 200;
             res.set_content(to_string(time), "text/plain");
-        } catch (const exception& err)
+        } catch (int& e)
         {
-            cout << "TimeController::TimeController: exception occured" << err.what() << endl;
+            cout << "exception occured " << e << endl;
+            res.status = e;
+        } catch (const exception& e)
+        {
+            cout << "exception occured" << e.what() << endl;
             res.status = 500;
         }
     });
@@ -23,20 +27,17 @@ void TimeController::configure(Server* server)
         try
         {
             long int skip = 0;
-            try
-            {
-                skip = stol(req.get_param_value("skip"));
-            } catch (...)
-            {
-                res.status = 400;
-                return;
-            }
+            skip = stol(req.get_param_value("skip"));
             serv.skipTime(skip);
             res.status = 200;
             res.set_content("skipped " + to_string(skip) + " seconds", "text/plain");
-        } catch (const exception& err)
+        } catch (int& e)
         {
-            cout << "TimeController::TimeController: exception occured" << err.what() << endl;
+            cout << "exception occured " << e << endl;
+            res.status = e;
+        } catch (const exception& e)
+        {
+            cout << "exception occured" << e.what() << endl;
             res.status = 500;
         }
     });

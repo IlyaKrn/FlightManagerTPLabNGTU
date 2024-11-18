@@ -31,16 +31,13 @@ void FlightController::configure(Server* server)
             }
             res.status = 200;
             res.set_content(result.dump(), "application/json");
-        } catch(const string& e)
+        } catch (int& e)
         {
-            if (e == "401")
-            {
-                cout << "Access denied" << endl;
-                res.status = 401;
-            }
-        } catch (const exception& err)
+            cout << "exception occured " << e << endl;
+            res.status = e;
+        } catch (const exception& e)
         {
-            cout << "FlightController::FlightController: exception occured" << err.what() << endl;
+            cout << "exception occured" << e.what() << endl;
             res.status = 500;
         }
     });
@@ -54,23 +51,16 @@ void FlightController::configure(Server* server)
             bool created = serv.createFlight(flight, header);
             if (created)
             {
-                res.status = 201;
+                res.status = 200;
                 res.set_content(flight_json.dump(), "application/json");
             }
-        } catch (const string& e)
+        } catch (int& e)
         {
-            if (e == "400") {
-                cout << "Bad Request" << endl;
-                res.status = 400;
-            }
-            if (e == "401")
-            {
-                cout << "Access denied" << endl;
-                res.status = 401;
-            }
-        } catch (const exception& err)
+            cout << "exception occured " << e << endl;
+            res.status = e;
+        } catch (const exception& e)
         {
-            cout << "FlightController::FlightController: exception occured" << err.what() << endl;
+            cout << "exception occured" << e.what() << endl;
             res.status = 500;
         }
     });
@@ -90,16 +80,13 @@ void FlightController::configure(Server* server)
             flight_json["airportId"] = flight.getAirportId();
             res.status = 200;
             res.set_content(flight_json.dump(), "application/json");
-        } catch(const string& e)
+        } catch (int& e)
         {
-            if (e == "401")
-            {
-                cout << "Access denied" << endl;
-                res.status = 401;
-            }
-        } catch (const exception& err)
+            cout << "exception occured " << e << endl;
+            res.status = e;
+        } catch (const exception& e)
         {
-            cout << "FlightController::FlightController: exception occured" << err.what() << endl;
+            cout << "exception occured" << e.what() << endl;
             res.status = 500;
         }
     });
