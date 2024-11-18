@@ -2,11 +2,10 @@
 
 class TimeModel
 {
-private:
     long int _currentTime;
     long int _addedTime;
 public:
-    TimeModel();
+    TimeModel(long int currentTime, long int addedTime);
 
     long int getCurrentTime();
     long int getAddedTime();

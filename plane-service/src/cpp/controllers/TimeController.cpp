@@ -22,7 +22,15 @@ void TimeController::configure(Server* server)
     {
         try
         {
-            long int skip = stol(req.get_param_value("skip"));
+            long int skip = 0;
+            try
+            {
+                skip = stol(req.get_param_value("skip"));
+            } catch (...)
+            {
+                res.status = 400;
+                return;
+            }
             serv.skipTime(skip);
             res.status = 200;
             res.set_content("skipped " + to_string(skip) + " seconds", "text/plain");
