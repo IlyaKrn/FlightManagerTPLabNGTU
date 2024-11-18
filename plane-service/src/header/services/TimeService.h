@@ -3,7 +3,6 @@
 
 class TimeService
 {
-private:
     TimeModel timer;
 public:
     long int getCurrentTime();

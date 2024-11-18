@@ -1,10 +1,10 @@
 #include "../../header/models/TimeModel.h"
 
 
-TimeModel::TimeModel(long int currentTime, long int addedTime)
+TimeModel::TimeModel()
 {
-    _currentTime = currentTime;
-    _addedTime = addedTime;
+    _currentTime = 0;
+    _addedTime = 0;
 }
 
 long int TimeModel::getCurrentTime()

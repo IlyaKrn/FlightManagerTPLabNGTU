@@ -5,7 +5,7 @@ class TimeModel
     long int _currentTime;
     long int _addedTime;
 public:
-    TimeModel(long int currentTime, long int addedTime);
+    TimeModel();
 
     long int getCurrentTime();
     long int getAddedTime();

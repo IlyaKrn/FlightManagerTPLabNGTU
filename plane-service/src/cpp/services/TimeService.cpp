@@ -9,6 +9,6 @@ long int TimeService::getCurrentTime()
 }
 void TimeService::skipTime(long int addedTime)
 {
-    timer.setAddedTime(addedTime);
+    timer.setAddedTime(timer.getAddedTime() + addedTime);
 }
 
