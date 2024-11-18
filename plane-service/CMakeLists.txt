@@ -55,6 +55,8 @@ add_executable(main src/main.cpp
         src/cpp/services/TimeService.cpp
         src/header/controllers/TimeController.h
         src/cpp/controllers/TimeController.cpp
+        src/cpp/models/PlaneModelResponse.cpp
+        src/header/models/PlaneModelResponse.h
 
 
 )
