@@ -1,9 +1,11 @@
 #pragma once
-#include "../models/TimeModel.h"
+#include "../repos/TimeRepository.h"
+#include "../repos/IdentityRepository.h"
 
 class TimeService
 {
-    TimeModel timer;
+    TimeRepository repo;
+    IdentityRepository ident;
 public:
     long int getCurrentTime();
     void skipTime(long int addedTime);

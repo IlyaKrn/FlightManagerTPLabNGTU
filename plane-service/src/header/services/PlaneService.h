@@ -16,5 +16,4 @@ public:
     bool createPlane(PlaneModel plane, std::string token);
     bool deletePlane(long int id, std::string token);
     bool updatePlane(PlaneModel plane, std::set<std::string> update, std::string token);
-    PlaneModelResponse getPlaneCoordinates(PlaneModelResponse plane, std::string token);
 };
