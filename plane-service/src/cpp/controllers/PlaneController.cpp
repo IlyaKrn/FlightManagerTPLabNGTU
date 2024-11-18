@@ -14,38 +14,36 @@ void PlaneController::configure(Server* server)
     {
         try
         {
-            auto header = req.get_header_value("User-Token");
-            std::set<std::string> permissions = std::set<std::string>();
-            pmr::list<PlaneModel> planes = serv.getAllPlanes(header, permissions);
-            if (!planes.empty())
+            auto header = req.get_header_value("Authorization");
+            list<PlaneModelResponse> planes = serv.getAllPlanes(header);
+            json planes_json = json::array();
+            for (auto plane : planes)
             {
-                json planes_json = json::array();
-                for (auto plane : planes)
-                {
-                    json plane_json;
-                    plane_json["id"] = plane.getId();
-                    plane_json["name"] = plane.getName();
-                    plane_json["pilot"] = plane.getPilot();
-                    plane_json["builtYear"] = plane.getBuiltYear();
-                    plane_json["brokenPercentage"] = plane.getBrokenPercentage();
-                    plane_json["speed"] = plane.getSpeed();
-                    plane_json["minAirportSize"] = plane.getMinAirportSize();
-                    planes_json.push_back(plane_json);
-                }
-                res.status = 200;
-                res.set_content(planes_json.dump(), "application/json");
-            } else
-            {
-                res.status = 404;
-                res.set_content("Аэропорты не найдены", "text/plain");
+                PlaneModelResponse n_plane = serv.getPlaneCoordinates(plane, header);
+                json plane_json;
+                plane_json["id"] = n_plane.getId();
+                plane_json["name"] = n_plane.getName();
+                plane_json["pilot"] = n_plane.getPilot();
+                plane_json["builtYear"] = n_plane.getBuiltYear();
+                plane_json["brokenPercentage"] = n_plane.getBrokenPercentage();
+                plane_json["speed"] = n_plane.getSpeed();
+                plane_json["minAirportSize"] = n_plane.getMinAirportSize();
+                plane_json["x"] = n_plane.getX();
+                plane_json["y"] = n_plane.getY();
+                planes_json.push_back(plane_json);
             }
-        } catch (const runtime_error& e)
+            res.status = 200;
+            res.set_content(planes_json.dump(), "application/json");
+        } catch (const string& e)
         {
-            res.status = 401;
-            res.set_content(e.what(), "text/plain");
-        } catch (const std::exception& e)
+            if (e == "401")
+            {
+                cout << "Access denied" << endl;
+                res.status = 401;
+            }
+        } catch (const exception& err)
         {
-            cout << "PlaneController::PlaneController: exception occured" << e.what() << endl;
+            cout << "PlaneController::PlaneController: exception occured" << err.what() << endl;
             res.status = 500;
         }
     });
@@ -54,27 +52,29 @@ void PlaneController::configure(Server* server)
     {
         try
         {
-            auto header = req.get_header_value("User-Token");
-            std::set<std::string> permissions = std::set<std::string>();
+            auto header = req.get_header_value("Authorization");
             json plane_json = json::parse(req.body);
             PlaneModel plane(plane_json["id"], plane_json["name"], plane_json["pilot"], plane_json["builtYear"], plane_json["brokenPercentage"], plane_json["speed"], plane_json["minAirportSize"]);
-            bool created = serv.createPlane(plane, header, permissions);
+            bool created = serv.createPlane(plane, header);
             if (created)
             {
                 res.status = 201;
                 res.set_content(plane_json.dump(), "application/json");
-            } else
-            {
-                res.status = 400;
-                res.set_content("Не удалось создать аэропорт", "text/plain");
             }
-        } catch (const runtime_error& e)
+        } catch (const string& e)
         {
-            res.status = 401;
-            res.set_content(e.what(), "text/plain");
-        } catch (const std::exception& e)
+            if (e == "400") {
+                cout << "Bad Request" << endl;
+                res.status = 400;
+            }
+            if (e == "401")
+            {
+                cout << "Access denied" << endl;
+                res.status = 401;
+            }
+        } catch (const exception& err)
         {
-            cout << "PlaneController::PlaneController: exception occured" << e.what() << endl;
+            cout << "PlaneController::PlaneController: exception occured" << err.what() << endl;
             res.status = 500;
         }
     });
@@ -82,28 +82,41 @@ void PlaneController::configure(Server* server)
     {
         try
         {
-            auto header = req.get_header_value("User-Token");
-            std::set<std::string> permissions = std::set<std::string>();
-            std::string fields = req.get_param_value("update");
-            json plane_json = json::parse(req.body);
-            PlaneModel plane(plane_json["id"], plane_json["name"], plane_json["pilot"], plane_json["builtYear"], plane_json["brokenPercentage"], plane_json["speed"], plane_json["minAirportSize"]);
-            bool updated = serv.updatePlane(plane, fields, header, permissions);
+            auto header = req.get_header_value("Authorization");
+            string fields = req.get_param_value("update");
+            stringstream ss(fields);
+            string item;
+            set<string> updates;
+            while (getline(ss, item, ','))
+            {
+                item.erase(0, item.find_first_not_of(" \n\r\t"));
+                item.erase(item.find_last_not_of(" \n\r\t") + 1);
+                if (!item.empty())
+                    updates.insert(item);
+            }
+            json result = json::parse(req.body);
+            PlaneModel plane(result["id"], result["name"], result["pilot"], result["builtYear"], result["brokenPercentage"], result["speed"], result["minAirportSize"]);
+            bool updated = serv.updatePlane(plane, updates, header);
+            updates.clear();
             if (updated)
             {
-                res.status = 200;
-                res.set_content("Обновлены поля " + fields + " у самолёта с id " + std::to_string(plane.getId()), "text/plane");
-            } else
-            {
-                res.status = 400;
-                res.set_content("Не удалось обновить самолёт", "text/plain");
+                res.status = 201;
+                res.set_content(result.dump(), "application/json");
             }
-        } catch (const runtime_error& e)
+        } catch (const string& e)
         {
-            res.status = 401;
-            res.set_content(e.what(), "text/plain");
-        } catch (const std::exception& e)
+            if (e == "400") {
+                cout << "Bad Request" << endl;
+                res.status = 400;
+            }
+            if (e == "401")
+            {
+                cout << "Access denied" << endl;
+                res.status = 401;
+            }
+        } catch (const exception& err)
         {
-            cout << "PlaneController::PlaneController: exception occured" << e.what() << endl;
+            cout << "PlaneController::PlaneController: exception occured" << err.what() << endl;
             res.status = 500;
         }
     });
@@ -111,25 +124,23 @@ void PlaneController::configure(Server* server)
     {
         try
         {
-            auto header = req.get_header_value("User-Token");
-            std::set<std::string> permissions = std::set<std::string>();
+            auto header = req.get_header_value("Authorization");
             int id = stoi(req.matches[1]);
-            bool deleted = serv.deletePlane(id, header, permissions);
+            bool deleted = serv.deletePlane(id, header);
             if (deleted)
             {
                 res.status = 200;
-            } else
-            {
-                res.status = 404;
-                res.set_content("Самолет с таким id не найден", "text/plain");
             }
-        } catch (const runtime_error& e)
+        } catch (const string& e)
         {
-            res.status = 401;
-            res.set_content(e.what(), "text/plain");
-        } catch (const std::exception& e)
+            if (e == "401")
+            {
+                cout << "Access denied" << endl;
+                res.status = 401;
+            }
+        } catch (const exception& err)
         {
-            cout << "PlaneController::PlaneController: exception occured" << e.what() << endl;
+            cout << "PlaneController::PlaneController: exception occured" << err.what() << endl;
             res.status = 500;
         }
     });
@@ -137,36 +148,36 @@ void PlaneController::configure(Server* server)
     {
         try
         {
-            auto header = req.get_header_value("User-Token");
-            std::set<std::string> permissions = std::set<std::string>();
+            auto header = req.get_header_value("Authorization");
             int id = stoi(req.get_param_value("id"));
-            PlaneModel plane = serv.getPlaneById(id, header, permissions);
-            PlaneModel empty_plane;
-            if (plane.getId() != empty_plane.getId())
-            {
-                json plane_json;
-                plane_json["id"] = plane.getId();
-                plane_json["name"] = plane.getName();
-                plane_json["pilot"] = plane.getPilot();
-                plane_json["builtYear"] = plane.getBuiltYear();
-                plane_json["brokenPercentage"] = plane.getBrokenPercentage();
-                plane_json["speed"] = plane.getSpeed();
-                plane_json["minAirportSize"] = plane.getMinAirportSize();
-                res.status = 200;
-                res.set_content(plane_json.dump(), "application/json");
-            } else
-            {
-                res.status = 404;
-                res.set_content("Не найден самолет с таким id", "text/plain");
+            PlaneModelResponse plane = serv.getPlaneById(id, header);
+            PlaneModelResponse n_plane = serv.getPlaneCoordinates(plane, header);
+            json plane_json;
+            plane_json["id"] = plane.getId();
+            plane_json["name"] = plane.getName();
+            plane_json["pilot"] = plane.getPilot();
+            plane_json["builtYear"] = plane.getBuiltYear();
+            plane_json["brokenPercentage"] = plane.getBrokenPercentage();
+            plane_json["speed"] = plane.getSpeed();
+            plane_json["minAirportSize"] = plane.getMinAirportSize();
+            plane_json["x"] = n_plane.getX();
+            plane_json["y"] = n_plane.getY();
+            res.status = 200;
+            res.set_content(plane_json.dump(), "application/json");
+        } catch (const string& e)
+        {
+            if (e == "400") {
+                cout << "Bad Request" << endl;
+                res.status = 400;
             }
-        }
-        catch (const runtime_error& e)
+            if (e == "401")
+            {
+                cout << "Access denied" << endl;
+                res.status = 401;
+            }
+        } catch (const exception& err)
         {
-            res.status = 401;
-            res.set_content(e.what(), "text/plain");
-        } catch (const std::exception& e)
-        {
-            cout << "PlaneController::PlaneController: exception occured" << e.what() << endl;
+            cout << "PlaneController::PlaneController: exception occured" << err.what() << endl;
             res.status = 500;
         }
     });
