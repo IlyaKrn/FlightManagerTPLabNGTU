@@ -9,17 +9,9 @@ void TimeController::configure(Server* server)
     {
         try
         {
-            long int skip = 0;
-            try
-            {
-                skip = stol(req.get_param_value("skip"));
-            } catch (...)
-            {
-                res.status = 400;
-                return;
-            }
+            long int time = serv.getCurrentTime();
             res.status = 200;
-            res.set_content(to_string(skip), "text/plain");
+            res.set_content(to_string(time), "text/plain");
         } catch (const exception& err)
         {
             cout << "TimeController::TimeController: exception occured" << err.what() << endl;
