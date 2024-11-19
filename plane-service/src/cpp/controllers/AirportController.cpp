@@ -15,6 +15,9 @@ void AirportController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
+            string service_token = req.get_param_value("Service-Token");
+            if (service_token != SERVICE_TOKEN_VALUE)
+                res.status = 403;
             list<AirportModel> airports = serv.getAllAirports(header);
             json airports_json = json::array();
             for (auto airport : airports) {
@@ -44,6 +47,9 @@ void AirportController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
+            string service_token = req.get_param_value("Service-Token");
+            if (service_token != SERVICE_TOKEN_VALUE)
+                res.status = 403;
             json result = json::parse(req.body);
             bool created = serv.createAirport(AirportModel(result["id"], result["name"], result["size"],  result["x"], result["y"]), header);
             if (created)
@@ -68,6 +74,9 @@ void AirportController::configure(Server* server)
         {
             auto header = req.get_header_value("Authorization");
             string fields = req.get_param_value("update");
+            string service_token = req.get_param_value("Service-Token");
+            if (service_token != SERVICE_TOKEN_VALUE)
+                res.status = 403;
             stringstream ss(fields);
             string item;
             set<string> updates;
@@ -103,6 +112,9 @@ void AirportController::configure(Server* server)
     try
     {
         auto header = req.get_header_value("Authorization");
+        string service_token = req.get_param_value("Service-Token");
+            if (service_token != SERVICE_TOKEN_VALUE)
+                res.status = 403;
         long int id = stol(req.matches[1]);
         bool deleted = serv.deleteAirport(id, header);
         if (deleted)
@@ -124,6 +136,9 @@ void AirportController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
+            string service_token = req.get_param_value("Service-Token");
+            if (service_token != SERVICE_TOKEN_VALUE)
+                res.status = 403;
             int id = stoi(req.get_param_value("id"));
             AirportModel airport = serv.getAirportById(id, header);
             json airport_json;

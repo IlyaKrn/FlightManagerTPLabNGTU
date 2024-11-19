@@ -16,6 +16,9 @@ void FlightController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
+            string service_token = req.get_param_value("Service-Token");
+            if (service_token != SERVICE_TOKEN_VALUE)
+                res.status = 403;
             list<FlightModel> flights = serv.getAllFlights(header);
             json result = json::array();
             for (auto flight : flights)
@@ -46,6 +49,9 @@ void FlightController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
+            string service_token = req.get_param_value("Service-Token");
+            if (service_token != SERVICE_TOKEN_VALUE)
+                res.status = 403;
             json flight_json = json::parse(req.body);
             FlightModel flight(flight_json["id"], flight_json["timestampStart"], flight_json["timestampEnd"], flight_json["dispatcherId"], flight_json["planeId"], flight_json["airportId"]);
             bool created = serv.createFlight(flight, header);
@@ -69,6 +75,9 @@ void FlightController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
+            string service_token = req.get_param_value("Service-Token");
+            if (service_token != SERVICE_TOKEN_VALUE)
+                res.status = 403;
             int id = stoi(req.get_param_value("id"));
             FlightModel flight = serv.getFlightById(id, header);
             json flight_json;
