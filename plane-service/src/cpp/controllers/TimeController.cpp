@@ -9,7 +9,11 @@ void TimeController::configure(Server* server)
     {
         try
         {
-            long int time = serv.getCurrentTime();
+            auto header = req.get_header_value("Authorization");
+            string service_token = req.get_param_value("Service-Token");
+            if (service_token != SERVICE_TOKEN_VALUE)
+                res.status = 403;
+            long int time = serv.getCurrentTime(header);
             res.status = 200;
             res.set_content(to_string(time), "text/plain");
         } catch (int& e)
@@ -26,9 +30,13 @@ void TimeController::configure(Server* server)
     {
         try
         {
+            auto header = req.get_header_value("Authorization");
+            string service_token = req.get_param_value("Service-Token");
+            if (service_token != SERVICE_TOKEN_VALUE)
+                res.status = 403;
             long int skip = 0;
             skip = stol(req.get_param_value("skip"));
-            serv.skipTime(skip);
+            serv.skipTime(skip, header);
             res.status = 200;
             res.set_content("skipped " + to_string(skip) + " seconds", "text/plain");
         } catch (int& e)

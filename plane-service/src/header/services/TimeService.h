@@ -7,6 +7,6 @@ class TimeService
     TimeRepository repo;
     IdentityRepository ident;
 public:
-    long int getCurrentTime();
-    void skipTime(long int addedTime);
+    long int getCurrentTime(std::string token);
+    void skipTime(long int addedTime, std::string token);
 };
