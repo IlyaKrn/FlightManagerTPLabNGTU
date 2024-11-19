@@ -15,22 +15,24 @@ void PlaneController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
+            string service_token = req.get_param_value("Service-Token");
+            if (service_token != SERVICE_TOKEN_VALUE)
+                res.status = 403;
             list<PlaneModelResponse> planes = serv.getAllPlanes(header);
             json planes_json = json::array();
             for (auto plane : planes)
             {
-                // PlaneModelResponse n_plane = serv.getPlaneCoordinates(plane, header);
-                // json plane_json;
-                // plane_json["id"] = n_plane.getId();
-                // plane_json["name"] = n_plane.getName();
-                // plane_json["pilot"] = n_plane.getPilot();
-                // plane_json["builtYear"] = n_plane.getBuiltYear();
-                // plane_json["brokenPercentage"] = n_plane.getBrokenPercentage();
-                // plane_json["speed"] = n_plane.getSpeed();
-                // plane_json["minAirportSize"] = n_plane.getMinAirportSize();
-                // plane_json["x"] = n_plane.getX();
-                // plane_json["y"] = n_plane.getY();
-                // planes_json.push_back(plane_json);
+                json plane_json;
+                plane_json["id"] = plane.getId();
+                plane_json["name"] = plane.getName();
+                plane_json["pilot"] = plane.getPilot();
+                plane_json["builtYear"] = plane.getBuiltYear();
+                plane_json["brokenPercentage"] = plane.getBrokenPercentage();
+                plane_json["speed"] = plane.getSpeed();
+                plane_json["minAirportSize"] = plane.getMinAirportSize();
+                plane_json["x"] = plane.getX();
+                plane_json["y"] = plane.getY();
+                planes_json.push_back(plane_json);
             }
             res.status = 200;
             res.set_content(planes_json.dump(), "application/json");
@@ -50,6 +52,9 @@ void PlaneController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
+            string service_token = req.get_param_value("Service-Token");
+            if (service_token != SERVICE_TOKEN_VALUE)
+                res.status = 403;
             json plane_json = json::parse(req.body);
             PlaneModel plane(plane_json["id"], plane_json["name"], plane_json["pilot"], plane_json["builtYear"], plane_json["brokenPercentage"], plane_json["speed"], plane_json["minAirportSize"]);
             bool created = serv.createPlane(plane, header);
@@ -73,6 +78,9 @@ void PlaneController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
+            string service_token = req.get_param_value("Service-Token");
+            if (service_token != SERVICE_TOKEN_VALUE)
+                res.status = 403;
             string fields = req.get_param_value("update");
             stringstream ss(fields);
             string item;
@@ -108,6 +116,9 @@ void PlaneController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
+            string service_token = req.get_param_value("Service-Token");
+            if (service_token != SERVICE_TOKEN_VALUE)
+                res.status = 403;
             int id = stoi(req.matches[1]);
             bool deleted = serv.deletePlane(id, header);
             if (deleted)
@@ -128,22 +139,24 @@ void PlaneController::configure(Server* server)
     {
         try
         {
-            // auto header = req.get_header_value("Authorization");
-            // int id = stoi(req.get_param_value("id"));
-            // PlaneModelResponse plane = serv.getPlaneById(id, header);
-            // PlaneModelResponse n_plane = serv.getPlaneCoordinates(plane, header);
-            // json plane_json;
-            // plane_json["id"] = plane.getId();
-            // plane_json["name"] = plane.getName();
-            // plane_json["pilot"] = plane.getPilot();
-            // plane_json["builtYear"] = plane.getBuiltYear();
-            // plane_json["brokenPercentage"] = plane.getBrokenPercentage();
-            // plane_json["speed"] = plane.getSpeed();
-            // plane_json["minAirportSize"] = plane.getMinAirportSize();
-            // plane_json["x"] = n_plane.getX();
-            // plane_json["y"] = n_plane.getY();
-            // res.status = 200;
-            // res.set_content(plane_json.dump(), "application/json");
+            auto header = req.get_header_value("Authorization");
+            string service_token = req.get_param_value("Service-Token");
+            if (service_token != SERVICE_TOKEN_VALUE)
+                res.status = 403;
+            int id = stoi(req.get_param_value("id"));
+            PlaneModelResponse plane = serv.getPlaneById(id, header);
+            json plane_json;
+            plane_json["id"] = plane.getId();
+            plane_json["name"] = plane.getName();
+            plane_json["pilot"] = plane.getPilot();
+            plane_json["builtYear"] = plane.getBuiltYear();
+            plane_json["brokenPercentage"] = plane.getBrokenPercentage();
+            plane_json["speed"] = plane.getSpeed();
+            plane_json["minAirportSize"] = plane.getMinAirportSize();
+            plane_json["x"] = plane.getX();
+            plane_json["y"] = plane.getY();
+            res.status = 200;
+            res.set_content(plane_json.dump(), "application/json");
         } catch (const string& e)
         {
             if (e == "400") {

@@ -5,9 +5,14 @@
 #include "../models/PlaneModelResponse.h"
 #include "../repos/PlaneRepository.h"
 #include "../repos/IdentityRepository.h"
-
+#include "../../header/services/FlightService.h"
+#include "../../header/services/AirportService.h"
+#include "../../header/services/TimeService.h"
 class PlaneService
 {
+    FlightService flightServ;
+    AirportService airServ;
+    TimeService timer;
     PlaneRepository repo;
     IdentityRepository ident;
 public:
