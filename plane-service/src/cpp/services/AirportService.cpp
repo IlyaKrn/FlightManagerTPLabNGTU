@@ -62,6 +62,15 @@ bool AirportService::deleteAirport(long int id, string token)
     bool isAllowed = ident.authorize(permissions, token);
     if (!isAllowed)
         throw 401;
+    list<FlightModel> flights = flight.getAllFlights(token);
+    for (auto fly : flights)
+    {
+        if (fly.getAirportId() == id)
+        {
+            if (fly.getTimestampEnd() >= timer.getCurrentTime(token))
+                throw 409;
+        }
+    }
     bool res = repo.deleteAirport(id);
     return res;
 }
