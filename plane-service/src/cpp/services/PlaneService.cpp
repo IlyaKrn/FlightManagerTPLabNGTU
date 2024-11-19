@@ -1,8 +1,12 @@
 #include "../../header/services/PlaneService.h"
+#include <algorithm>
 #include "../../header/models/PlaneModelResponse.h"
 #include <cmath>
 
-
+bool sortByTime(FlightModel a, FlightModel b)
+{
+    return a.getTimestampEnd() > b.getTimestampEnd();
+}
 using namespace std;
 list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
 {
@@ -11,63 +15,69 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
     bool isAllowed = ident.authorize(permissions ,token);
     if (!isAllowed)
         throw 401;
-    //Объяснение кода в getPlaneById
     list<PlaneModel> planes = repo.getPlanes();
     list<PlaneModelResponse> planesResponse;
     for (auto plane : planes)
     {
-        PlaneModelResponse planeResponse(plane.getId(), plane.getName(), plane.getPilot(), plane.getBuiltYear(), plane.getBrokenPercentage(), plane.getSpeed(), plane.getMinAirportSize(), 0, 0);
-        long int planeId = plane.getId();
-        list<FlightModel> flights = flight.getFlights(nullptr, nullptr , nullptr, nullptr, &planeId);
+        //create object planeResponse
+        PlaneModelResponse planeResponse(planes.front().getId(), planes.front().getName(), planes.front().getPilot(), planes.front().getBuiltYear(), planes.front().getBrokenPercentage(), planes.front().getSpeed(), planes.front().getMinAirportSize(), 0, 0);
+        long int planeId = planes.front().getId();
+        //Taking all flights with our plane
+        list<FlightModel> flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr,&planeId);
         if (!flights.empty())
         {
-            long int last_flight_time = 0;
+            //If we found flights, we search last flight and, if that's it, current flight
+            long int last_flight_time = 0; //in there we will have last flight time
             FlightModel last_flight(0,0,0,0,0,0);
             FlightModel current_fly(0,0,0,0,0,0);
-            for (auto flight : flights)
+            sort(flights.begin(), flights.end(), sortByTime);
+            if (flights.front().getTimestampEnd() > timer.getCurrentTime(token))
             {
-                if (flight.getTimestampEnd() > last_flight_time)
-                {
-                    if (flight.getTimestampStart() < timer.getCurrentTime(token))
-                    {
-                        last_flight_time = flight.getTimestampEnd();
-                        last_flight = flight;
-                    } else
-                    {
-                        current_fly = flight;
-                    }
-                }
+                current_fly = flights.front();
+                flights.remove(flights.front());
+                last_flight = flights.front();
             }
+            else
+                last_flight = flights.front();
             if (last_flight.getAirportId())
             {
+                //Found airport from what plane took off
                 long int last_flight_air_id = last_flight.getAirportId();
                 list<AirportModel> airport1 = air.getAirports(&last_flight_air_id);
-                double x1 = airport1.front().getX();
-                double y1 = airport1.front().getY();
-                int speed = planeResponse.getSpeed();
+                if (airport1.empty())
+                    throw 404;
+                double x1 = airport1.front().getX(); //start airport coordinate x
+                double y1 = airport1.front().getY(); //start airport coordinate y
+                int speed = planes.front().getSpeed(); //plane speed
                 if (current_fly.getId() != 0)
                 {
+                    //If we found current flight, we will find airport from that flight
                     long int current_flight_air_id = current_fly.getAirportId();
                     list<AirportModel> airport2 = air.getAirports(&current_flight_air_id);
-                    double x2 = airport2.front().getX();
-                    double y2 = airport2.front().getY();
-                    double length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+                    if (airport2.empty())
+                        throw 404;
+                    double x2 = airport2.front().getX(); //end airport coordnate x
+                    double y2 = airport2.front().getY(); //end airport coordinate y
+                    double length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)); //lenght of flight
                     long int elapsedTime = timer.getCurrentTime(token) - current_fly.getTimestampStart();
-
+                    //Calculating airport coordinates
                     double newX = x1 + (x2 - x1) * (speed * elapsedTime / length);
                     double newY = y1 + (y2 - y1) * (speed * elapsedTime / length);
                     planeResponse.setX(newX);
                     planeResponse.setY(newY);
                 } else
                 {
+                    //If we didn't find executing flight, we set coordinates of start airport
                     planeResponse.setX(x1);
                     planeResponse.setY(y1);
                 }
             }
         } else
         {
-            long int air_id = flights.front().getAirportId();
-            list<AirportModel> airport = air.getAirports(&air_id);
+            //If plane didn't fly yer, we take coordinates of airport, that first in list of airports.
+            list<AirportModel> airport = air.getAirports();
+            if (airport.empty())
+                throw 404;
             planeResponse.setX(airport.front().getX());
             planeResponse.setY(airport.front().getY());
         }
@@ -84,68 +94,66 @@ PlaneModelResponse PlaneService::getPlaneById(long int id, string token)
     if (!isAllowed)
             throw 401;
     list<PlaneModel> planes = repo.getPlanes(&id);
-    //Создаем объект planeResponse
+    //create object planeResponse
     PlaneModelResponse planeResponse(planes.front().getId(), planes.front().getName(), planes.front().getPilot(), planes.front().getBuiltYear(), planes.front().getBrokenPercentage(), planes.front().getSpeed(), planes.front().getMinAirportSize(), 0, 0);
     long int planeId = planes.front().getId();
-    //Берем все полеты с участием данного самолета
+    //Taking all flights with our plane
     list<FlightModel> flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr,&planeId);
     if (!flights.empty())
     {
-        //Если найдены полеты, то ищем последний полет и, если есть, текущий полет
-        long int last_flight_time = 0; //В эту переменную будет записано время последнего полета (не текущего)
+        //If we found flights, we search last flight and, if that's it, current flight
+        long int last_flight_time = 0; //in there we will have last flight time
         FlightModel last_flight(0,0,0,0,0,0);
         FlightModel current_fly(0,0,0,0,0,0);
-        for (auto flight : flights)
+        if (flights.front().getTimestampEnd() > timer.getCurrentTime(token))
         {
-            //Здесь ищется последний полет (если найден исполняемый, то мы его сохраняем)
-            if (flight.getTimestampEnd() > last_flight_time)
-            {
-                if (flight.getTimestampStart() < timer.getCurrentTime(token))
-                {
-                    last_flight_time = flight.getTimestampEnd();
-                    last_flight = flight;
-                } else
-                {
-                    current_fly = flight;
-                }
-            }
+            current_fly = flights.front();
+            flights.remove(flights.front());
+            last_flight = flights.front();
         }
+        else
+            last_flight = flights.front();
         if (last_flight.getAirportId())
         {
-            //Находим аэропорт из которого вылетел самолет (его координаты x1, y1)
+            //Found airport from what plane took off
             long int last_flight_air_id = last_flight.getAirportId();
             list<AirportModel> airport1 = air.getAirports(&last_flight_air_id);
-            double x1 = airport1.front().getX();
-            double y1 = airport1.front().getY();
-            //скорость самолета
-            int speed = planes.front().getSpeed();
+            if (airport1.empty())
+                throw 404;
+            double x1 = airport1.front().getX(); //start airport coordinate x
+            double y1 = airport1.front().getY(); //start airport coordinate y
+            int speed = planes.front().getSpeed(); //plane speed
             if (current_fly.getId() != 0)
             {
-                //Если найден текущий полет, то находим аэропорт из этого полета
+                //If we found current flight, we will find airport from that flight
                 long int current_fly_air_id = current_fly.getAirportId();
                 list<AirportModel> airport2 = air.getAirports(&current_fly_air_id);
-                double x2 = airport2.front().getX();
-                double y2 = airport2.front().getY();
-                //Вычисляем длину пути и пройденное время с момента вылета
-                double length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
-                long int elapsedTime = timer.getCurrentTime(token) - current_fly.getTimestampStart();
-                //Вычисляем координаты самолета (формула взята из прошлой лабы)
+                if (airport2.empty())
+                    throw 404;
+                if (airport2.empty())
+                    throw 404;
+                double x2 = airport2.front().getX(); //end airport coordnate x
+                double y2 = airport2.front().getY(); //end airport coordinate y
+                double length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)); //lenght of flight
+                long int elapsedTime = timer.getCurrentTime(token) - current_fly.getTimestampStart(); //time, past since the beginning of flight
+                //Calculating airport coordinates
                 double newX = x1 + (x2 - x1) * (speed * elapsedTime / length);
                 double newY = y1 + (y2 - y1) * (speed * elapsedTime / length);
                 planeResponse.setX(newX);
                 planeResponse.setY(newY);
             } else
             {
-                //Если нет текущего полета, то записываем координаты аэропорта (в который прилетел самолет из его ласт пути)
+                //If we didn't find executing flight, we set coordinates of start airport
                 planeResponse.setX(x1);
                 planeResponse.setY(y1);
             }
         }
     } else
     {
-        //Если самолет не летал еще, то мы берем координаты первого аэропорта в списке аэропортов.
-        long int airId = flights.front().getAirportId();
-        list<AirportModel> airport = air.getAirports(&airId);
+        //If plane didn't fly yer, we take coordinates of airport, that first in list of airports.
+        list<AirportModel> airport = air.getAirports();
+        if (airport.empty())
+            throw 404;
         planeResponse.setX(airport.front().getX());
         planeResponse.setY(airport.front().getY());
     }
