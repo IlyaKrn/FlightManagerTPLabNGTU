@@ -33,9 +33,7 @@ bool IdentityRepository::authorize(set<string> permissions, string token)
     json authorize;
     authorize["permissions"] = json::array();
     for (auto permission : permissions)
-    {
         authorize["permissions"].push_back(permission);
-    }
     authorize["token"] = token;
     auto res = cli.Post(AUTHORIZE_MAPPING, headers, authorize.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
