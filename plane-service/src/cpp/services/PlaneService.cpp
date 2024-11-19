@@ -11,24 +11,20 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
     bool isAllowed = ident.authorize(permissions ,token);
     if (!isAllowed)
         throw 401;
+    //Объяснение кода в getPlaneById
     list<PlaneModel> planes = repo.getPlanes();
     list<PlaneModelResponse> planesResponse;
     for (auto plane : planes)
     {
         PlaneModelResponse planeResponse(plane.getId(), plane.getName(), plane.getPilot(), plane.getBuiltYear(), plane.getBrokenPercentage(), plane.getSpeed(), plane.getMinAirportSize(), 0, 0);
-        list<FlightModel> flights = flightServ.getAllFlights(token);
-        list<FlightModel> new_flights;
-        for (auto flight : flights)
-        {
-            if (flight.getPlaneId() == plane.getId())
-                new_flights.push_back(flight);
-        }
-        if (!new_flights.empty())
+        long int planeId = plane.getId();
+        list<FlightModel> flights = flight.getFlights(nullptr, nullptr , nullptr, nullptr, &planeId);
+        if (!flights.empty())
         {
             long int last_flight_time = 0;
             FlightModel last_flight(0,0,0,0,0,0);
             FlightModel current_fly(0,0,0,0,0,0);
-            for (auto flight : new_flights)
+            for (auto flight : flights)
             {
                 if (flight.getTimestampEnd() > last_flight_time)
                 {
@@ -44,15 +40,17 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
             }
             if (last_flight.getAirportId())
             {
-                AirportModel airport1 = airServ.getAirportById(last_flight.getAirportId(), token);
-                double x1 = airport1.getX();
-                double y1 = airport1.getY();
+                long int last_flight_air_id = last_flight.getAirportId();
+                list<AirportModel> airport1 = air.getAirports(&last_flight_air_id);
+                double x1 = airport1.front().getX();
+                double y1 = airport1.front().getY();
                 int speed = planeResponse.getSpeed();
                 if (current_fly.getId() != 0)
                 {
-                    AirportModel airport2 = airServ.getAirportById(current_fly.getAirportId(), token);
-                    double x2 = airport2.getX();
-                    double y2 = airport2.getY();
+                    long int current_flight_air_id = current_fly.getAirportId();
+                    list<AirportModel> airport2 = air.getAirports(&current_flight_air_id);
+                    double x2 = airport2.front().getX();
+                    double y2 = airport2.front().getY();
                     double length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
                     long int elapsedTime = timer.getCurrentTime(token) - current_fly.getTimestampStart();
 
@@ -68,9 +66,10 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
             }
         } else
         {
-            AirportModel airport = airServ.getAirportById(flights.front().getAirportId(), token);
-            planeResponse.setX(airport.getX());
-            planeResponse.setY(airport.getY());
+            long int air_id = flights.front().getAirportId();
+            list<AirportModel> airport = air.getAirports(&air_id);
+            planeResponse.setX(airport.front().getX());
+            planeResponse.setY(airport.front().getY());
         }
         planesResponse.push_back(planeResponse);
     }
@@ -85,21 +84,20 @@ PlaneModelResponse PlaneService::getPlaneById(long int id, string token)
     if (!isAllowed)
             throw 401;
     list<PlaneModel> planes = repo.getPlanes(&id);
+    //Создаем объект planeResponse
     PlaneModelResponse planeResponse(planes.front().getId(), planes.front().getName(), planes.front().getPilot(), planes.front().getBuiltYear(), planes.front().getBrokenPercentage(), planes.front().getSpeed(), planes.front().getMinAirportSize(), 0, 0);
-    list<FlightModel> flights = flightServ.getAllFlights(token);
-    list<FlightModel> new_flights;
-    for (auto flight : flights)
+    long int planeId = planes.front().getId();
+    //Берем все полеты с участием данного самолета
+    list<FlightModel> flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr,&planeId);
+    if (!flights.empty())
     {
-        if (flight.getPlaneId() == planes.front().getId())
-            new_flights.push_back(flight);
-    }
-    if (!new_flights.empty())
-    {
-        long int last_flight_time = 0;
+        //Если найдены полеты, то ищем последний полет и, если есть, текущий полет
+        long int last_flight_time = 0; //В эту переменную будет записано время последнего полета (не текущего)
         FlightModel last_flight(0,0,0,0,0,0);
         FlightModel current_fly(0,0,0,0,0,0);
-        for (auto flight : new_flights)
+        for (auto flight : flights)
         {
+            //Здесь ищется последний полет (если найден исполняемый, то мы его сохраняем)
             if (flight.getTimestampEnd() > last_flight_time)
             {
                 if (flight.getTimestampStart() < timer.getCurrentTime(token))
@@ -114,33 +112,42 @@ PlaneModelResponse PlaneService::getPlaneById(long int id, string token)
         }
         if (last_flight.getAirportId())
         {
-            AirportModel airport1 = airServ.getAirportById(last_flight.getAirportId(), token);
-            double x1 = airport1.getX();
-            double y1 = airport1.getY();
+            //Находим аэропорт из которого вылетел самолет (его координаты x1, y1)
+            long int last_flight_air_id = last_flight.getAirportId();
+            list<AirportModel> airport1 = air.getAirports(&last_flight_air_id);
+            double x1 = airport1.front().getX();
+            double y1 = airport1.front().getY();
+            //скорость самолета
             int speed = planes.front().getSpeed();
             if (current_fly.getId() != 0)
             {
-                AirportModel airport2 = airServ.getAirportById(current_fly.getAirportId(), token);
-                double x2 = airport2.getX();
-                double y2 = airport2.getY();
+                //Если найден текущий полет, то находим аэропорт из этого полета
+                long int current_fly_air_id = current_fly.getAirportId();
+                list<AirportModel> airport2 = air.getAirports(&current_fly_air_id);
+                double x2 = airport2.front().getX();
+                double y2 = airport2.front().getY();
+                //Вычисляем длину пути и пройденное время с момента вылета
                 double length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
                 long int elapsedTime = timer.getCurrentTime(token) - current_fly.getTimestampStart();
-
+                //Вычисляем координаты самолета (формула взята из прошлой лабы)
                 double newX = x1 + (x2 - x1) * (speed * elapsedTime / length);
                 double newY = y1 + (y2 - y1) * (speed * elapsedTime / length);
                 planeResponse.setX(newX);
                 planeResponse.setY(newY);
             } else
             {
+                //Если нет текущего полета, то записываем координаты аэропорта (в который прилетел самолет из его ласт пути)
                 planeResponse.setX(x1);
                 planeResponse.setY(y1);
             }
         }
     } else
     {
-        AirportModel airport = airServ.getAirportById(flights.front().getAirportId(), token);
-        planeResponse.setX(airport.getX());
-        planeResponse.setY(airport.getY());
+        //Если самолет не летал еще, то мы берем координаты первого аэропорта в списке аэропортов.
+        long int airId = flights.front().getAirportId();
+        list<AirportModel> airport = air.getAirports(&airId);
+        planeResponse.setX(airport.front().getX());
+        planeResponse.setY(airport.front().getY());
     }
     return planeResponse;
 }
@@ -161,7 +168,7 @@ bool PlaneService::deletePlane(long int id, string token)
     bool isAllowed = ident.authorize(permissions ,token);
     if (!isAllowed)
         throw 401;
-    list<FlightModel> flights = flightServ.getAllFlights(token);
+    list<FlightModel> flights = flight.getFlights();
     for (auto fly : flights)
     {
         if (fly.getPlaneId() == id)

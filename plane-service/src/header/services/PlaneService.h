@@ -10,8 +10,8 @@
 #include "../../header/services/TimeService.h"
 class PlaneService
 {
-    FlightService flightServ;
-    AirportService airServ;
+    FlightRepository flight;
+    AirportRepository air;
     TimeService timer;
     PlaneRepository repo;
     IdentityRepository ident;
