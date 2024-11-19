@@ -31,6 +31,7 @@ bool FlightService::createFlight(FlightModel flight, string token)
     bool isAllowed = ident.authorize(permissions, token);
     if (!isAllowed)
         throw 401;
+
     bool res = repo.createFlight(flight);
     return res;
 }
