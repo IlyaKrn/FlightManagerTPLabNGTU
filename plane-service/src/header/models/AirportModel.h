@@ -10,7 +10,7 @@ class AirportModel
     double _x;
     double _y;
 public:
-    AirportModel(int id, std::string name, int size, double x, double y);
+    AirportModel(long int id, std::string name, int size, double x, double y);
 
     long int getId();
     std::string getName();

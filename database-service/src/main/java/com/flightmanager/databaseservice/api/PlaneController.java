@@ -4,6 +4,7 @@ import com.flightmanager.databaseservice.models.PlaneModel;
 import com.flightmanager.databaseservice.repos.PlaneRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,10 +47,10 @@ public class PlaneController {
                 models = models.stream().filter(m -> m.getSpeed().equals(speed)).collect(Collectors.toList());
             if (minAirportSize != null)
                 models = models.stream().filter(m -> m.getMinAirportSize().equals(minAirportSize)).collect(Collectors.toList());
-            log.info("get plane successful ({} entities)", models.size());
+            log.info("get plane successful ({} entities) [code 200]", models.size());
             return ResponseEntity.ok(models);
         } catch (Exception e) {
-            log.warn("get plane failed: {}", e.getMessage());
+            log.warn("get plane failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -59,14 +60,14 @@ public class PlaneController {
         try {
             data.setId(0L);
             if (containsNullFields(data)) {
-                log.warn("create plane failed: invalid data");
+                log.warn("create plane failed: invalid data [code 400]");
                 return ResponseEntity.status(400).build();
             }
             PlaneModel model = repo.save(data);
-            log.info("create plane successful: id={}", model.getId());
+            log.info("create plane successful: id={} [code 200]", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
-            log.warn("create plane failed: {}", e.getMessage());
+            log.warn("create plane failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -75,12 +76,12 @@ public class PlaneController {
     public ResponseEntity<PlaneModel> update(@RequestBody PlaneModel data, @RequestParam("update") String update) {
         try {
             if (data.getId() == null) {
-                log.warn("update plane failed: id not provided");
+                log.warn("update plane failed: id not provided [code 400]");
                 return ResponseEntity.status(400).build();
             }
             PlaneModel fromDB = repo.findById(data.getId()).orElse(null);
             if (fromDB == null) {
-                log.warn("update plane failed: plane not found");
+                log.warn("update plane failed: plane not found [code 400]");
                 return ResponseEntity.status(400).build();
             }
 
@@ -98,15 +99,15 @@ public class PlaneController {
             if (!fields.contains("minAirportSize"))
                 data.setMinAirportSize(fromDB.getMinAirportSize());
             if (containsNullFields(data)) {
-                log.warn("update plane failed: invalid data");
+                log.warn("update plane failed: invalid data [code 400]");
                 return ResponseEntity.status(400).build();
             }
 
             PlaneModel model = repo.save(data);
-            log.info("update plane successful: id={}", model.getId());
+            log.info("update plane successful: id={} [code 200]", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
-            log.warn("update plane failed: {}", e.getMessage());
+            log.warn("update plane failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -115,10 +116,13 @@ public class PlaneController {
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
         try {
             repo.deleteById(id);
-            log.info("delete plane successful: id={}", id);
+            log.info("delete plane successful: id={} [code 200]", id);
+            return ResponseEntity.ok().build();
+        } catch (EmptyResultDataAccessException e) {
+            log.warn("delete plane failed: id={} not exists [code 200]", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            log.warn("delete plane failed: {}", e.getMessage());
+            log.warn("delete plane failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
@@ -129,7 +133,9 @@ public class PlaneController {
                 data.getBuiltYear() == null ||
                 data.getBrokenPercentage() == null ||
                 data.getSpeed() == null ||
-                data.getMinAirportSize() == null;
+                data.getMinAirportSize() == null ||
+                data.getName().isEmpty() ||
+                data.getPilot().isEmpty();
     }
 
 }
