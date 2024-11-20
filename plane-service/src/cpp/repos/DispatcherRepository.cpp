@@ -6,7 +6,7 @@
 using namespace std;
 using namespace httplib;
 using namespace nlohmann;
-list<DispatcherModel> DispatcherRepository::getDispatchers(long int* id, string* firstName, string* lastName, string* email, string* password, bool* isBanned, set<RoleModel>* roles)
+list<DispatcherModel> DispatcherRepository::getDispatchers(long int* id, string* firstName, string* lastName, string* email, string* password, bool* isBanned, set<RoleModel*>* roles)
 {
     Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
 
@@ -16,14 +16,14 @@ list<DispatcherModel> DispatcherRepository::getDispatchers(long int* id, string*
     string role;
     for (auto item : *roles)
     {
-        if (item == RoleModel::ADMIN)
+        if (*item == RoleModel::ADMIN)
         {
             if (role.empty())
                 role += "ADMIN";
             else
                 role += ",ADMIN";
         }
-        if (item == RoleModel::DISPATCHER)
+        if (*item == RoleModel::DISPATCHER)
         {
             if (role.empty())
                 role += "DISPATCHER";
@@ -47,7 +47,7 @@ list<DispatcherModel> DispatcherRepository::getDispatchers(long int* id, string*
     if (roles != nullptr)
         params.insert(make_pair("roles", role));
     auto res = cli.Get(DISPATCHER_GET_BY_ID_MAPPING, params, headers);
-    if (res->status == 200)
+    if (res->status >= 200 && res->status < 300)
     {
         json dispatcher_json = json::parse(res->body);
         list<DispatcherModel> result;
@@ -66,7 +66,7 @@ list<DispatcherModel> DispatcherRepository::getDispatchers(long int* id, string*
         }
         return result;
     }
-    throw string("500");
+    throw res->status;
 }
 bool DispatcherRepository::updateDispatchers(DispatcherModel dispatcher, set<string> updates)
 {
@@ -100,10 +100,8 @@ bool DispatcherRepository::updateDispatchers(DispatcherModel dispatcher, set<str
             update += "," + item;
     }
     auto res = cli.Post(DISPATCHER_UPDATE_MAPPING + "?update" + update, headers, dispatcher_json.dump(), "application/json");
-    if (res->status == 200)
+    if (res->status >= 200 && res->status < 300)
         return true;
-    if (res->status == 400)
-        throw string("400");
-    throw string("500");
+    throw res->status;
 }
 

@@ -19,7 +19,6 @@ const std::string DATABASE_SERVICE_GET_AIRPORTS = "/api/airport/get";
 const int IDENTITY_SERVICE_PORT = std::stoi(std::string(std::getenv("IDENTITY_SERVICE_PORT")));
 const std::string IDENTITY_SERVICE_HOST = "127.0.0.1";
 const std::string IDENTITY_SERVICE_URL = std::string(std::getenv("IDENTITY_SERVICE_URL"));
-const std::string IDENTITY_SERVICE_GET_AIRPORTS = "/api/airport/get";
 
 // mappings
 const std::string GET_ID_BY_TOKEN_MAPPING = "/api/auth/getIdByToken";
@@ -45,3 +44,6 @@ const std::string DISPATCHER_UPDATE_MAPPING = "/api/dispatcher/update";
 const std::string FLIGHT_GET_ALL_MAPPING = "/api/flights/getAll";
 const std::string FLIGHT_GET_BY_ID_MAPPING = "/api/flights/get";
 const std::string FLIGHT_CREATE_MAPPING = "/api/flights/create";
+
+const std::string TIME_SKIP_MAPPING = "/api/time/skip";
+const std::string TIME_GET_MAPPING = "/api/time/get";

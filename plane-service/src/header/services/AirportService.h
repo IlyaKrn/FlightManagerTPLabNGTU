@@ -4,16 +4,19 @@
 #include <string>
 #include "../repos/AirportRepository.h"
 #include "../../header/repos/IdentityRepository.h"
-
+#include "../../header/repos/FlightRepository.h"
+#include "../../header/services/TimeService.h"
 
 class AirportService
 {
     AirportRepository repo;
     IdentityRepository ident;
+    FlightRepository flight;
+    TimeService timer;
 public:
-    std::list<AirportModel> getAllAirports(std::string token, std::set<std::string> permissions);
-    AirportModel getAirportById(long int id, std::string token, std::set<std::string> permissions);
-    bool editAirport(AirportModel airport, std::set<std::string> update, std::string token, std::set<std::string> permissions);
-    bool createAirport(AirportModel airport, std::string token, std::set<std::string> permissions);
-    bool deleteAirport(long int id, std::string token, std::set<std::string> permissions);
+    std::list<AirportModel> getAllAirports(std::string token);
+    AirportModel getAirportById(long int id, std::string token);
+    bool updateAirport(AirportModel airport, std::set<std::string> update, std::string token);
+    bool createAirport(AirportModel airport, std::string token);
+    bool deleteAirport(long int id, std::string token);
 };

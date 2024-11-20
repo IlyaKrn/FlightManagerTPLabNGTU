@@ -4,7 +4,7 @@
 #include "header/controllers/DispatcherController.h"
 #include "header/controllers/FlightController.h"
 #include "header/controllers/PlaneController.h"
-
+#include "header/controllers/TimeController.h"
 using namespace std;
 
 
@@ -15,6 +15,7 @@ int main(int argc, char* argv[])
     PlaneController().configure(&server);
     DispatcherController().configure(&server);
     FlightController().configure(&server);
+    TimeController().configure(&server);
     server.listen(SERVER_HOST, SERVER_PORT);
 }
 

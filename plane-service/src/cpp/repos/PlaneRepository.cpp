@@ -29,7 +29,7 @@ list<PlaneModel> PlaneRepository::getPlanes(long int* id, string* name, string* 
     if (minAirportSize != nullptr)
         params.insert(make_pair("minAirportSize", to_string(*minAirportSize)));
     auto res = cli.Get(PLANE_GET_BY_ID_MAPPING, params, headers);
-    if (res->status == 200)
+    if (res->status >= 200 && res->status < 300)
     {
         json planes = json::parse(res->body);
         list<PlaneModel> result;
@@ -40,7 +40,7 @@ list<PlaneModel> PlaneRepository::getPlanes(long int* id, string* name, string* 
         }
         return result;
     }
-    throw string("500");
+    throw res->status;
 }
 bool PlaneRepository::createPlane(PlaneModel plane)
 {
@@ -59,11 +59,9 @@ bool PlaneRepository::createPlane(PlaneModel plane)
     plane_json["minAirportSize"] = plane.getMinAirportSize();
 
     auto res = cli.Post(PLANE_CREATE_MAPPING, headers, plane_json.dump(), "application/json");
-    if (res->status == 200)
+    if (res->status >= 200 && res->status < 300)
         return true;
-    if (res->status == 400)
-        throw string("400");
-    throw string("500");
+    throw res->status;
 }
 bool PlaneRepository::deletePlane(long int id)
 {
@@ -74,9 +72,9 @@ bool PlaneRepository::deletePlane(long int id)
     };
 
     auto res = cli.Delete(PLANE_DELETE_MAPPING + "/" + to_string(id), headers);
-    if (res->status == 200)
+    if (res->status >= 200 && res->status < 300)
         return true;
-    throw string("500");
+    throw res->status;
 }
 bool PlaneRepository::updatePlane(PlaneModel plane, set<string> updates)
 {
@@ -102,10 +100,8 @@ bool PlaneRepository::updatePlane(PlaneModel plane, set<string> updates)
             update += "," + item;
     }
     auto res = cli.Post(PLANE_UPDATE_MAPPING + "?update=" + update, headers, plane_json.dump(), "application/json");
-    if (res->status == 200)
+    if (res->status >= 200 && res->status < 300)
         return true;
-    if (res->status == 400)
-        throw string("400");
-    throw string("500");
+    throw res->status;
 }
 

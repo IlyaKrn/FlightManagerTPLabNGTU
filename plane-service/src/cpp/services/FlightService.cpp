@@ -1,52 +1,37 @@
 #include "../../header/services/FlightService.h"
-#include <stdexcept>
 
-std::pmr::list<FlightModel> FlightService::getAllFlights(std::string token, std::set<std::string> permissions)
+using namespace std;
+
+list<FlightModel> FlightService::getAllFlights(string token)
 {
-    bool isAllowed = ident.authorize(permissions ,token);
+    set<string> permissions;
+    permissions.insert("getAllFlights");
+    bool isAllowed = ident.authorize(permissions, token);
     if (!isAllowed)
-    {
-        throw std::runtime_error("Отказано в доступе");
-    }
-    std::pmr::list<FlightModel> flights = repo.getFlights("");
-    if (!flights.empty())
-    {
-        return flights;
-    }
-    return std::pmr::list<FlightModel>();
+        throw 401;
+    list<FlightModel> flights = repo.getFlights();
+    return flights;
 }
 
-FlightModel FlightService::getFlightById(int id, std::string token, std::set<std::string> permissions)
+FlightModel FlightService::getFlightById(long int id, string token)
 {
-    bool isAllowed = ident.authorize(permissions ,token);
+    set<string> permissions;
+    permissions.insert("getFlightById");
+    bool isAllowed = ident.authorize(permissions, token);
     if (!isAllowed)
-    {
-        throw std::runtime_error("Отказано в доступе");
-    }
-    std::pmr::list<FlightModel> flights = repo.getFlights(std::to_string(id));
-    FlightModel empty_flight;
-    for (auto flight : flights)
-    {
-        if (flight.getId() != empty_flight.getId())
-        {
-            return flight;
-        }
-    }
-    return empty_flight;
+        throw 401;
+    list<FlightModel> flights = repo.getFlights(&id);
+    return flights.front();
 }
-bool FlightService::createFlight(FlightModel flight, std::string token, std::set<std::string> permissions)
+
+bool FlightService::createFlight(FlightModel flight, string token)
 {
-    bool isAllowed = ident.authorize(permissions ,token);
+    set<string> permissions;
+    permissions.insert("createFlight");
+    bool isAllowed = ident.authorize(permissions, token);
     if (!isAllowed)
-    {
-        throw std::runtime_error("Отказано в доступе");
-    }
+        throw 401;
+
     bool res = repo.createFlight(flight);
-    if (res)
-    {
-        return true;
-    }
-    return false;
+    return res;
 }
-
-
