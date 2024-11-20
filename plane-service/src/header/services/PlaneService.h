@@ -12,12 +12,11 @@ class PlaneService
 {
     FlightRepository flight;
     AirportRepository air;
-    TimeService timer;
+    TimeRepository timer;
     PlaneRepository repo;
     IdentityRepository ident;
 public:
     std::list<PlaneModelResponse> getAllPlanes(std::string token);
-    PlaneModelResponse getPlaneById(long int id, std::string token);
     bool createPlane(PlaneModel plane, std::string token);
     bool deletePlane(long int id, std::string token);
     bool updatePlane(PlaneModel plane, std::set<std::string> update, std::string token);

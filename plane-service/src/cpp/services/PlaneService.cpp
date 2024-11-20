@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "../../header/models/PlaneModelResponse.h"
 #include <cmath>
+#include <ctime>
 
 bool sortByTime(FlightModel a, FlightModel b)
 {
@@ -31,7 +32,7 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
             FlightModel last_flight(0,0,0,0,0,0);
             FlightModel current_fly(0,0,0,0,0,0);
             flights.sort(sortByTime);
-            if (flights.front().getTimestampEnd() > timer.getCurrentTime(token))
+            if (flights.front().getTimestampEnd() > static_cast<long int>(time(0)) + timer.getAddedTime())
             {
                 current_fly = flights.front();
                 auto it = next(flights.begin(), 1);
@@ -59,7 +60,7 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
                     double x2 = airport2.front().getX(); //end airport coordnate x
                     double y2 = airport2.front().getY(); //end airport coordinate y
                     double length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)); //lenght of flight
-                    long int elapsedTime = timer.getCurrentTime(token) - current_fly.getTimestampStart();
+                    long int elapsedTime = (timer.getAddedTime() + static_cast<long int>(time(0))) - current_fly.getTimestampStart();
                     //Calculating airport coordinates
                     double newX = x1 + (x2 - x1) * (speed * elapsedTime / length);
                     double newY = y1 + (y2 - y1) * (speed * elapsedTime / length);
@@ -108,7 +109,7 @@ bool PlaneService::deletePlane(long int id, string token)
     {
         if (fly.getPlaneId() == id)
         {
-            if (fly.getTimestampEnd() >= timer.getCurrentTime(token))
+            if (fly.getTimestampEnd() >= timer.getAddedTime() + static_cast<long int>(time(0)))
                 throw 409;
         }
     }

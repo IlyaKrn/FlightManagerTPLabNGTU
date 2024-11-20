@@ -1,5 +1,6 @@
 #include "../../header/services/AirportService.h"
 #include <algorithm>
+#include <ctime>
 using namespace std;
 
 list<AirportModel> AirportService::getAllAirports(string token)
@@ -57,7 +58,7 @@ bool AirportService::deleteAirport(long int id, string token)
     list<FlightModel> flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr, nullptr, &id);
     for (auto fly : flights)
     {
-        if (fly.getTimestampEnd() >= timer.getCurrentTime(token))
+        if (fly.getTimestampEnd() >= static_cast<long int>(time(0)) + timer.getAddedTime())
             throw 409;
     }
     bool res = repo.deleteAirport(id);

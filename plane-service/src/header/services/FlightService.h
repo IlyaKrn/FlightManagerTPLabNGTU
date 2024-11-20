@@ -11,6 +11,5 @@ class FlightService
     IdentityRepository ident;
 public:
     std::list<FlightModel> getAllFlights(std::string token);
-    FlightModel getFlightById(long int id, std::string token);
     bool createFlight(FlightModel flight, std::string token);
 };
