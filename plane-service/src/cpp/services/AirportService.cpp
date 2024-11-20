@@ -13,16 +13,6 @@ list<AirportModel> AirportService::getAllAirports(string token)
     return airports;
 }
 
-AirportModel AirportService::getAirportById(long int id, string token)
-{
-    set<string> permissions;
-    permissions.insert("getAirportById");
-    bool isAllowed = ident.authorize(permissions, token);
-    if (!isAllowed)
-        throw 401;
-    list<AirportModel> airports = repo.getAirports(&id);
-    return airports.front();
-}
 
 bool AirportService::createAirport(AirportModel airport, string token)
 {
@@ -42,7 +32,9 @@ bool AirportService::updateAirport(AirportModel airport, set<string> update, str
     bool isAllowed = ident.authorize(permissions, token);
     if (!isAllowed)
         throw 401;
-    AirportModel n_airport = getAirportById(airport.getId(), token);
+    long int airId = airport.getId();
+    list<AirportModel> n_airports = repo.getAirports(&airId);
+    AirportModel n_airport = n_airports.front();
     if (update.count("name") > 0)
         n_airport.setName(airport.getName());
     if (update.count("size") > 0)

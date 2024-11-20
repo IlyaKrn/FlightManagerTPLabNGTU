@@ -15,7 +15,7 @@ void PlaneController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
-            string service_token = req.get_param_value("Service-Token");
+            string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             list<PlaneModelResponse> planes = serv.getAllPlanes(header);
@@ -52,7 +52,7 @@ void PlaneController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
-            string service_token = req.get_param_value("Service-Token");
+            string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             json plane_json = json::parse(req.body);
@@ -78,7 +78,7 @@ void PlaneController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
-            string service_token = req.get_param_value("Service-Token");
+            string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             string fields = req.get_param_value("update");
@@ -116,7 +116,7 @@ void PlaneController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
-            string service_token = req.get_param_value("Service-Token");
+            string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             int id = stoi(req.matches[1]);
@@ -132,45 +132,6 @@ void PlaneController::configure(Server* server)
         } catch (const exception& e)
         {
             cout << "exception occured" << e.what() << endl;
-            res.status = 500;
-        }
-    });
-    server->Get(PLANE_GET_BY_ID_MAPPING, [this](const Request& req, Response& res)
-    {
-        try
-        {
-            auto header = req.get_header_value("Authorization");
-            string service_token = req.get_param_value("Service-Token");
-            if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
-            int id = stoi(req.get_param_value("id"));
-            PlaneModelResponse plane = serv.getPlaneById(id, header);
-            json plane_json;
-            plane_json["id"] = plane.getId();
-            plane_json["name"] = plane.getName();
-            plane_json["pilot"] = plane.getPilot();
-            plane_json["builtYear"] = plane.getBuiltYear();
-            plane_json["brokenPercentage"] = plane.getBrokenPercentage();
-            plane_json["speed"] = plane.getSpeed();
-            plane_json["minAirportSize"] = plane.getMinAirportSize();
-            plane_json["x"] = plane.getX();
-            plane_json["y"] = plane.getY();
-            res.status = 200;
-            res.set_content(plane_json.dump(), "application/json");
-        } catch (const string& e)
-        {
-            if (e == "400") {
-                cout << "Bad Request" << endl;
-                res.status = 400;
-            }
-            if (e == "401")
-            {
-                cout << "Access denied" << endl;
-                res.status = 401;
-            }
-        } catch (const exception& err)
-        {
-            cout << "PlaneController::PlaneController: exception occured" << err.what() << endl;
             res.status = 500;
         }
     });

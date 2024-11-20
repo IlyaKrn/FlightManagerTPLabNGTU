@@ -15,7 +15,7 @@ void AirportController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
-            string service_token = req.get_param_value("Service-Token");
+            string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             list<AirportModel> airports = serv.getAllAirports(header);
@@ -47,7 +47,7 @@ void AirportController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
-            string service_token = req.get_param_value("Service-Token");
+            string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             json result = json::parse(req.body);
@@ -74,7 +74,7 @@ void AirportController::configure(Server* server)
         {
             auto header = req.get_header_value("Authorization");
             string fields = req.get_param_value("update");
-            string service_token = req.get_param_value("Service-Token");
+            string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             stringstream ss(fields);
@@ -112,9 +112,9 @@ void AirportController::configure(Server* server)
     try
     {
         auto header = req.get_header_value("Authorization");
-        string service_token = req.get_param_value("Service-Token");
-            if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+        string service_token = req.get_header_value("Service-Token");
+        if (service_token != SERVICE_TOKEN_VALUE)
+            res.status = 403;
         long int id = stol(req.matches[1]);
         bool deleted = serv.deleteAirport(id, header);
         if (deleted)
@@ -131,33 +131,5 @@ void AirportController::configure(Server* server)
         res.status = 500;
     }
 });
-    server->Get(AIRPORT_GET_BY_ID_MAPPING, [this](const Request& req, Response& res)
-    {
-        try
-        {
-            auto header = req.get_header_value("Authorization");
-            string service_token = req.get_param_value("Service-Token");
-            if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
-            int id = stoi(req.get_param_value("id"));
-            AirportModel airport = serv.getAirportById(id, header);
-            json airport_json;
-            airport_json["id"] = airport.getId();
-            airport_json["name"] = airport.getName();
-            airport_json["size"] = airport.getSize();
-            airport_json["x"] = airport.getX();
-            airport_json["y"] = airport.getY();
-            res.status = 200;
-            res.set_content(airport_json.dump(), "application/json");
-
-        }  catch (int& e)
-        {
-            cout << "exception occured " << e << endl;
-            res.status = e;
-        } catch (const exception& e)
-        {
-            cout << "exception occured" << e.what() << endl;
-            res.status = 500;
-        }
-    });
 }
+

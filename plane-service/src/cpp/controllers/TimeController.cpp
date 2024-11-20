@@ -10,7 +10,7 @@ void TimeController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
-            string service_token = req.get_param_value("Service-Token");
+            string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             long int time = serv.getCurrentTime(header);
@@ -31,7 +31,7 @@ void TimeController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
-            string service_token = req.get_param_value("Service-Token");
+            string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             long int skip = 0;

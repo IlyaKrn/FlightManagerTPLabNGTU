@@ -30,12 +30,12 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
             long int last_flight_time = 0; //in there we will have last flight time
             FlightModel last_flight(0,0,0,0,0,0);
             FlightModel current_fly(0,0,0,0,0,0);
-            sort(flights.begin(), flights.end(), sortByTime);
+            flights.sort(sortByTime);
             if (flights.front().getTimestampEnd() > timer.getCurrentTime(token))
             {
                 current_fly = flights.front();
-                flights.remove(flights.front());
-                last_flight = flights.front();
+                auto it = next(flights.begin(), 1);
+                last_flight = *it;
             }
             else
                 last_flight = flights.front();
@@ -86,79 +86,6 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
     return planesResponse;
 }
 
-PlaneModelResponse PlaneService::getPlaneById(long int id, string token)
-{
-    set<string> permissions;
-    permissions.insert("getPlaneById");
-    bool isAllowed = ident.authorize(permissions ,token);
-    if (!isAllowed)
-            throw 401;
-    list<PlaneModel> planes = repo.getPlanes(&id);
-    //create object planeResponse
-    PlaneModelResponse planeResponse(planes.front().getId(), planes.front().getName(), planes.front().getPilot(), planes.front().getBuiltYear(), planes.front().getBrokenPercentage(), planes.front().getSpeed(), planes.front().getMinAirportSize(), 0, 0);
-    long int planeId = planes.front().getId();
-    //Taking all flights with our plane
-    list<FlightModel> flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr,&planeId);
-    if (!flights.empty())
-    {
-        //If we found flights, we search last flight and, if that's it, current flight
-        long int last_flight_time = 0; //in there we will have last flight time
-        FlightModel last_flight(0,0,0,0,0,0);
-        FlightModel current_fly(0,0,0,0,0,0);
-        if (flights.front().getTimestampEnd() > timer.getCurrentTime(token))
-        {
-            current_fly = flights.front();
-            flights.remove(flights.front());
-            last_flight = flights.front();
-        }
-        else
-            last_flight = flights.front();
-        if (last_flight.getAirportId())
-        {
-            //Found airport from what plane took off
-            long int last_flight_air_id = last_flight.getAirportId();
-            list<AirportModel> airport1 = air.getAirports(&last_flight_air_id);
-            if (airport1.empty())
-                throw 404;
-            double x1 = airport1.front().getX(); //start airport coordinate x
-            double y1 = airport1.front().getY(); //start airport coordinate y
-            int speed = planes.front().getSpeed(); //plane speed
-            if (current_fly.getId() != 0)
-            {
-                //If we found current flight, we will find airport from that flight
-                long int current_fly_air_id = current_fly.getAirportId();
-                list<AirportModel> airport2 = air.getAirports(&current_fly_air_id);
-                if (airport2.empty())
-                    throw 404;
-                if (airport2.empty())
-                    throw 404;
-                double x2 = airport2.front().getX(); //end airport coordnate x
-                double y2 = airport2.front().getY(); //end airport coordinate y
-                double length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)); //lenght of flight
-                long int elapsedTime = timer.getCurrentTime(token) - current_fly.getTimestampStart(); //time, past since the beginning of flight
-                //Calculating airport coordinates
-                double newX = x1 + (x2 - x1) * (speed * elapsedTime / length);
-                double newY = y1 + (y2 - y1) * (speed * elapsedTime / length);
-                planeResponse.setX(newX);
-                planeResponse.setY(newY);
-            } else
-            {
-                //If we didn't find executing flight, we set coordinates of start airport
-                planeResponse.setX(x1);
-                planeResponse.setY(y1);
-            }
-        }
-    } else
-    {
-        //If plane didn't fly yer, we take coordinates of airport, that first in list of airports.
-        list<AirportModel> airport = air.getAirports();
-        if (airport.empty())
-            throw 404;
-        planeResponse.setX(airport.front().getX());
-        planeResponse.setY(airport.front().getY());
-    }
-    return planeResponse;
-}
 bool PlaneService::createPlane(PlaneModel plane, string token)
 {
     set<string> permissions;
@@ -195,8 +122,9 @@ bool PlaneService::updatePlane(PlaneModel plane, set<string> update, string toke
     bool isAllowed = ident.authorize(permissions ,token);
     if (!isAllowed)
         throw 401;
-    PlaneModelResponse nplane = getPlaneById(plane.getId(), token);
-    PlaneModel n_plane(nplane.getId(), nplane.getName(), nplane.getPilot(), nplane.getBuiltYear(), nplane.getBrokenPercentage(), nplane.getSpeed(), nplane.getMinAirportSize());
+    long int planeId = plane.getId();
+    list<PlaneModel> n_planes = repo.getPlanes(&planeId);
+    PlaneModel n_plane = n_planes.front();
     if (update.count("name") > 0)
         n_plane.setName(plane.getName());
     if (update.count("pilot") > 0)
