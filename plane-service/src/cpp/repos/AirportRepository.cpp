@@ -24,12 +24,12 @@ list<AirportModel> AirportRepository::getAirports(long int* id, string* name, in
         params.insert({"x", to_string(*x)});
     if (y != nullptr)
         params.insert({"y", to_string(*y)});
-    auto res = cli.Get(AIRPORT_GET_BY_ID_MAPPING, params, headers);
+    auto res = cli.Get(DATABASE_PLANE_GET_MAPPING, params, headers);
     if (res->status >= 200 && res->status < 300)
     {
         json airports = json::parse(res->body);
         list<AirportModel> result;
-        for (auto& item : airports)
+        for (auto item : airports)
         {
             AirportModel airport(item["id"], item["name"], item["size"], item["x"], item["y"]);
             result.push_back(airport);
@@ -52,7 +52,7 @@ bool AirportRepository::createAirport(AirportModel airport)
     airport_json["x"] = airport.getX();
     airport_json["y"] = airport.getY();
 
-    auto res = cli.Post(AIRPORT_CREATE_MAPPING, headers, airport_json.dump(), "application/json");
+    auto res = cli.Post(DATABASE_AIRPORT_CREATE_MAPPING, headers, airport_json.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
         return true;
     throw res->status;
@@ -78,7 +78,7 @@ bool AirportRepository::updateAirport(AirportModel airport, set<string> updates)
         else
             update += "," + item;
     }
-    auto res = cli.Post((AIRPORT_UPDATE_MAPPING + "?update=" + update), headers, airport_json.dump(), "application/json");
+    auto res = cli.Post((DATABASE_AIRPORT_UPDATE_MAPPING + "?update=" + update), headers, airport_json.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
         return true;
     throw res->status;
@@ -92,7 +92,7 @@ bool AirportRepository::deleteAirport(long int id)
     Headers headers = {
     { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
-    auto res = cli.Delete(AIRPORT_DELETE_MAPPING + "/" + to_string(id), headers);
+    auto res = cli.Delete(DATABASE_AIRPORT_DELETE_MAPPING + "/" + to_string(id), headers);
     if (res->status >= 200 && res->status < 300)
         return true;
     throw res->status;

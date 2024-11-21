@@ -28,7 +28,7 @@ list<PlaneModel> PlaneRepository::getPlanes(long int* id, string* name, string* 
         params.insert(make_pair("speed", to_string(*speed)));
     if (minAirportSize != nullptr)
         params.insert(make_pair("minAirportSize", to_string(*minAirportSize)));
-    auto res = cli.Get(PLANE_GET_BY_ID_MAPPING, params, headers);
+    auto res = cli.Get(DATABASE_PLANE_GET_MAPPING, params, headers);
     if (res->status >= 200 && res->status < 300)
     {
         json planes = json::parse(res->body);
@@ -58,7 +58,7 @@ bool PlaneRepository::createPlane(PlaneModel plane)
     plane_json["speed"] = plane.getSpeed();
     plane_json["minAirportSize"] = plane.getMinAirportSize();
 
-    auto res = cli.Post(PLANE_CREATE_MAPPING, headers, plane_json.dump(), "application/json");
+    auto res = cli.Post(DATABASE_PLANE_CREATE_MAPPING, headers, plane_json.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
         return true;
     throw res->status;
@@ -71,7 +71,7 @@ bool PlaneRepository::deletePlane(long int id)
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
 
-    auto res = cli.Delete(PLANE_DELETE_MAPPING + "/" + to_string(id), headers);
+    auto res = cli.Delete(DATABASE_PLANE_DELETE_MAPPING + "/" + to_string(id), headers);
     if (res->status >= 200 && res->status < 300)
         return true;
     throw res->status;
@@ -99,7 +99,7 @@ bool PlaneRepository::updatePlane(PlaneModel plane, set<string> updates)
         else
             update += "," + item;
     }
-    auto res = cli.Post(PLANE_UPDATE_MAPPING + "?update=" + update, headers, plane_json.dump(), "application/json");
+    auto res = cli.Post(DATABASE_PLANE_UPDATE_MAPPING + "?update=" + update, headers, plane_json.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
         return true;
     throw res->status;

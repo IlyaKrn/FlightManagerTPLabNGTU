@@ -55,7 +55,7 @@ bool FlightRepository::createFlight(FlightModel flight)
     flight_json["dispatcherId"] = flight.getDispatcherId();
     flight_json["planeId"] = flight.getPlaneId();
     flight_json["airportId"] = flight.getAirportId();
-    auto res = cli.Post(FLIGHT_CREATE_MAPPING, headers, flight_json.dump(), "application/json");
+    auto res = cli.Post(DATABASE_FLIGHT_CREATE_MAPPING, headers, flight_json.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
         return true;
     throw res->status;
