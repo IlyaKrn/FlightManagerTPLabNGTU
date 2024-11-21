@@ -8,7 +8,7 @@ using namespace nlohmann;
 using namespace httplib;
 list<AirportModel> AirportRepository::getAirports(long int* id, string* name, int* size, double* x, double* y)
 {
-    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST_PORT);
 
     Headers headers = {
         {SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE}
@@ -40,7 +40,7 @@ list<AirportModel> AirportRepository::getAirports(long int* id, string* name, in
 }
 bool AirportRepository::createAirport(AirportModel airport)
 {
-    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
@@ -59,7 +59,7 @@ bool AirportRepository::createAirport(AirportModel airport)
 }
 bool AirportRepository::updateAirport(AirportModel airport, set<string> updates)
 {
-    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST_PORT);
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
@@ -87,7 +87,7 @@ bool AirportRepository::updateAirport(AirportModel airport, set<string> updates)
 
 bool AirportRepository::deleteAirport(long int id)
 {
-    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST_PORT);
 
     Headers headers = {
     { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }

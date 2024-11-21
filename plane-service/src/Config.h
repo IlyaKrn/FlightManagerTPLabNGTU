@@ -10,8 +10,8 @@ const std::string AUTHORIZATION_HEADER_NAME = std::string(std::getenv("AUTHORIZA
 
 // database-service connection
 const int DATABASE_SERVICE_PORT = std::stoi(std::string(std::getenv("DATABASE_SERVICE_PORT")));
-const std::string DATABASE_SERVICE_HOST = "127.0.0.1";
 const std::string DATABASE_SERVICE_URL = std::string(std::getenv("DATABASE_SERVICE_URL"));
+const std::string DATABASE_SERVICE_HOST_PORT = DATABASE_SERVICE_URL.substr(DATABASE_SERVICE_URL.find("://") + 3, DATABASE_SERVICE_URL.length() - DATABASE_SERVICE_URL.find("://") - 4);
 
 const std::string DATABASE_AIRPORT_GET_MAPPING = "/api/airport/get";
 const std::string DATABASE_AIRPORT_CREATE_MAPPING = "/api/airport/create";
@@ -36,8 +36,8 @@ const std::string DATABASE_TIME_GET_MAPPING = "/api/time/get";
 
 // identity-service connection
 const int IDENTITY_SERVICE_PORT = std::stoi(std::string(std::getenv("IDENTITY_SERVICE_PORT")));
-const std::string IDENTITY_SERVICE_HOST = "127.0.0.1";
 const std::string IDENTITY_SERVICE_URL = std::string(std::getenv("IDENTITY_SERVICE_URL"));
+const std::string IDENTITY_SERVICE_HOST_PORT = IDENTITY_SERVICE_URL.substr(IDENTITY_SERVICE_URL.find("://") + 3, IDENTITY_SERVICE_URL.length() - IDENTITY_SERVICE_URL.find("://") - 4);
 
 const std::string IDENTITY_GET_ID_BY_TOKEN_MAPPING = "/api/auth/getIdByToken";
 const std::string IDENTITY_AUTHORIZE_MAPPING = "/api/auth/authorize";

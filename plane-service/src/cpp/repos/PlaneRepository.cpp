@@ -8,7 +8,7 @@ using namespace httplib;
 using namespace nlohmann;
 list<PlaneModel> PlaneRepository::getPlanes(long int* id, string* name, string* pilot, int* builtYear, int* brokenPercentage, int* speed, int* minAirportSize)
 {
-    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
@@ -44,7 +44,7 @@ list<PlaneModel> PlaneRepository::getPlanes(long int* id, string* name, string* 
 }
 bool PlaneRepository::createPlane(PlaneModel plane)
 {
-    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
@@ -65,7 +65,7 @@ bool PlaneRepository::createPlane(PlaneModel plane)
 }
 bool PlaneRepository::deletePlane(long int id)
 {
-    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
@@ -78,7 +78,7 @@ bool PlaneRepository::deletePlane(long int id)
 }
 bool PlaneRepository::updatePlane(PlaneModel plane, set<string> updates)
 {
-    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }

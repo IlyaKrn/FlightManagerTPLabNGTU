@@ -10,9 +10,8 @@ list<AirportModel> AirportService::getAllAirports(string token)
 {
     set<string> permissions;
     permissions.insert("airport-get");
-    // bool isAllowed = ident.authorize(permissions, token);
-    // if (!isAllowed)
-    //     throw 401;
+    if (!ident.authorize(permissions, token))
+        throw 401;
     list<AirportModel> airports = repo.getAirports();
     return airports;
 }
@@ -21,9 +20,8 @@ bool AirportService::createAirport(AirportModel airport, string token)
 {
     set<string> permissions;
     permissions.insert("airport-create");
-    // bool isAllowed = ident.authorize(permissions, token);
-    // if (!isAllowed)
-    //     throw 401;
+    if (!ident.authorize(permissions, token))
+        throw 401;
     bool res = repo.createAirport(airport);
     return res;
 }
@@ -32,9 +30,8 @@ bool AirportService::updateAirport(AirportModel airport, set<string> update, str
 {
     set<string> permissions;
     permissions.insert("airport-update");
-    // bool isAllowed = ident.authorize(permissions, token);
-    //  if (!isAllowed)
-    //      throw 401;
+    if (!ident.authorize(permissions, token))
+         throw 401;
     long int airId = airport.getId();
     list<AirportModel> n_airports = repo.getAirports(&airId);
     AirportModel n_airport = n_airports.front();
@@ -54,9 +51,8 @@ bool AirportService::deleteAirport(long int id, string token)
 {
     set<string> permissions;
     permissions.insert("airport-delete");
-    // bool isAllowed = ident.authorize(permissions, token);
-    // if (!isAllowed)
-    //     throw 401;
+    if (!ident.authorize(permissions, token))
+        throw 401;
     list<FlightModel> flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr, nullptr, &id);
     flights.sort(AirportSortByTime);
     if (flights.front().getTimestampEnd() > timer.getAddedTime())

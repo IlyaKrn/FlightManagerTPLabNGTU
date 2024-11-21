@@ -10,9 +10,8 @@ list<DispatcherModel> DispatcherService::getAllDispatchers(string token)
         permissions.insert("dispather-get-public-none");
     else
         permissions.insert("dispather-get-public-all");
-    // bool isAllowed = ident.authorize(permissions, token);
-    // if (!isAllowed)
-    //     throw 401;
+    if (!ident.authorize(permissions, token))
+         throw 401;
     return dispatchers;
 }
 
@@ -25,9 +24,8 @@ DispatcherModel DispatcherService::getDispatcherById(long int id, string token, 
         permissions.insert("dispather-get-public " + id);
 
     list<DispatcherModel> dispatchers = repo.getDispatchers(&id);
-    // bool isAllowed = ident.authorize(permissions, token);
-    // if (!isAllowed)
-    //     throw 401;
+    if (!ident.authorize(permissions, token))
+         throw 401;
     return dispatchers.front();
 }
 
@@ -39,9 +37,8 @@ bool DispatcherService::updateDispatcher(DispatcherModel dispatcher, set<string>
     else
         permissions.insert("dispather-update-public " + dispatcher.getId());
 
-    // bool isAllowed = ident.authorize(permissions, token);
-    // if (!isAllowed)
-    //     throw 401;
+    if (!ident.authorize(permissions, token))
+         throw 401;
     long int dispId = dispatcher.getId();
     list<DispatcherModel> n_dispatcher = repo.getDispatchers(&dispId);
     if (update.count("firstName") > 0)

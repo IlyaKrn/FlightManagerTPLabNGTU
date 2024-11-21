@@ -13,9 +13,8 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
 {
     set<string> permissions;
     permissions.insert("plane-get");
-    // bool isAllowed = ident.authorize(permissions ,token);
-    // if (!isAllowed)
-    //     throw 401;
+    if (!ident.authorize(permissions, token))
+         throw 401;
     list<PlaneModel> planes = repo.getPlanes();
     list<PlaneModelResponse> planesResponse;
     for (auto plane : planes)
@@ -99,9 +98,8 @@ bool PlaneService::createPlane(PlaneModel plane, string token)
 {
     set<string> permissions;
     permissions.insert("plane-create");
-    // bool isAllowed = ident.authorize(permissions ,token);
-    // if (!isAllowed)
-    //     throw 401;
+    if (!ident.authorize(permissions, token))
+         throw 401;
     bool res = repo.createPlane(plane);
     return res;
 }
@@ -109,9 +107,8 @@ bool PlaneService::deletePlane(long int id, string token)
 {
     set<string> permissions;
     permissions.insert("plane-delete");
-    // bool isAllowed = ident.authorize(permissions ,token);
-    // if (!isAllowed)
-    //     throw 401;
+    if (!ident.authorize(permissions, token))
+         throw 401;
     list<FlightModel> flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr, &id);
     flights.sort(PlaneSortByTime);
     if (flights.front().getTimestampEnd() > timer.getAddedTime())
@@ -123,9 +120,8 @@ bool PlaneService::updatePlane(PlaneModel plane, set<string> update, string toke
 {
     set<string> permissions;
     permissions.insert("plane-update");
-    // bool isAllowed = ident.authorize(permissions ,token);
-    // if (!isAllowed)
-    //     throw 401;
+    if (!ident.authorize(permissions, token))
+         throw 401;
     long int planeId = plane.getId();
     list<PlaneModel> n_planes = repo.getPlanes(&planeId);
     PlaneModel n_plane = n_planes.front();

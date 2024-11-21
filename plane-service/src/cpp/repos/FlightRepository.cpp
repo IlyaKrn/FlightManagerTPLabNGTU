@@ -8,7 +8,7 @@ using namespace httplib;
 using namespace nlohmann;
 list<FlightModel> FlightRepository::getFlights(long int* id, long int* timestampStart, long int* timestampEnd, long int* dispatcherId, long int* planeId, long int* airportId)
 {
-    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
@@ -43,7 +43,7 @@ list<FlightModel> FlightRepository::getFlights(long int* id, long int* timestamp
 
 bool FlightRepository::createFlight(FlightModel flight)
 {
-    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }

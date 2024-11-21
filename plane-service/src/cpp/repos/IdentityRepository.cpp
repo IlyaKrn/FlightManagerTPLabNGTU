@@ -8,7 +8,7 @@ using namespace httplib;
 using namespace nlohmann;
 int IdentityRepository::getIdByToken(string token)
 {
-    Client cli(IDENTITY_SERVICE_HOST, IDENTITY_SERVICE_PORT);
+    Client cli(IDENTITY_SERVICE_HOST_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
@@ -25,7 +25,7 @@ int IdentityRepository::getIdByToken(string token)
 
 bool IdentityRepository::authorize(set<string> permissions, string token)
 {
-    Client cli(IDENTITY_SERVICE_HOST, IDENTITY_SERVICE_PORT);
+    Client cli(IDENTITY_SERVICE_HOST_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }

@@ -12,9 +12,8 @@ list<FlightModel> FlightService::getAllFlights(string token)
 {
     set<string> permissions;
     permissions.insert("flight-get");
-    // bool isAllowed = ident.authorize(permissions, token);
-    // if (!isAllowed)
-    //     throw 401;
+    if (!ident.authorize(permissions, token))
+         throw 401;
     list<FlightModel> flights = repo.getFlights();
     return flights;
 }
@@ -24,9 +23,8 @@ bool FlightService::createFlight(FlightModel flight, string token)
 {
     set<string> permissions;
     permissions.insert("flight-create");
-    // bool isAllowed = ident.authorize(permissions, token);
-    // if (!isAllowed)
-    //     throw 401;
+    if (!ident.authorize(permissions, token))
+         throw 401;
     long int planeId = flight.getPlaneId();
     long int airId = flight.getAirportId();
     list<PlaneModel> planes = planeRepo.getPlanes(&planeId);

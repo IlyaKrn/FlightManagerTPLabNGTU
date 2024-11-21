@@ -8,7 +8,7 @@ using namespace httplib;
 using namespace nlohmann;
 list<DispatcherModel> DispatcherRepository::getDispatchers(long int* id, string* firstName, string* lastName, string* email, string* password, bool* isBanned, set<RoleModel*>* roles)
 {
-    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
@@ -70,7 +70,7 @@ list<DispatcherModel> DispatcherRepository::getDispatchers(long int* id, string*
 }
 bool DispatcherRepository::updateDispatchers(DispatcherModel dispatcher, set<string> updates)
 {
-    Client cli(DATABASE_SERVICE_HOST, DATABASE_SERVICE_PORT);
+    Client cli(DATABASE_SERVICE_HOST_PORT);
 
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
