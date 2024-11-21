@@ -5,7 +5,7 @@ using namespace std;
 long int TimeService::getCurrentTime(string token)
 {
     set<string> permissions;
-    permissions.insert("getCurrentTime");
+    permissions.insert("time-get");
     // bool isAllowed = ident.authorize(permissions, token);
     // if (!isAllowed)
     //     throw 401;
@@ -14,7 +14,7 @@ long int TimeService::getCurrentTime(string token)
 void TimeService::skipTime(long int addedTime, string token)
 {
     set<string> permissions;
-    permissions.insert("skipTime");
+    permissions.insert("time-skip");
     // bool isAllowed = ident.authorize(permissions, token);
     // if (!isAllowed)
     //     throw 401;

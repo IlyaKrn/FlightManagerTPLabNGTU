@@ -1,15 +1,11 @@
 #include "../../header/services/AirportService.h"
-#include "../../header/services/FlightService.h"
-#include <ctime>
+
 using namespace std;
-bool AirportSortByTime(FlightModel a, FlightModel b)
-{
-    return a.getTimestampEnd() > b.getTimestampEnd();
-}
+
 list<AirportModel> AirportService::getAllAirports(string token)
 {
     set<string> permissions;
-    permissions.insert("getAllAirports");
+    permissions.insert("airport-get");
     // bool isAllowed = ident.authorize(permissions, token);
     // if (!isAllowed)
     //     throw 401;
@@ -17,11 +13,21 @@ list<AirportModel> AirportService::getAllAirports(string token)
     return airports;
 }
 
+AirportModel AirportService::getAirportById(long int id, string token)
+{
+    set<string> permissions;
+    permissions.insert("getAirportById");
+    bool isAllowed = ident.authorize(permissions, token);
+    if (!isAllowed)
+        throw 401;
+    list<AirportModel> airports = repo.getAirports(&id);
+    return airports.front();
+}
 
 bool AirportService::createAirport(AirportModel airport, string token)
 {
     set<string> permissions;
-    permissions.insert("createAirport");
+    permissions.insert("airport-create");
     // bool isAllowed = ident.authorize(permissions, token);
     // if (!isAllowed)
     //     throw 401;
@@ -32,7 +38,7 @@ bool AirportService::createAirport(AirportModel airport, string token)
 bool AirportService::updateAirport(AirportModel airport, set<string> update, string token)
 {
     set<string> permissions;
-    permissions.insert("updateAirport");
+    permissions.insert("airport-update");
     // bool isAllowed = ident.authorize(permissions, token);
     //  if (!isAllowed)
     //      throw 401;
@@ -54,7 +60,7 @@ bool AirportService::updateAirport(AirportModel airport, set<string> update, str
 bool AirportService::deleteAirport(long int id, string token)
 {
     set<string> permissions;
-    permissions.insert("deleteAirport");
+    permissions.insert("airport-delete");
     // bool isAllowed = ident.authorize(permissions, token);
     // if (!isAllowed)
     //     throw 401;

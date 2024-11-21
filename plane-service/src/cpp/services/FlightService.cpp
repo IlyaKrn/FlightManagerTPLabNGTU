@@ -11,7 +11,7 @@ bool flightSortByTime(FlightModel a, FlightModel b)
 list<FlightModel> FlightService::getAllFlights(string token)
 {
     set<string> permissions;
-    permissions.insert("getAllFlights");
+    permissions.insert("flight-get");
     // bool isAllowed = ident.authorize(permissions, token);
     // if (!isAllowed)
     //     throw 401;
@@ -23,7 +23,7 @@ list<FlightModel> FlightService::getAllFlights(string token)
 bool FlightService::createFlight(FlightModel flight, string token)
 {
     set<string> permissions;
-    permissions.insert("createFlight");
+    permissions.insert("flight-create");
     // bool isAllowed = ident.authorize(permissions, token);
     // if (!isAllowed)
     //     throw 401;

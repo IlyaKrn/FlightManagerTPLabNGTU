@@ -12,7 +12,7 @@ using namespace std;
 list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
 {
     set<string> permissions;
-    permissions.insert("getAllPlanes");
+    permissions.insert("plane-get");
     // bool isAllowed = ident.authorize(permissions ,token);
     // if (!isAllowed)
     //     throw 401;
@@ -98,7 +98,7 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
 bool PlaneService::createPlane(PlaneModel plane, string token)
 {
     set<string> permissions;
-    permissions.insert("createPlane");
+    permissions.insert("plane-create");
     // bool isAllowed = ident.authorize(permissions ,token);
     // if (!isAllowed)
     //     throw 401;
@@ -108,7 +108,7 @@ bool PlaneService::createPlane(PlaneModel plane, string token)
 bool PlaneService::deletePlane(long int id, string token)
 {
     set<string> permissions;
-    permissions.insert("deletePlane");
+    permissions.insert("plane-delete");
     // bool isAllowed = ident.authorize(permissions ,token);
     // if (!isAllowed)
     //     throw 401;
@@ -122,7 +122,7 @@ bool PlaneService::deletePlane(long int id, string token)
 bool PlaneService::updatePlane(PlaneModel plane, set<string> update, string token)
 {
     set<string> permissions;
-    permissions.insert("updatePlane");
+    permissions.insert("plane-update");
     // bool isAllowed = ident.authorize(permissions ,token);
     // if (!isAllowed)
     //     throw 401;
