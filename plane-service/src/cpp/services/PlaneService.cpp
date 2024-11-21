@@ -4,7 +4,7 @@
 #include <cmath>
 #include <ctime>
 
-bool sortByTime(FlightModel a, FlightModel b)
+bool PlaneSortByTime(FlightModel a, FlightModel b)
 {
     return a.getTimestampEnd() > b.getTimestampEnd();
 }
@@ -13,9 +13,9 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
 {
     set<string> permissions;
     permissions.insert("getAllPlanes");
-    bool isAllowed = ident.authorize(permissions ,token);
-    if (!isAllowed)
-        throw 401;
+    // bool isAllowed = ident.authorize(permissions ,token);
+    // if (!isAllowed)
+    //     throw 401;
     list<PlaneModel> planes = repo.getPlanes();
     list<PlaneModelResponse> planesResponse;
     for (auto plane : planes)
@@ -31,7 +31,7 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
             long int last_flight_time = 0; //in there we will have last flight time
             FlightModel last_flight(0,0,0,0,0,0);
             FlightModel current_fly(0,0,0,0,0,0);
-            flights.sort(sortByTime);
+            flights.sort(PlaneSortByTime);
             if (flights.front().getTimestampEnd() > static_cast<long int>(time(0)) + timer.getAddedTime())
             {
                 current_fly = flights.front();
@@ -60,7 +60,7 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
                     double x2 = airport2.front().getX(); //end airport coordnate x
                     double y2 = airport2.front().getY(); //end airport coordinate y
                     double length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)); //lenght of flight
-                    long int elapsedTime = (timer.getAddedTime() + static_cast<long int>(time(0))) - current_fly.getTimestampStart();
+                    long int elapsedTime = timer.getAddedTime() + static_cast<long int>(time(0)) - current_fly.getTimestampStart();
                     //Calculating airport coordinates
                     double newX = x1 + (x2 - x1) * (speed * elapsedTime / length);
                     double newY = y1 + (y2 - y1) * (speed * elapsedTime / length);
@@ -69,6 +69,14 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
                 } else
                 {
                     //If we didn't find executing flight, we set coordinates of start airport
+                    if (!x1)
+                    {
+                        throw 234;
+                    }
+                    if (!y1)
+                    {
+                        throw 234;
+                    }
                     planeResponse.setX(x1);
                     planeResponse.setY(y1);
                 }
@@ -91,9 +99,9 @@ bool PlaneService::createPlane(PlaneModel plane, string token)
 {
     set<string> permissions;
     permissions.insert("createPlane");
-    bool isAllowed = ident.authorize(permissions ,token);
-    if (!isAllowed)
-        throw 401;
+    // bool isAllowed = ident.authorize(permissions ,token);
+    // if (!isAllowed)
+    //     throw 401;
     bool res = repo.createPlane(plane);
     return res;
 }
@@ -101,18 +109,13 @@ bool PlaneService::deletePlane(long int id, string token)
 {
     set<string> permissions;
     permissions.insert("deletePlane");
-    bool isAllowed = ident.authorize(permissions ,token);
-    if (!isAllowed)
-        throw 401;
-    list<FlightModel> flights = flight.getFlights();
-    for (auto fly : flights)
-    {
-        if (fly.getPlaneId() == id)
-        {
-            if (fly.getTimestampEnd() >= timer.getAddedTime() + static_cast<long int>(time(0)))
-                throw 409;
-        }
-    }
+    // bool isAllowed = ident.authorize(permissions ,token);
+    // if (!isAllowed)
+    //     throw 401;
+    list<FlightModel> flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr, &id);
+    flights.sort(PlaneSortByTime);
+    if (flights.front().getTimestampEnd() > timer.getAddedTime())
+        throw 409;
     bool res = repo.deletePlane(id);
     return res;
 }
@@ -120,9 +123,9 @@ bool PlaneService::updatePlane(PlaneModel plane, set<string> update, string toke
 {
     set<string> permissions;
     permissions.insert("updatePlane");
-    bool isAllowed = ident.authorize(permissions ,token);
-    if (!isAllowed)
-        throw 401;
+    // bool isAllowed = ident.authorize(permissions ,token);
+    // if (!isAllowed)
+    //     throw 401;
     long int planeId = plane.getId();
     list<PlaneModel> n_planes = repo.getPlanes(&planeId);
     PlaneModel n_plane = n_planes.front();
