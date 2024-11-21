@@ -7,15 +7,14 @@
 #include "header/controllers/TimeController.h"
 using namespace std;
 
-
 int main(int argc, char* argv[])
 {
-    httplib::Server server;
-    AirportController().configure(&server);
-    PlaneController().configure(&server);
-    DispatcherController().configure(&server);
-    FlightController().configure(&server);
-    TimeController().configure(&server);
-    server.listen(SERVER_HOST, SERVER_PORT);
+        httplib::Server server;
+        AirportController().configure(&server);
+        PlaneController().configure(&server);
+        DispatcherController().configure(&server);
+        FlightController().configure(&server);
+        TimeController().configure(&server);
+        server.listen(SERVER_HOST, SERVER_PORT);
 }
 
