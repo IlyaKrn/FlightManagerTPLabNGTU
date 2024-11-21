@@ -1,7 +1,7 @@
 #include "../../header/services/PlaneService.h"
-#include <algorithm>
+//#include <algorithm>
 #include "../../header/models/PlaneModelResponse.h"
-#include <cmath>
+//#include <cmath>
 
 bool sortByTime(FlightModel a, FlightModel b)
 {
@@ -30,11 +30,11 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
             long int last_flight_time = 0; //in there we will have last flight time
             FlightModel last_flight(0,0,0,0,0,0);
             FlightModel current_fly(0,0,0,0,0,0);
-            sort(flights.begin(), flights.end(), sortByTime);
+         //   sort(flights.begin(), flights.end(), sortByTime);
             if (flights.front().getTimestampEnd() > timer.getCurrentTime(token))
             {
                 current_fly = flights.front();
-                flights.remove(flights.front());
+                //flights.remove(flights.front());
                 last_flight = flights.front();
             }
             else
@@ -58,7 +58,7 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
                         throw 404;
                     double x2 = airport2.front().getX(); //end airport coordnate x
                     double y2 = airport2.front().getY(); //end airport coordinate y
-                    double length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)); //lenght of flight
+                    double length = 10;// sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)); //lenght of flight
                     long int elapsedTime = timer.getCurrentTime(token) - current_fly.getTimestampStart();
                     //Calculating airport coordinates
                     double newX = x1 + (x2 - x1) * (speed * elapsedTime / length);
@@ -108,7 +108,7 @@ PlaneModelResponse PlaneService::getPlaneById(long int id, string token)
         if (flights.front().getTimestampEnd() > timer.getCurrentTime(token))
         {
             current_fly = flights.front();
-            flights.remove(flights.front());
+        //    flights.remove(flights.front());
             last_flight = flights.front();
         }
         else
@@ -134,7 +134,7 @@ PlaneModelResponse PlaneService::getPlaneById(long int id, string token)
                     throw 404;
                 double x2 = airport2.front().getX(); //end airport coordnate x
                 double y2 = airport2.front().getY(); //end airport coordinate y
-                double length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)); //lenght of flight
+                double length = 10;// sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)); //lenght of flight
                 long int elapsedTime = timer.getCurrentTime(token) - current_fly.getTimestampStart(); //time, past since the beginning of flight
                 //Calculating airport coordinates
                 double newX = x1 + (x2 - x1) * (speed * elapsedTime / length);

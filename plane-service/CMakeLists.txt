@@ -57,6 +57,7 @@ add_executable(main src/main.cpp
         src/header/models/PlaneModelResponse.h
         src/cpp/repos/TimeRepository.cpp
         src/header/repos/TimeRepository.h
+        ../client/src/cpp/repos/AirportRepository.cpp
 
 
 )

@@ -19,6 +19,7 @@ add_executable(main src/main.cpp
         src/header/models/PlaneModel.h
         src/header/models/RoleModel.h
         src/header/repos/AirportRepository.h
+        src/cpp/repos/AirportRepository.cpp
 
 
 )
