@@ -5,11 +5,14 @@ using namespace std;
 list<DispatcherModel> DispatcherService::getAllDispatchers(string token)
 {
     set<string> permissions;
-    permissions.insert("public"); //оставить
+    list<DispatcherModel> dispatchers = repo.getDispatchers();
+    if (dispatchers.empty())
+        permissions.insert("dispather-get-public-none");
+    else
+        permissions.insert("dispather-get-public-all");
     // bool isAllowed = ident.authorize(permissions, token);
     // if (!isAllowed)
     //     throw 401;
-    list<DispatcherModel> dispatchers = repo.getDispatchers();
     return dispatchers;
 }
 
@@ -17,9 +20,9 @@ DispatcherModel DispatcherService::getDispatcherById(long int id, string token, 
 {
     set<string> permissions;
     if(isPrivate)
-        permissions.insert("dispather-get private " + id);
+        permissions.insert("dispather-get-private " + id);
     else
-        permissions.insert("dispather-get public " + id);
+        permissions.insert("dispather-get-public " + id);
 
     list<DispatcherModel> dispatchers = repo.getDispatchers(&id);
     // bool isAllowed = ident.authorize(permissions, token);
@@ -32,9 +35,9 @@ bool DispatcherService::updateDispatcher(DispatcherModel dispatcher, set<string>
 {
     set<string> permissions;
     if(update.count("password"))
-        permissions.insert("dispather-get private " + dispatcher.getId());
+        permissions.insert("dispather-update-private " + dispatcher.getId());
     else
-        permissions.insert("dispather-get public " + dispatcher.getId());
+        permissions.insert("dispather-update-public " + dispatcher.getId());
 
     // bool isAllowed = ident.authorize(permissions, token);
     // if (!isAllowed)

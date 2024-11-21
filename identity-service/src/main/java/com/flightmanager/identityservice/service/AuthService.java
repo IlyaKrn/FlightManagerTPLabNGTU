@@ -82,11 +82,23 @@ public class AuthService {
             permsForDispatcher.add("dispatcher-update-public " + u.getId());
             permsForDispatcher.add("dispatcher-update-private " + u.getId());
 
-            permsForAdmin.add("dispatcher-get-public");
+            permsForDispatcher.add("dispatcher-get-public-none");
+            permsForDispatcher.add("dispatcher-get-private-none");
+
+            permsForDispatcher.add("dispatcher-update-public-none");
+            permsForDispatcher.add("dispatcher-update-private-none");
+
+            permsForAdmin.add("dispatcher-get-public-all");
             permsForAdmin.add("dispatcher-get-private " + u.getId());
 
-            permsForAdmin.add("dispatcher-update-public");
+            permsForAdmin.add("dispatcher-update-public-all");
             permsForAdmin.add("dispatcher-update-private " + u.getId());
+
+            permsForAdmin.add("dispatcher-get-public-none");
+            permsForAdmin.add("dispatcher-get-private-none");
+
+            permsForAdmin.add("dispatcher-update-public-none");
+            permsForAdmin.add("dispatcher-update-private-none");
 
             for (String p : permissions) {
                 if (permsForDispatcher.contains(p) && u.getRoles().contains(RoleModel.DISPATCHER)) {
