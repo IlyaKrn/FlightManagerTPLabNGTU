@@ -58,6 +58,18 @@ add_executable(main src/main.cpp
         src/cpp/repos/TimeRepository.cpp
         src/header/repos/TimeRepository.h
         ../client/src/cpp/repos/AirportRepository.cpp
+        ../client/src/cpp/repos/DispatcherRepository.cpp
+        ../client/src/header/repos/DispatcherRepository.h
+        ../client/src/cpp/repos/FlightRepository.cpp
+        ../client/src/header/repos/FlightRepository.h
+        ../client/src/cpp/repos/IdentityRepository.cpp
+        ../client/src/header/repos/IdentityRepository.h
+        ../client/src/header/models/PlaneModel.h
+        ../client/src/header/models/PlaneModelResponse.h
+        ../client/src/cpp/repos/PlaneRepository.cpp
+        ../client/src/header/repos/PlaneRepository.h
+        ../client/src/cpp/repos/TimeRepository.cpp
+        ../client/src/header/repos/TimeRepository.h
 
 
 )
