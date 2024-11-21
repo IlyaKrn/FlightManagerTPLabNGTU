@@ -26,7 +26,7 @@ list<FlightModel> FlightRepository::getFlights(long int* id, long int* timestamp
         params.insert(make_pair("planeId", to_string(*planeId)));
     if (airportId != nullptr)
         params.insert(make_pair("airportId", to_string(*airportId)));
-    auto res = cli.Get(FLIGHT_GET_BY_ID_MAPPING, params, headers);
+    auto res = cli.Get(DATABASE_FLIGHT_GET_MAPPING, params, headers);
     if (res->status >= 200 && res->status < 300)
     {
         json flights_json = json::parse(res->body);

@@ -10,6 +10,7 @@ FlightModel::FlightModel(long int id, long int timestampstart, long int timestam
     _airportId = airportId;
 }
 
+
 long int FlightModel::getId()
 {
     return _id;
