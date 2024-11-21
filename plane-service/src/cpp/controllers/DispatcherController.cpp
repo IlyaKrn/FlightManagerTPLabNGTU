@@ -109,10 +109,11 @@ void DispatcherController::configure(Server* server)
         {
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
+            auto isPrivate = req.get_param_value("private");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             int id = stoi(req.get_param_value("id"));
-            DispatcherModel dispatcher = serv.getDispatcherById(id, header);
+            DispatcherModel dispatcher = serv.getDispatcherById(id, header, isPrivate == "true");
             json result;
             result["id"] = dispatcher.getId();
             result["firstName"] = dispatcher.getFirstname();
