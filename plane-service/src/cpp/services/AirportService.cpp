@@ -5,7 +5,7 @@ using namespace std;
 list<AirportModel> AirportService::getAllAirports(string token)
 {
     set<string> permissions;
-    permissions.insert("getAllAirports");
+    permissions.insert("airport-get");
     bool isAllowed = ident.authorize(permissions, token);
     if (!isAllowed)
         throw 401;
@@ -27,7 +27,7 @@ AirportModel AirportService::getAirportById(long int id, string token)
 bool AirportService::createAirport(AirportModel airport, string token)
 {
     set<string> permissions;
-    permissions.insert("createAirport");
+    permissions.insert("airport-create");
     bool isAllowed = ident.authorize(permissions, token);
     if (!isAllowed)
         throw 401;
@@ -38,7 +38,7 @@ bool AirportService::createAirport(AirportModel airport, string token)
 bool AirportService::updateAirport(AirportModel airport, set<string> update, string token)
 {
     set<string> permissions;
-    permissions.insert("updateAirport");
+    permissions.insert("airport-update");
     bool isAllowed = ident.authorize(permissions, token);
     if (!isAllowed)
         throw 401;
@@ -58,7 +58,7 @@ bool AirportService::updateAirport(AirportModel airport, set<string> update, str
 bool AirportService::deleteAirport(long int id, string token)
 {
     set<string> permissions;
-    permissions.insert("deleteAirport");
+    permissions.insert("airport-delete");
     bool isAllowed = ident.authorize(permissions, token);
     if (!isAllowed)
         throw 401;
