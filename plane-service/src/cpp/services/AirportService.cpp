@@ -1,7 +1,11 @@
 #include "../../header/services/AirportService.h"
-
+#include "../../header/services/FlightService.h"
+#include <ctime>
 using namespace std;
-
+bool AirportSortByTime(FlightModel a, FlightModel b)
+{
+    return a.getTimestampEnd() > b.getTimestampEnd();
+}
 list<AirportModel> AirportService::getAllAirports(string token)
 {
     set<string> permissions;
@@ -11,17 +15,6 @@ list<AirportModel> AirportService::getAllAirports(string token)
     //     throw 401;
     list<AirportModel> airports = repo.getAirports();
     return airports;
-}
-
-AirportModel AirportService::getAirportById(long int id, string token)
-{
-    set<string> permissions;
-    permissions.insert("getAirportById");
-    bool isAllowed = ident.authorize(permissions, token);
-    if (!isAllowed)
-        throw 401;
-    list<AirportModel> airports = repo.getAirports(&id);
-    return airports.front();
 }
 
 bool AirportService::createAirport(AirportModel airport, string token)
