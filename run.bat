@@ -1,83 +1,60 @@
 @echo off
 
-if "%1" EQU "-help" goto help
-if "%1" EQU "-c" goto compile
 if "%1" EQU "-d" goto docker
 if "%1" EQU "-dl" goto docker-less
 
 
-:compile
-
-echo ==============================
-echo   database-service COMPILING
-echo ==============================
-cd database-service/
-call gradlew clean
-call gradlew bootJar
-cd ../
-
-echo ==============================
-echo   identity-service COMPILING
-echo ==============================
-cd identity-service/
-call gradlew clean
-call gradlew bootJar
-cd ../
-
-echo ==============================
-echo        gateway COMPILING
-echo ==============================
-cd gateway/
-call gradlew clean
-call gradlew bootJar
-cd ../
-
-echo ==============================
-echo     plain-service COMPILING
-echo ==============================
-cd plane-service/
-mkdir build
-call cmake -G "MinGW Makefiles" -B ./build
-cd build/
-call mingw32-make
-cd ../
-cd ../
-
-goto end
 
 :docker
-echo ==============================
-echo    DOCKER COMPOSE CLEANING
-echo        AND RESTARTING
-echo ==============================
 docker compose down
-echo y|docker system prune -a --volumes
+
+cd database-service
+call ./service -cl
+call ./service -bd
+cd ../
+
+cd identity-service
+call ./service -cl
+call ./service -bd
+cd ../
+
+cd gateway
+call ./service -cl
+call ./service -bd
+cd ../
+
+cd plane-service
+call ./service -cl
+call ./service -bd
+cd ../
+
 docker compose up
 goto end
 
 :docker-less
-echo ==============================
-echo       RUNNING SERVICES
-echo        WITHOUT DOCKER
-echo ==============================
-
 for /f "tokens=*" %%a in (.env) do (
     set %%a
 )
-for /f "tokens=*" %%a in (docker-less.env) do (
-    set %%a
-)
+cd database-service
+call ./service -bdl
+cd ../
+
+cd identity-service
+call ./service -bdl
+cd ../
+
+cd gateway
+call ./service -bdl
+cd ../
+
+cd plane-service
+call ./service -bdl
+cd ../
+
 start java -jar ./database-service/build/libs/database-service.jar
 start java -jar ./identity-service/build/libs/identity-service.jar
 start java -jar ./gateway/build/libs/gateway.jar
 start plane-service/build/main.exe
-goto end
-
-:help
-echo run types (first arg):
-echo [-c]   compile without run (must be installed: JDK 8 or later + JRE 8 or later + cmake + make + gcc)
-echo [-d]   compile and run with docker (must be installed: docker)
-echo [-dl]  compile and run without docker (must be installed: JRE 8 or later)
 goto end
 
 :end

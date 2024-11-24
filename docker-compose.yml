@@ -10,13 +10,14 @@ services:
       - 5433:5433
     command: -p 5433
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - data:/var/lib/postgresql/data
 
   database-service:
+    image: database-service
+    build: database-service
     container_name: database-service
     env_file:
       - .env
-    build: database-service
     ports:
       - 8081:8081
     depends_on:
@@ -24,28 +25,33 @@ services:
         condition: service_started
 
   identity-service:
+    image: identity-service
+    build: identity-service
     container_name: identity-service
     env_file:
       - .env
-    build: identity-service
     ports:
       - 8082:8082
 
   plane-service:
+    image: plane-service
+    build: plane-service
     container_name: plane-service
     env_file:
       - .env
-    build: plane-service
     ports:
       - 8083:8083
+    volumes:
+      - data:/var/lib/plane-service/data
 
   gateway:
+    image: gateway
+    build: gateway
     container_name: gateway
     env_file:
       - .env
-    build: gateway
     ports:
       - 8080:8080
 
 volumes:
-  postgres-data:
+  data:
