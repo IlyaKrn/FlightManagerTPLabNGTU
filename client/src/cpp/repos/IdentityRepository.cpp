@@ -26,7 +26,7 @@ set<string> IdentityRepository::login(string email, string password) {
     throw res->status;
 }
 
-set<string> IdentityRepository::Register(DispatcherModel dispatcher) {
+set<string> IdentityRepository::regist(DispatcherModel dispatcher) {
     Client cli(GATEWAY_HOST, GATEWAY_PORT);
     json dispatcher_json;
     dispatcher_json["id"] = dispatcher.getId();

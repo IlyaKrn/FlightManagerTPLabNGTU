@@ -8,8 +8,6 @@ class DispatcherRepository
 {
 public:
     std::list<DispatcherModel> getDispatchers(std::string token);
-
     bool updateDispatchers(DispatcherModel dispatcher, std::set<std::string> updates, std::string token);
-
-    DispatcherModel getDispatcherByID(std::string token, long int id);
+    DispatcherModel getDispatcherById(long int id, std::string token);
 };

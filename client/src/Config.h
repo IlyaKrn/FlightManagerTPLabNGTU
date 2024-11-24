@@ -8,8 +8,6 @@ const std::string GATEWAY_URL = std::string(std::getenv("GATEWAY_URL"));
 const std::string AUTH_TOKEN_NAME = "Authorization";
 
 //mappings
-const std::string GET_ID_BY_TOKEN_MAPPING = "/api/auth/getIdByToken";
-const std::string AUTHORIZE_MAPPING = "/api/auth/authorize";
 const std::string LOGIN_MAPPING = "/api/auth/login";
 const std::string REGISTER_MAPPING = "/api/auth/register";
 

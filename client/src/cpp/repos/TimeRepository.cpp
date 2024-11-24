@@ -24,7 +24,7 @@ long int TimeRepository::getCurrentTime(string token) {
     throw res->status;
 }
 
-bool TimeRepository::addTime(string token, long int time) {
+bool TimeRepository::addTime(long int time, string token) {
     Client cli(GATEWAY_HOST, GATEWAY_PORT);
     Headers headers = {
         { AUTH_TOKEN_NAME, token }

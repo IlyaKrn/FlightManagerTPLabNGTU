@@ -7,8 +7,6 @@
 
 class AirportRepository {
 public:
-
-  //methods with requests to plane-service and identity-service (not in one class)
     std::list<AirportModel> getAllAirports(std::string token);
     bool createAirport(AirportModel airport, std::string token);
     bool deleteAirport(long int id, std::string token);

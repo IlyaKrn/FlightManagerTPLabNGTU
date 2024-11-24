@@ -74,7 +74,7 @@ bool DispatcherRepository::updateDispatchers(DispatcherModel dispatcher, set<str
     throw res->status;
 }
 
-DispatcherModel getDispatcherByID(std::string token, long int id) {
+DispatcherModel DispatcherRepository::getDispatcherById(long int id, std::string token) {
     Client cli(GATEWAY_HOST, GATEWAY_PORT);
     Headers headers = {
         { AUTH_TOKEN_NAME, token }

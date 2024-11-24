@@ -13,7 +13,7 @@ private:
     int _speed;
     int _minAirportSize;
 public:
-    PlaneModel(int id, std::string name, std::string pilot, int builtYear, int brokenPercentage, int speed, int minAirportSize);
+    PlaneModel(long int id, std::string name, std::string pilot, int builtYear, int brokenPercentage, int speed, int minAirportSize);
 
     long int getId();
     std::string getName();

@@ -14,7 +14,7 @@ class DispatcherModel
     bool _isBanned;
     std::set<RoleModel> _roles;
 public:
-    DispatcherModel(int id, std::string firstname, std::string lastname, std::string email, std::string password, bool isBanned, std::set<RoleModel> roles);
+    DispatcherModel(long int id, std::string firstname, std::string lastname, std::string email, std::string password, bool isBanned, std::set<RoleModel> roles);
 
     long int getId();
     std::string getFirstname();
