@@ -9,22 +9,18 @@ if "%1" EQU "-dl" goto docker-less
 docker compose down
 
 cd database-service
-call ./service -cl
 call ./service -bd
 cd ../
 
 cd identity-service
-call ./service -cl
 call ./service -bd
 cd ../
 
 cd gateway
-call ./service -cl
 call ./service -bd
 cd ../
 
 cd plane-service
-call ./service -cl
 call ./service -bd
 cd ../
 

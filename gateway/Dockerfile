@@ -1,8 +1,12 @@
-FROM ubuntu
+FROM alpine
 
-RUN apt update -y && apt install -y openjdk-17-jdk openjdk-17-jre dos2unix
+RUN apk update
+RUN apk add java-cacerts openjdk17-jdk openjdk17-jre dos2unix
 
-ADD ../ /app
+ADD ../gradle /app/gradle
+ADD ../gradlew /app/gradlew
+ADD ../build.gradle /app/build.gradle
+ADD ../src /app/src
 
 RUN cd /app &&\
     dos2unix gradlew &&\
