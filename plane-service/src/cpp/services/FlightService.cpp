@@ -51,7 +51,6 @@ bool FlightService::createFlight(FlightModel flight, string token)
     double y2 = airports2.front().getY();
     long int length = sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
     int timestampEnd = flight.getTimestampStart() + length/speed;
-    throw timestampEnd;
     flight.setTimestampEnd(timestampEnd);
     bool res = repo.createFlight(flight);
     return res;
