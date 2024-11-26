@@ -13,24 +13,7 @@ list<DispatcherModel> DispatcherRepository::getDispatchers(long int* id, string*
     Headers headers = {
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
-    string role;
-    for (auto item : *roles)
-    {
-        if (*item == RoleModel::ADMIN)
-        {
-            if (role.empty())
-                role += "ADMIN";
-            else
-                role += ",ADMIN";
-        }
-        if (*item == RoleModel::DISPATCHER)
-        {
-            if (role.empty())
-                role += "DISPATCHER";
-            else
-                role += ",DISPATCHER";
-        }
-    }
+
     Params params;
     if (id != nullptr)
         params.insert(make_pair("id", to_string(*id)));
@@ -45,7 +28,7 @@ list<DispatcherModel> DispatcherRepository::getDispatchers(long int* id, string*
     if (isBanned != nullptr)
         params.insert(make_pair("isBanned", to_string(*isBanned)));
     if (roles != nullptr)
-        params.insert(make_pair("roles", role));
+        params.insert(make_pair("roles", "role"));
     auto res = cli.Get(DATABASE_DISPATCHER_GET_MAPPING, params, headers);
     if (res->status >= 200 && res->status < 300)
     {

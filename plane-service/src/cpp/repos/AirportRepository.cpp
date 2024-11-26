@@ -24,7 +24,7 @@ list<AirportModel> AirportRepository::getAirports(long int* id, string* name, in
         params.insert({"x", to_string(*x)});
     if (y != nullptr)
         params.insert({"y", to_string(*y)});
-    auto res = cli.Get(DATABASE_PLANE_GET_MAPPING, params, headers);
+    auto res = cli.Get(DATABASE_AIRPORT_GET_MAPPING, params, headers);
     if (res->status >= 200 && res->status < 300)
     {
         json airports = json::parse(res->body);
