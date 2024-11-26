@@ -37,18 +37,22 @@ bool FlightService::createFlight(FlightModel flight, string token)
     double x1 = airports.front().getX();
     double y1 = airports.front().getY();
     list<FlightModel> flights = repo.getFlights(nullptr, nullptr, nullptr, nullptr, &planeId);
+    list<AirportModel> airports2;
     if (flights.empty())
-        throw 404;
-    flights.sort(flightSortByTime);
-    long int air2Id = flights.front().getAirportId();
-    list<AirportModel> airports2 = airportRepo.getAirports(&air2Id);
+        airports2 = airportRepo.getAirports();
+    else {
+        flights.sort(flightSortByTime);
+        long int air2Id = flights.front().getAirportId();
+        airports2 = airportRepo.getAirports(&air2Id);
+    }
     if (airports2.empty())
         throw 404;
-    double x2 = airports.front().getX();
-    double y2 = airports.front().getY();
-    long int length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
-    long int timstampEnd = flight.getTimestampStart() + length/speed;
-    flight.setTimestampEnd(timstampEnd);
+    double x2 = airports2.front().getX();
+    double y2 = airports2.front().getY();
+    long int length = sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
+    int timestampEnd = flight.getTimestampStart() + length/speed;
+    throw timestampEnd;
+    flight.setTimestampEnd(timestampEnd);
     bool res = repo.createFlight(flight);
     return res;
 }

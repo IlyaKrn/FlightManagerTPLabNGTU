@@ -68,14 +68,6 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
                 } else
                 {
                     //If we didn't find executing flight, we set coordinates of start airport
-                    if (!x1)
-                    {
-                        throw 234;
-                    }
-                    if (!y1)
-                    {
-                        throw 234;
-                    }
                     planeResponse.setX(x1);
                     planeResponse.setY(y1);
                 }
