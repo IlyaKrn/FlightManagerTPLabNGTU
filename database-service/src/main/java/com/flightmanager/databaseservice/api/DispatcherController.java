@@ -4,6 +4,8 @@ import com.flightmanager.databaseservice.models.DispatcherModel;
 import com.flightmanager.databaseservice.models.RoleModel;
 import com.flightmanager.databaseservice.repos.DispatcherRepo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +17,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
+
 @RestController
 public class DispatcherController {
+    private Logger log = LogManager.getLogger(DispatcherController.class);
 
     @Autowired
     private DispatcherRepo repo;
