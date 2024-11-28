@@ -31,3 +31,6 @@ const std::string FLIGHT_CREATE_MAPPING = "/api/flights/create";
 
 const std::string TIME_SKIP_MAPPING = "/api/time/skip";
 const std::string TIME_GET_MAPPING = "/api/time/get";
+
+
+const std::string TOKEN_FILE_PATH = "";
