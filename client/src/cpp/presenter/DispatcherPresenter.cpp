@@ -25,44 +25,6 @@ void DispatcherPresenter::getDispatchers()
     }
 }
 
-void DispatcherPresenter::createDispatcher()
-{
-    string firstName, lastName, email, password;
-    bool isBanned;
-
-    *_output << "Enter first name: ";
-    *_input >> firstName;
-
-    *_output << "Enter last name: ";
-    *_input >> lastName;
-
-    *_output << "Enter email: ";
-    *_input >> email;
-
-    *_output << "Enter password: ";
-    *_input >> password;
-
-    *_output << "Is banned (1 for Yes, 0 for No): ";
-    *_input >> isBanned;
-
-    set<RoleModel> roles; // Здесь можно добавить роли, если нужно
-    // Например, добавим роль DISPATCHER
-    roles.insert(RoleModel::DISPATCHER);
-
-    DispatcherModel newDispatcher(0, firstName, lastName, email, password, isBanned, roles); // Создаем новый объект диспетчера
-    DispatcherRepository dispatcherRepo;
-    string token; // Здесь должен быть токен авторизации
-
-    // Отправляем нового диспетчера на сервер
-    bool result = dispatcherRepo.createDispatcher(newDispatcher, token);
-
-    if (result) {
-        *_output << "Dispatcher created successfully!" << std::endl;
-    } else {
-        *_output << "Error creating dispatcher!" << std::endl;
-    }
-}
-
 void DispatcherPresenter::updateDispatcher()
 {
     long int dispatcherId;
@@ -120,24 +82,5 @@ void DispatcherPresenter::updateDispatcher()
         *_output << "Dispatcher updated successfully!" << std::endl;
     } else {
         *_output << "Error updating dispatcher!" << std::endl;
-    }
-}
-
-void DispatcherPresenter::deleteDispatcher()
-{
-    long int dispatcherId;
-    *_output << "Enter dispatcher ID to delete: ";
-    *_input >> dispatcherId;
-
-    DispatcherRepository dispatcherRepo;
-    string token; // Здесь должен быть токен авторизации
-
-    // Удаляем диспетчера с сервера
-    bool result = dispatcherRepo.deleteDispatcher(dispatcherId, token);
-
-    if (result) {
-        *_output << "Dispatcher deleted successfully!" << std::endl;
-    } else {
-        *_output << "Error deleting dispatcher!" << std::endl;
     }
 }
