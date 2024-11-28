@@ -100,6 +100,46 @@ public class AuthService {
             permsForAdmin.add("dispatcher-update-public-none");
             permsForAdmin.add("dispatcher-update-private-none");
 
+            HashSet<String> tempPerms = new HashSet<>(permissions);
+            for (String perm : permissions) {
+                if (perm.startsWith("dispatcher-update-public") && !permsForDispatcher.contains(perm) && !permsForAdmin.contains(perm)) {
+                    tempPerms.remove(perm);
+                    tempPerms.add("dispatcher-update-public-all");
+                }
+                if (perm.startsWith("dispatcher-update-private") && !permsForDispatcher.contains(perm) && !permsForAdmin.contains(perm)) {
+                    tempPerms.remove(perm);
+                    tempPerms.add("dispatcher-update-private-all");
+                }
+                if (perm.startsWith("dispatcher-get-public") && !permsForDispatcher.contains(perm) && !permsForAdmin.contains(perm)) {
+                    tempPerms.remove(perm);
+                    tempPerms.add("dispatcher-get-public-all");
+                }
+                if (perm.startsWith("dispatcher-get-private") && !permsForDispatcher.contains(perm) && !permsForAdmin.contains(perm)) {
+                    tempPerms.remove(perm);
+                    tempPerms.add("dispatcher-get-private-all");
+                }
+
+
+                if (perm.equals("dispatcher-update-public ")) {
+                    tempPerms.remove(perm);
+                    tempPerms.add("dispatcher-update-public-none");
+                }
+                if (perm.equals("dispatcher-update-private ")) {
+                    tempPerms.remove(perm);
+                    tempPerms.add("dispatcher-update-private-none");
+                }
+                if (perm.equals("dispatcher-get-public ")) {
+                    tempPerms.remove(perm);
+                    tempPerms.add("dispatcher-get-public-none");
+                }
+                if (perm.equals("dispatcher-get-private ")) {
+                    tempPerms.remove(perm);
+                    tempPerms.add("dispatcher-get-private-none");
+                }
+
+            }
+            permissions = tempPerms;
+
             for (String p : permissions) {
                 if (permsForDispatcher.contains(p) && u.getRoles().contains(RoleModel.DISPATCHER)) {
                     continue;

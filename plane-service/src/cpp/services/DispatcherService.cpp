@@ -7,9 +7,9 @@ list<DispatcherModel> DispatcherService::getAllDispatchers(string token)
     set<string> permissions;
     list<DispatcherModel> dispatchers = repo.getDispatchers();
     if (dispatchers.empty())
-        permissions.insert("dispather-get-public-none");
+        permissions.insert("dispatcher-get-public-none");
     else
-        permissions.insert("dispather-get-public-all");
+        permissions.insert("dispatcher-get-public-all");
     if (!ident.authorize(permissions, token))
          throw 401;
     return dispatchers;
@@ -19,9 +19,9 @@ DispatcherModel DispatcherService::getDispatcherById(long int id, string token, 
 {
     set<string> permissions;
     if(isPrivate)
-        permissions.insert("dispather-get-private " + id);
+        permissions.insert("dispatcher-get-private " + to_string(id));
     else
-        permissions.insert("dispather-get-public " + id);
+        permissions.insert("dispatcher-get-public " + to_string(id));
 
     list<DispatcherModel> dispatchers = repo.getDispatchers(&id);
     if (!ident.authorize(permissions, token))
@@ -33,9 +33,9 @@ bool DispatcherService::updateDispatcher(DispatcherModel dispatcher, set<string>
 {
     set<string> permissions;
     if(update.count("password"))
-        permissions.insert("dispather-update-private " + dispatcher.getId());
+        permissions.insert("dispatcher-update-private " + to_string(dispatcher.getId()));
     else
-        permissions.insert("dispather-update-public " + dispatcher.getId());
+        permissions.insert("dispatcher-update-public " + to_string(dispatcher.getId()));
 
     if (!ident.authorize(permissions, token))
          throw 401;
