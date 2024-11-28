@@ -43,8 +43,6 @@ const std::string IDENTITY_GET_ID_BY_TOKEN_MAPPING = "/api/auth/getIdByToken";
 const std::string IDENTITY_AUTHORIZE_MAPPING = "/api/auth/authorize";
 
 // mappings
-const std::string GET_ID_BY_TOKEN_MAPPING = "/api/auth/getIdByToken";
-const std::string AUTHORIZE_MAPPING = "/api/auth/authorize";
 
 const std::string AIRPORT_GET_ALL_MAPPING = "/api/airport/getAll";
 const std::string AIRPORT_GET_BY_ID_MAPPING = "/api/airport/get";
@@ -70,5 +68,5 @@ const std::string FLIGHT_CREATE_MAPPING = "/api/flights/create";
 const std::string TIME_SKIP_MAPPING = "/api/time/skip";
 const std::string TIME_GET_MAPPING = "/api/time/get";
 
-// путь к файлу времени
+// path to the time file
 const std::string TIME_FILE_PATH = "/var/lib/plane-service/data/addedTime.txt";

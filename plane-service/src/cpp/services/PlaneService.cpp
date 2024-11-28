@@ -6,8 +6,7 @@
 
 bool PlaneSortByTime(FlightModel a, FlightModel b)
 {
-    return a.getTimestampEnd() >
-    b.getTimestampEnd();
+    return a.getTimestampEnd() > b.getTimestampEnd();
 }
 using namespace std;
 list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
