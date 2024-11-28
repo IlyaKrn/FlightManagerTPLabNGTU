@@ -29,3 +29,8 @@ void AirportPresenter::deleteAirport()
 {
 
 }
+
+void PlanePresenter::getPlain()
+{
+
+}
