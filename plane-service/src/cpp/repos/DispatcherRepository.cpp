@@ -82,7 +82,7 @@ bool DispatcherRepository::updateDispatchers(DispatcherModel dispatcher, set<str
         else
             update += "," + item;
     }
-    auto res = cli.Post(DATABASE_DISPATCHER_UPDATE_MAPPING + "?update" + update, headers, dispatcher_json.dump(), "application/json");
+    auto res = cli.Post(DATABASE_DISPATCHER_UPDATE_MAPPING + "?update=" + update, headers, dispatcher_json.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
         return true;
     throw res->status;
