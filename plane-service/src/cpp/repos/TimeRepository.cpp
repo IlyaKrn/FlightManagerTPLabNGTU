@@ -2,7 +2,6 @@
 #include "../../header/repos/TimeRepository.h"
 #include "../../Config.h"
 
-#include <ctime>
 using namespace std;
 
 long int TimeRepository::getAddedTime()
@@ -16,7 +15,8 @@ long int TimeRepository::getAddedTime()
 
 bool TimeRepository::AddTime(long int addedTime)
 {
-    ofstream file(TIME_FILE_PATH);
-    file << addedTime << endl;
+    long int newAddedTime = getAddedTime() + addedTime;
+    ofstream file(TIME_FILE_PATH, ios::trunc);
+    file << newAddedTime << endl;
     return true;
 }
