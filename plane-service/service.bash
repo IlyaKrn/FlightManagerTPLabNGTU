@@ -10,7 +10,6 @@ function clean {
 
 function build_docker_less {
     echo "[script] building $service_name exec ..."
-    rm -rf build
     mkdir build
     cmake -G "MinGW Makefiles" -B ./build
     cd build || exit
@@ -21,8 +20,8 @@ function build_docker_less {
 
 function build_docker {
     echo "[script] building $service_name image ..."
-    docker rmi -f $(docker images -q "$service_name")
-    docker build . -t "$service_name"
+    sudo docker rmi -f $(sudo docker images -q "$service_name")
+    sudo docker build . -t "$service_name"
     echo "[script] building $service_name image finished"
 }
 
@@ -38,6 +37,5 @@ case "$1" in
         ;;
     *)
         echo "Usage: $0 {-cl|-bdl|-bd}"
-        exit 1
-        ;;
+
 esac

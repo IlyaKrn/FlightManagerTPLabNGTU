@@ -10,6 +10,7 @@ ADD ../src /app/src
 
 RUN cd /app &&\
     dos2unix gradlew &&\
+    chmod +x gradlew &&\
     ./gradlew bootJar
 
 CMD ["java", "-jar", "/app/build/libs/app.jar"]
