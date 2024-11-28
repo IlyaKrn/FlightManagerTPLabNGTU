@@ -22,6 +22,7 @@ void AirportPresenter::createAirport()
 
 void AirportPresenter::updateAirport()
 {
+
 }
 
 void AirportPresenter::deleteAirport()
