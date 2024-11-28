@@ -30,7 +30,6 @@ bool FlightService::createFlight(FlightModel flight, string token)
     list<PlaneModel> planes = planeRepo.getPlanes(&planeId);
     if (planes.empty())
         throw 404;
-    int speed = planes.front().getSpeed();
     list<AirportModel> airports = airportRepo.getAirports(&airId);
     if (airports.empty())
         throw 404;
@@ -47,10 +46,12 @@ bool FlightService::createFlight(FlightModel flight, string token)
     }
     if (airports2.empty())
         throw 404;
+    int speed = planes.front().getSpeed();
     double x2 = airports2.front().getX();
     double y2 = airports2.front().getY();
-    long int length = sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
-    int timestampEnd = flight.getTimestampStart() + length/speed;
+    long int length = lround(sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)));
+    long int flightTime = length/speed;
+    long int timestampEnd = flight.getTimestampStart() + flightTime;
     flight.setTimestampEnd(timestampEnd);
     bool res = repo.createFlight(flight);
     return res;
