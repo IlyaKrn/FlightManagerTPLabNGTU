@@ -1,6 +1,6 @@
 #include "../../header/services/FlightService.h"
-
 #include <cmath>
+#include <ctime>
 
 using namespace std;
 bool flightSortByTime(FlightModel a, FlightModel b)
@@ -41,6 +41,8 @@ bool FlightService::createFlight(FlightModel flight, string token)
         airports2 = airportRepo.getAirports();
     else {
         flights.sort(flightSortByTime);
+        if (flights.front().getTimestampEnd() > static_cast<long int>(time(nullptr)) + timer.getAddedTime())
+            throw 409;
         long int air2Id = flights.front().getAirportId();
         airports2 = airportRepo.getAirports(&air2Id);
     }

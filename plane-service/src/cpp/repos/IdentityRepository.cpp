@@ -14,7 +14,7 @@ int IdentityRepository::getIdByToken(string token)
         { SERVICE_TOKEN_NAME, SERVICE_TOKEN_VALUE }
     };
 
-    auto res = cli.Post(GET_ID_BY_TOKEN_MAPPING ,headers, token,  "application/json");
+    auto res = cli.Post(IDENTITY_GET_ID_BY_TOKEN_MAPPING ,headers, token,  "application/json");
     if (res->status >= 200 && res->status < 300)
     {
         int id = stoi(res->body);
@@ -35,7 +35,7 @@ bool IdentityRepository::authorize(set<string> permissions, string token)
     for (auto permission : permissions)
         authorize["permissions"].push_back(permission);
     authorize["token"] = token;
-    auto res = cli.Post(AUTHORIZE_MAPPING, headers, authorize.dump(), "application/json");
+    auto res = cli.Post(IDENTITY_AUTHORIZE_MAPPING, headers, authorize.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
     {
         if (res->body == "true")

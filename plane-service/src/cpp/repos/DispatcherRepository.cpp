@@ -28,7 +28,27 @@ list<DispatcherModel> DispatcherRepository::getDispatchers(long int* id, string*
     if (isBanned != nullptr)
         params.insert(make_pair("isBanned", to_string(*isBanned)));
     if (roles != nullptr)
-        params.insert(make_pair("roles", "role"));
+    {
+        ostringstream role;
+        bool first = true;
+        for (auto rolePtr : *roles) {
+            if (rolePtr != nullptr) {
+                if (!first) {
+                    role << ", ";
+                }
+                first = false;
+                switch (*rolePtr) {
+                case RoleModel::ADMIN:
+                    role << "ADMIN";
+                    break;
+                case RoleModel::DISPATCHER:
+                    role << "DISPATCHER";
+                    break;
+                }
+            }
+        }
+        params.insert(make_pair("roles", role.str()));
+    }
     auto res = cli.Get(DATABASE_DISPATCHER_GET_MAPPING, params, headers);
     if (res->status >= 200 && res->status < 300)
     {
@@ -82,7 +102,7 @@ bool DispatcherRepository::updateDispatchers(DispatcherModel dispatcher, set<str
         else
             update += "," + item;
     }
-    auto res = cli.Post(DATABASE_DISPATCHER_UPDATE_MAPPING + "?update" + update, headers, dispatcher_json.dump(), "application/json");
+    auto res = cli.Post(DATABASE_DISPATCHER_UPDATE_MAPPING + "?update=" + update, headers, dispatcher_json.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
         return true;
     throw res->status;
