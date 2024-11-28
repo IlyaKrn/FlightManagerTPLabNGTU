@@ -92,7 +92,7 @@ bool PlaneRepository::updatePlane(PlaneModel plane, set<string> updates)
     plane_json["speed"] = plane.getSpeed();
     plane_json["minAirportSize"] = plane.getMinAirportSize();
     string update;
-    for (auto item: update)
+    for (auto item: updates)
     {
         if (update.empty())
             update = item;
