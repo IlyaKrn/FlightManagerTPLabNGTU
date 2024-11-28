@@ -93,8 +93,6 @@ void DispatcherController::configure(Server* server)
                 res.status = 200;
                 res.set_content(result.dump(), "application/json");
             }
-        } catch (string& f) {
-            cout << "exception occured " << f << endl;
         } catch (int& e)
         {
             cout << "exception occured " << e << endl;
