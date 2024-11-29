@@ -20,8 +20,8 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
     for (auto plane : planes)
     {
         //create object planeResponse
-        PlaneModelResponse planeResponse(planes.front().getId(), planes.front().getName(), planes.front().getPilot(), planes.front().getBuiltYear(), planes.front().getBrokenPercentage(), planes.front().getSpeed(), planes.front().getMinAirportSize(), 0, 0);
-        long int planeId = planes.front().getId();
+        PlaneModelResponse planeResponse(plane.getId(), plane.getName(), plane.getPilot(), plane.getBuiltYear(), plane.getBrokenPercentage(), plane.getSpeed(), plane.getMinAirportSize(), 0, 0);
+        long int planeId = plane.getId();
         int speed = plane.getSpeed();
         //Taking all flights with our plane
         list<FlightModel> flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr,&planeId);
@@ -96,13 +96,15 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
     return planesResponse;
 }
 
-bool PlaneService::createPlane(PlaneModel plane, string token)
+PlaneModel PlaneService::createPlane(PlaneModel plane, string token)
 {
     set<string> permissions;
     permissions.insert("plane-create");
     if (!ident.authorize(permissions, token))
          throw 401;
-    bool res = repo.createPlane(plane);
+    if (plane.getSpeed() == 0)
+         throw 400;
+    PlaneModel res = repo.createPlane(plane);
     return res;
 }
 bool PlaneService::deletePlane(long int id, string token)
@@ -118,28 +120,13 @@ bool PlaneService::deletePlane(long int id, string token)
     bool res = repo.deletePlane(id);
     return res;
 }
-bool PlaneService::updatePlane(PlaneModel plane, set<string> update, string token)
+PlaneModel PlaneService::updatePlane(PlaneModel plane, set<string> update, string token)
 {
     set<string> permissions;
     permissions.insert("plane-update");
     if (!ident.authorize(permissions, token))
          throw 401;
-    long int planeId = plane.getId();
-    list<PlaneModel> n_planes = repo.getPlanes(&planeId);
-    PlaneModel n_plane = n_planes.front();
-    if (update.count("name") > 0)
-        n_plane.setName(plane.getName());
-    if (update.count("pilot") > 0)
-        n_plane.setPilot(plane.getPilot());
-    if (update.count("builtYear") > 0)
-        n_plane.setBuiltYear(plane.getBuiltYear());
-    if (update.count("brokenPercentage") > 0)
-        n_plane.setBrokenPercentage(plane.getBrokenPercentage());
-    if (update.count("speed") > 0)
-        n_plane.setSpeed(plane.getSpeed());
-    if (update.count("minAirportSize") > 0)
-        n_plane.setMinAirportSize(plane.getMinAirportSize());
-    bool res = repo.updatePlane(n_plane, update);
+    PlaneModel res = repo.updatePlane(plane, update);
     return res;
 }
 

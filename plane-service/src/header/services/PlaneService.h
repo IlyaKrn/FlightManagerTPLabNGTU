@@ -17,7 +17,7 @@ class PlaneService
     IdentityRepository ident;
 public:
     std::list<PlaneModelResponse> getAllPlanes(std::string token);
-    bool createPlane(PlaneModel plane, std::string token);
+    PlaneModel createPlane(PlaneModel plane, std::string token);
     bool deletePlane(long int id, std::string token);
-    bool updatePlane(PlaneModel plane, std::set<std::string> update, std::string token);
+    PlaneModel updatePlane(PlaneModel plane, std::set<std::string> update, std::string token);
 };

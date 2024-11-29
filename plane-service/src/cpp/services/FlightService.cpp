@@ -1,7 +1,7 @@
 #include "../../header/services/FlightService.h"
 #include <cmath>
 #include <ctime>
-
+#include "../../Config.h"
 using namespace std;
 bool flightSortByTime(FlightModel a, FlightModel b)
 {
@@ -19,7 +19,7 @@ list<FlightModel> FlightService::getAllFlights(string token)
 }
 
 
-bool FlightService::createFlight(FlightModel flight, string token)
+FlightModel FlightService::createFlight(FlightModel flight, string token)
 {
     set<string> permissions;
     permissions.insert("flight-create");
@@ -30,9 +30,13 @@ bool FlightService::createFlight(FlightModel flight, string token)
     list<PlaneModel> planes = planeRepo.getPlanes(&planeId);
     if (planes.empty())
         throw 404;
+    if (planes.front().getBrokenPercentage() > 80)
+        throw 409;
     list<AirportModel> airports = airportRepo.getAirports(&airId);
     if (airports.empty())
         throw 404;
+    if (airports.front().getSize() < planes.front().getMinAirportSize())
+        throw 409;
     double x1 = airports.front().getX();
     double y1 = airports.front().getY();
     list<FlightModel> flights = repo.getFlights(nullptr, nullptr, nullptr, nullptr, &planeId);
@@ -53,8 +57,12 @@ bool FlightService::createFlight(FlightModel flight, string token)
     double y2 = airports2.front().getY();
     long int length = lround(sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)));
     long int flightTime = length/speed;
+    set<string> update;
+    update.insert("brokenPercentage");
+    planes.front().setBrokenPercentage(flightTime / addingBrokenPercentage);
+    planeRepo.updatePlane(planes.front(), update);
     long int timestampEnd = flight.getTimestampStart() + flightTime;
     flight.setTimestampEnd(timestampEnd);
-    bool res = repo.createFlight(flight);
+    FlightModel res = repo.createFlight(flight);
     return res;
 }

@@ -38,7 +38,7 @@ list<AirportModel> AirportRepository::getAirports(long int* id, string* name, in
     }
     throw res->status;
 }
-bool AirportRepository::createAirport(AirportModel airport)
+AirportModel AirportRepository::createAirport(AirportModel airport)
 {
     Client cli(DATABASE_SERVICE_HOST_PORT);
 
@@ -54,10 +54,15 @@ bool AirportRepository::createAirport(AirportModel airport)
 
     auto res = cli.Post(DATABASE_AIRPORT_CREATE_MAPPING, headers, airport_json.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
-        return true;
+    {
+        json airport_json = json::parse(res->body);
+        AirportModel airport(airport_json["id"], airport_json["name"], airport_json["size"], airport_json["x"], airport_json["y"]);
+        return airport;
+    }
+
     throw res->status;
 }
-bool AirportRepository::updateAirport(AirportModel airport, set<string> updates)
+AirportModel AirportRepository::updateAirport(AirportModel airport, set<string> updates)
 {
     Client cli(DATABASE_SERVICE_HOST_PORT);
     Headers headers = {
@@ -80,7 +85,11 @@ bool AirportRepository::updateAirport(AirportModel airport, set<string> updates)
     }
     auto res = cli.Post((DATABASE_AIRPORT_UPDATE_MAPPING + "?update=" + update), headers, airport_json.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
-        return true;
+    {
+        json airport_json = json::parse(res->body);
+        AirportModel airport(airport_json["id"], airport_json["name"], airport_json["size"], airport_json["x"], airport_json["y"]);
+        return airport;
+    }
     throw res->status;
 }
 

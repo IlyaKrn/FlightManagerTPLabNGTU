@@ -51,12 +51,15 @@ void AirportController::configure(Server* server)
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             json result = json::parse(req.body);
-            bool created = serv.createAirport(AirportModel(result["id"], result["name"], result["size"],  result["x"], result["y"]), header);
-            if (created)
-            {
-                res.status = 201;
-                res.set_content(result.dump(), "application/json");
-            }
+            AirportModel created = serv.createAirport(AirportModel(result["id"], result["name"], result["size"],  result["x"], result["y"]), header);
+            json airport_json;
+            airport_json["id"] = created.getId();
+            airport_json["name"] = created.getName();
+            airport_json["size"] = created.getSize();
+            airport_json["x"] = created.getX();
+            airport_json["y"] = created.getY();
+            res.status = 201;
+            res.set_content(airport_json.dump(), "application/json");
         }  catch (int& e)
         {
             cout << "exception occured " << e << endl;
@@ -89,13 +92,16 @@ void AirportController::configure(Server* server)
             }
             json result = json::parse(req.body);
             AirportModel airport(result["id"], result["name"], result["size"], result["x"], result["y"]);
-            bool updated = serv.updateAirport(airport, updates, header);
+            AirportModel updated = serv.updateAirport(airport, updates, header);
             updates.clear();
-            if (updated)
-            {
-                res.status = 201;
-                res.set_content(result.dump(), "application/json");
-            }
+            json airport_json;
+            airport_json["id"] = updated.getId();
+            airport_json["name"] = updated.getName();
+            airport_json["size"] = updated.getSize();
+            airport_json["x"] = updated.getX();
+            airport_json["y"] = updated.getY();
+            res.status = 201;
+            res.set_content(airport_json.dump(), "application/json");
         } catch (int& e)
         {
             cout << "exception occured " << e << endl;

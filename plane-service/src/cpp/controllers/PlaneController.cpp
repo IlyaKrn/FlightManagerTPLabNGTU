@@ -57,12 +57,17 @@ void PlaneController::configure(Server* server)
                 res.status = 403;
             json plane_json = json::parse(req.body);
             PlaneModel plane(plane_json["id"], plane_json["name"], plane_json["pilot"], plane_json["builtYear"], plane_json["brokenPercentage"], plane_json["speed"], plane_json["minAirportSize"]);
-            bool created = serv.createPlane(plane, header);
-            if (created)
-            {
-                res.status = 200;
-                res.set_content(plane_json.dump(), "application/json");
-            }
+            PlaneModel created = serv.createPlane(plane, header);
+            json result;
+            result["id"] = created.getId();
+            result["name"] = created.getName();
+            result["pilot"] = created.getPilot();
+            result["builtYear"] = created.getBuiltYear();
+            result["brokenPercentage"] = created.getBrokenPercentage();
+            result["speed"] = created.getSpeed();
+            result["minAirportSize"] = created.getMinAirportSize();
+            res.status = 200;
+            res.set_content(result.dump(), "application/json");
         } catch (int& e)
         {
             cout << "exception occured " << e << endl;
@@ -94,13 +99,18 @@ void PlaneController::configure(Server* server)
             }
             json result = json::parse(req.body);
             PlaneModel plane(result["id"], result["name"], result["pilot"], result["builtYear"], result["brokenPercentage"], result["speed"], result["minAirportSize"]);
-            bool updated = serv.updatePlane(plane, updates, header);
+            PlaneModel updated = serv.updatePlane(plane, updates, header);
             updates.clear();
-            if (updated)
-            {
-                res.status = 200;
-                res.set_content(result.dump(), "application/json");
-            }
+            json plane_json;
+            plane_json["id"] = updated.getId();
+            plane_json["name"] = updated.getName();
+            plane_json["pilot"] = updated.getPilot();
+            plane_json["builtYear"] = updated.getBuiltYear();
+            plane_json["brokenPercentage"] = updated.getBrokenPercentage();
+            plane_json["speed"] = updated.getSpeed();
+            plane_json["minAirportSize"] = updated.getMinAirportSize();
+            res.status = 200;
+            res.set_content(plane_json.dump(), "application/json");
         } catch (int& e)
         {
             cout << "exception occured " << e << endl;

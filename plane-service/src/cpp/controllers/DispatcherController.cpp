@@ -86,13 +86,26 @@ void DispatcherController::configure(Server* server)
             }
             bool isBanned = result["isBanned"];
             DispatcherModel dispatcher(result["id"], result["firstName"], result["lastName"], result["email"], result["password"], isBanned, roles);
-            bool updated = serv.updateDispatcher(dispatcher, updates, header);
+            DispatcherModel updated = serv.updateDispatcher(dispatcher, updates, header);
             updates.clear();
-            if (updated)
+            json dispatcher_json;
+            dispatcher_json["id"] = dispatcher.getId();
+            dispatcher_json["firstName"] = dispatcher.getFirstname();
+            dispatcher_json["lastName"] = dispatcher.getLastname();
+            dispatcher_json["email"] = dispatcher.getEmail();
+            dispatcher_json["password"] = dispatcher.getPassword();
+            dispatcher_json["isBanned"] = dispatcher.getIsBanned();
+            dispatcher_json["roles"] = json::array();
+            for (auto role: dispatcher.getRoles())
             {
-                res.status = 200;
-                res.set_content(result.dump(), "application/json");
+                switch (role)
+                {
+                case RoleModel::ADMIN: dispatcher_json["roles"].push_back("ADMIN");
+                case RoleModel::DISPATCHER: dispatcher_json["roles"].push_back("DISPATCHER");
+                }
             }
+            res.status = 200;
+            res.set_content(dispatcher_json.dump(), "application/json");
         } catch (int& e)
         {
             cout << "exception occured " << e << endl;

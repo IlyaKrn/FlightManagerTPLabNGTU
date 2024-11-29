@@ -54,12 +54,16 @@ void FlightController::configure(Server* server)
                 res.status = 403;
             json flight_json = json::parse(req.body);
             FlightModel flight(flight_json["id"], flight_json["timestampStart"], flight_json["timestampEnd"], flight_json["dispatcherId"], flight_json["planeId"], flight_json["airportId"]);
-            bool created = serv.createFlight(flight, header);
-            if (created)
-            {
-                res.status = 200;
-                res.set_content(flight_json.dump(), "application/json");
-            }
+            FlightModel created = serv.createFlight(flight, header);
+            json result;
+            result["id"] = created.getId();
+            result["timestampStart"] = created.getTimestampStart();
+            result["timestampEnd"] = created.getTimestampEnd();
+            result["dispatcherId"] = created.getDispatcherId();
+            result["planeId"] = created.getPlaneId();
+            result["airportId"] = created.getAirportId();
+            res.status = 200;
+            res.set_content(result.dump(), "application/json");
         } catch (int& e)
         {
             cout << "exception occured " << e << endl;

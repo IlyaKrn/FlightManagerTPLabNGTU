@@ -8,9 +8,9 @@ class PlaneRepository
 {
 public:
     std::list<PlaneModel> getPlanes(long int* id = nullptr, std::string* name = nullptr, std::string* pilot = nullptr, int* builtYear = nullptr, int* brokenPercentage = nullptr, int* speed = nullptr, int* minAirportSize = nullptr);
-    bool createPlane(PlaneModel plane);
+    PlaneModel createPlane(PlaneModel plane);
     bool deletePlane(long int id);
-    bool updatePlane(PlaneModel plane, std::set<std::string> update);
+    PlaneModel updatePlane(PlaneModel plane, std::set<std::string> update);
 
 
 };

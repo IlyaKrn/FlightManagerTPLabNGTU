@@ -41,7 +41,7 @@ list<FlightModel> FlightRepository::getFlights(long int* id, long int* timestamp
     throw res->status;
 }
 
-bool FlightRepository::createFlight(FlightModel flight)
+FlightModel FlightRepository::createFlight(FlightModel flight)
 {
     Client cli(DATABASE_SERVICE_HOST_PORT);
 
@@ -57,7 +57,11 @@ bool FlightRepository::createFlight(FlightModel flight)
     flight_json["airportId"] = flight.getAirportId();
     auto res = cli.Post(DATABASE_FLIGHT_CREATE_MAPPING, headers, flight_json.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
-        return true;
+    {
+        json flights_json = json::parse(res->body);
+        FlightModel flight(flights_json["id"], flights_json["timestampStart"], flights_json["timestampEnd"], flights_json["dispatcherId"], flights_json["planeId"], flights_json["airportId"]);
+        return flight;
+    }
     throw res->status;
 }
 
