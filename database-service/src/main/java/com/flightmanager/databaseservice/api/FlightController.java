@@ -3,6 +3,8 @@ package com.flightmanager.databaseservice.api;
 import com.flightmanager.databaseservice.models.FlightModel;
 import com.flightmanager.databaseservice.repos.FlightRepo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +15,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
+
 @RestController
 public class FlightController {
+    private Logger log = LogManager.getLogger(FlightController.class);
 
     @Autowired
     private FlightRepo repo;
@@ -47,6 +50,7 @@ public class FlightController {
             log.info("get flight successful ({} entities) [code 200]", models.size());
             return ResponseEntity.ok(models);
         } catch (Exception e) {
+            log.debug("Error get flight retrial:{},input parameters:id={}, timestampStart={}, timestampEnd={}, dispatcherId={}, planeId={}, airportId={}", e.getMessage(), id,timestampStart,timestampEnd,dispatcherId,planeId,airportId,e);
             log.warn("get flight failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -64,6 +68,7 @@ public class FlightController {
             log.info("create flight successful: id={} [code 200]", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
+            log.debug("Error creating flight:{},input data={}", e.getMessage(), data, e);
             log.warn("create flight failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -102,6 +107,7 @@ public class FlightController {
             log.info("update flight successful: id={} [code 200]", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
+            log.debug("Error flight update:{},input data: {}, update fields: {}", e.getMessage(), data,update, e);
             log.warn("update flight failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -117,6 +123,7 @@ public class FlightController {
             log.warn("delete flight failed: id={} not exists [code 200]", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            log.debug("Error flight delete:{},input parameters:id={}", e.getMessage(),id, e);
             log.warn("delete flight failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }

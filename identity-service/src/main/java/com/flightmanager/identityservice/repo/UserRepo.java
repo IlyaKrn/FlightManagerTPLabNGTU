@@ -3,6 +3,9 @@ package com.flightmanager.identityservice.repo;
 import com.flightmanager.identityservice.config.PropertiesConfig;
 import com.flightmanager.identityservice.exception.*;
 import com.flightmanager.identityservice.models.UserModel;
+import com.flightmanager.identityservice.security.ServiceTokenFilter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
@@ -14,6 +17,7 @@ import java.util.List;
 
 @Repository
 public class UserRepo {
+    private Logger log = LogManager.getLogger(UserRepo.class);
     @Autowired
     private RestTemplate restTemplate;
     @Autowired

@@ -2,6 +2,8 @@ package com.ilyakrn.gateway.config;
 
 import com.ilyakrn.gateway.routes.IdentityServiceRoutes;
 import com.ilyakrn.gateway.routes.PlaneServiceRoutes;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -9,9 +11,10 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Slf4j
 @Configuration
 public class RoutesConfig {
+    private Logger log = LogManager.getLogger(RoutesConfig.class);
+
 
     @Autowired
     IdentityServiceRoutes identityServiceRoutes;
