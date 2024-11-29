@@ -50,6 +50,7 @@ public class FlightController {
             log.info("get flight successful ({} entities) [code 200]", models.size());
             return ResponseEntity.ok(models);
         } catch (Exception e) {
+            log.debug("Error get flight retrial:{},input parameters:id={}, timestampStart={}, timestampEnd={}, dispatcherId={}, planeId={}, airportId={}", e.getMessage(), id,timestampStart,timestampEnd,dispatcherId,planeId,airportId,e);
             log.warn("get flight failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -67,6 +68,7 @@ public class FlightController {
             log.info("create flight successful: id={} [code 200]", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
+            log.debug("Error creating flight:{},input data={}", e.getMessage(), data, e);
             log.warn("create flight failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -105,6 +107,7 @@ public class FlightController {
             log.info("update flight successful: id={} [code 200]", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
+            log.debug("Error flight update:{},input data: {}, update fields: {}", e.getMessage(), data,update, e);
             log.warn("update flight failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -120,6 +123,7 @@ public class FlightController {
             log.warn("delete flight failed: id={} not exists [code 200]", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            log.debug("Error flight delete:{},input parameters:id={}", e.getMessage(),id, e);
             log.warn("delete flight failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }

@@ -53,6 +53,7 @@ public class PlaneController {
             log.info("get plane successful ({} entities) [code 200]", models.size());
             return ResponseEntity.ok(models);
         } catch (Exception e) {
+            log.debug("Error get plane retrial:{},input parameters:id={}, name={}, pilot={}, builtYear={}, brokenPercentage{}, speed={}, minAirportSize={} " , e.getMessage(), id,name,pilot,builtYear,brokenPercentage,speed,minAirportSize,e);
             log.warn("get plane failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -70,6 +71,7 @@ public class PlaneController {
             log.info("create plane successful: id={} [code 200]", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
+            log.debug("Error during plane creation:{},input data: {}", e.getMessage(), data, e);
             log.warn("create plane failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -110,6 +112,7 @@ public class PlaneController {
             log.info("update plane successful: id={} [code 200]", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
+            log.debug("Error during plane update:{},input data: {}, update fields: {}", e.getMessage(), data,update, e);
             log.warn("update plane failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -125,6 +128,7 @@ public class PlaneController {
             log.warn("delete plane failed: id={} not exists [code 200]", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            log.debug("Error during plane delete:{},input parameters:id={}", e.getMessage(),id, e);
             log.warn("delete plane failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }

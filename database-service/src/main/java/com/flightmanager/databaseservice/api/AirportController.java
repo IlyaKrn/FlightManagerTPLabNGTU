@@ -46,6 +46,7 @@ public class AirportController {
             log.info("get airports successful ({} entities) [code 200]", models.size());
             return ResponseEntity.ok(models);
         } catch (Exception e) {
+            log.debug("Error get airport retrial:{},input parameters:id={}, name={}, x={}, size={}", e.getMessage(), id,name,x,y,size,e);
             log.warn("get airports failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -63,6 +64,7 @@ public class AirportController {
             log.info("create airport successful: id={} [code 200]", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
+            log.debug("Error during airport creation:{},input data: {}", e.getMessage(), data, e);
             log.warn("create airport failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -99,6 +101,7 @@ public class AirportController {
             log.info("update airport successful: id={} [code 200]", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
+            log.debug("Error during airport creation:{},input data: {}, update files: {}", e.getMessage(), data, update, e);
             log.warn("update airport failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -114,6 +117,7 @@ public class AirportController {
             log.warn("delete airport failed: id={} not exists [code 200]", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            log.debug("Error during airport delete:{},input parameters:id={}", e.getMessage(),id, e);
             log.warn("delete airport failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
