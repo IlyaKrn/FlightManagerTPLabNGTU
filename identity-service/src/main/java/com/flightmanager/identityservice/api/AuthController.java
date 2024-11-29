@@ -7,15 +7,19 @@ import com.flightmanager.identityservice.models.TokenResponse;
 import com.flightmanager.identityservice.models.UserModel;
 import com.flightmanager.identityservice.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
+
 @RestController
 public class AuthController {
+    private Logger log = LogManager.getLogger(AuthController.class);
+
 
     @Autowired
     private AuthService authService;

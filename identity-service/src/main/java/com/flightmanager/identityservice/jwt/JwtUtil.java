@@ -1,11 +1,14 @@
 package com.flightmanager.identityservice.jwt;
 
 import com.flightmanager.identityservice.config.PropertiesConfig;
+import com.flightmanager.identityservice.security.ServiceTokenFilter;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import java.util.Map;
 
 @Service
 public class JwtUtil {
+    private Logger log = LogManager.getLogger(JwtUtil.class);
 
     @Autowired
     private PropertiesConfig properties;

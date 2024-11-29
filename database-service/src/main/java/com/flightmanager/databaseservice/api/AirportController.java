@@ -2,7 +2,8 @@ package com.flightmanager.databaseservice.api;
 
 import com.flightmanager.databaseservice.models.AirportModel;
 import com.flightmanager.databaseservice.repos.AirportRepo;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +14,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
+
 @RestController
 public class AirportController {
+    private Logger log = LogManager.getLogger(AirportController.class);
 
     @Autowired
     private AirportRepo repo;
@@ -44,6 +46,7 @@ public class AirportController {
             log.info("get airports successful ({} entities) [code 200]", models.size());
             return ResponseEntity.ok(models);
         } catch (Exception e) {
+            log.debug("Error get airport retrial:{},input parameters:id={}, name={}, x={}, size={}", e.getMessage(), id,name,x,y,size,e);
             log.warn("get airports failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -61,6 +64,7 @@ public class AirportController {
             log.info("create airport successful: id={} [code 200]", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
+            log.debug("Error during airport creation:{},input data: {}", e.getMessage(), data, e);
             log.warn("create airport failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -97,6 +101,7 @@ public class AirportController {
             log.info("update airport successful: id={} [code 200]", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
+            log.debug("Error during airport creation:{},input data: {}, update files: {}", e.getMessage(), data, update, e);
             log.warn("update airport failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -112,6 +117,7 @@ public class AirportController {
             log.warn("delete airport failed: id={} not exists [code 200]", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            log.debug("Error during airport delete:{},input parameters:id={}", e.getMessage(),id, e);
             log.warn("delete airport failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
