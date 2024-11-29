@@ -47,14 +47,10 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
                 FlightModel last_flight = *it;
                 long int last_flight_air_id = last_flight.getAirportId();
                 list<AirportModel> airport1 = air.getAirports(&last_flight_air_id);
-                if (airport1.empty())
-                    throw 404;
                 x1 = airport1.front().getX(); //start airport coordinate x
                 y1 = airport1.front().getY(); //start airport coordinate y
             } else { //if we didn't find last flight we take first airport from list of airports
                 list<AirportModel> airport1 = air.getAirports();
-                if (airport1.empty())
-                    throw 404;
                 x1 = airport1.front().getX(); //start airport coordinate x
                 y1 = airport1.front().getY(); //start airport coordinate y
             }
@@ -64,8 +60,6 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
                 //If we found current flight, we will find airport from that flight
                 long int current_flight_air_id = current_flight.getAirportId();
                 list<AirportModel> airport2 = air.getAirports(&current_flight_air_id);
-                if (airport2.empty())
-                    throw 404;
                 double x2 = airport2.front().getX(); //end airport coordnate x
                 double y2 = airport2.front().getY(); //end airport coordinate y
                 double length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)); //length of flight
@@ -87,7 +81,7 @@ list<PlaneModelResponse> PlaneService::getAllPlanes(string token)
             //If plane didn't fly yet, we take coordinates of airport, that first in list of airports.
             list<AirportModel> airports = air.getAirports();
             if (airports.empty())
-                throw 404;
+                throw 409;
             planeResponse.setX(airports.front().getX());
             planeResponse.setY(airports.front().getY());
         }
@@ -126,6 +120,11 @@ PlaneModel PlaneService::updatePlane(PlaneModel plane, set<string> update, strin
     permissions.insert("plane-update");
     if (!ident.authorize(permissions, token))
          throw 401;
+    long int planeId = plane.getId();
+    list<FlightModel> flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr, &planeId);
+    flights.sort(PlaneSortByTime);
+    if (flights.front().getTimestampEnd() > timer.getAddedTime())
+        throw 409;
     PlaneModel res = repo.updatePlane(plane, update);
     return res;
 }

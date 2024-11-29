@@ -29,12 +29,12 @@ FlightModel FlightService::createFlight(FlightModel flight, string token)
     long int airId = flight.getAirportId();
     list<PlaneModel> planes = planeRepo.getPlanes(&planeId);
     if (planes.empty())
-        throw 404;
+        throw 409;
     if (planes.front().getBrokenPercentage() > 80)
         throw 409;
     list<AirportModel> airports = airportRepo.getAirports(&airId);
     if (airports.empty())
-        throw 404;
+        throw 409;
     if (airports.front().getSize() < planes.front().getMinAirportSize())
         throw 409;
     double x1 = airports.front().getX();
@@ -51,7 +51,7 @@ FlightModel FlightService::createFlight(FlightModel flight, string token)
         airports2 = airportRepo.getAirports(&air2Id);
     }
     if (airports2.empty())
-        throw 404;
+        throw 409;
     int speed = planes.front().getSpeed();
     double x2 = airports2.front().getX();
     double y2 = airports2.front().getY();
