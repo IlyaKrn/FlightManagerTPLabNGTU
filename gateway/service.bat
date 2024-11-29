@@ -4,6 +4,7 @@ set service_name=gateway
 if "%1" EQU "-cl" goto clean
 if "%1" EQU "-bdl" goto build-docker-less
 if "%1" EQU "-bd" goto build-docker
+goto end
 
 :clean
 echo [script] cleaning %service_name% ...
