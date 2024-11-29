@@ -3,8 +3,6 @@ package com.flightmanager.databaseservice.security;
 import com.flightmanager.databaseservice.config.PropertiesConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -21,8 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 @RequiredArgsConstructor
 public class ServiceTokenFilter extends GenericFilterBean {
-    private Logger log = LogManager.getLogger(ServiceTokenFilter.class);
-
 
     @Autowired
     private PropertiesConfig properties;
@@ -40,11 +36,13 @@ public class ServiceTokenFilter extends GenericFilterBean {
                 SecurityContextHolder.getContext().setAuthentication(appInfoToken);
             }
         } catch (Exception e) {
+            log.debug("Error during ServiceTokenFilter doFilter:{}", e.getMessage(), e);
             log.warn(e.getMessage());
         }
         try {
             fc.doFilter(request, response);
         } catch (Exception e) {
+            log.debug("Error during ServiceTokenFilter doFilter:{}, request={},response={}", e.getMessage(),request,response, e);
             log.warn(e.getMessage());
             ((HttpServletResponse) response).setStatus(400);
         }
