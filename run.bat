@@ -28,7 +28,7 @@ docker compose up
 goto end
 
 :docker-less
-for /f "tokens=*" %%a in (.env) do (
+for /f "tokens=*" %%a in (docker-less.env) do (
     set %%a
 )
 cd database-service

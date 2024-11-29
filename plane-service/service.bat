@@ -13,8 +13,6 @@ goto end
 
 :build-docker-less
 echo [script] building %service_name% exec ...
-rd /s /q "build"
-mkdir build
 call cmake -G "MinGW Makefiles" -B ./build
 cd build/
 call mingw32-make
