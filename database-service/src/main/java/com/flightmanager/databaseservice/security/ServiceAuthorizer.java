@@ -1,12 +1,15 @@
 package com.flightmanager.databaseservice.security;
 
+import com.flightmanager.databaseservice.api.FlightController;
 import com.flightmanager.databaseservice.config.PropertiesConfig;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-@Slf4j
+
 @Service
 public class ServiceAuthorizer {
+    private Logger log = LogManager.getLogger(ServiceAuthorizer.class);
 
 
     @Autowired
@@ -17,7 +20,7 @@ public class ServiceAuthorizer {
         log.debug("Expected service token: {}", properties.getServiceToken());
 
         boolean isAuthorized = token.equals(properties.getServiceToken());
-        log.info("Authorization result: {}", isAuthorized ? "SUCCESS" : "FAILURE");
+        log.debug("Authorization result: {}", isAuthorized ? "SUCCESS" : "FAILURE");
 
         return isAuthorized;
     }
