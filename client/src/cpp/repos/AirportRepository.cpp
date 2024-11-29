@@ -30,7 +30,7 @@ list<AirportModel> AirportRepository::getAllAirports(string token) {
     throw res->status;
 }
 
-bool AirportRepository::createAirport(AirportModel airport, string token) {
+AirportModel AirportRepository::createAirport(AirportModel airport, string token) {
     Client cli(GATEWAY_HOST, GATEWAY_PORT);
 
     Headers headers = {
@@ -44,8 +44,11 @@ bool AirportRepository::createAirport(AirportModel airport, string token) {
     airport_json["y"] = airport.getY();
 
     auto res = cli.Post(AIRPORT_CREATE_MAPPING, headers, airport_json.dump(), "application/json");
-    if (res->status >= 200 && res->status < 300)
-        return true;
+    if (res->status >= 200 && res->status < 300) {
+        json airports = json::parse(res->body);
+        AirportModel airport(airports["id"], airports["name"], airports["size"], airports["x"], airports["y"]);
+        return airport;
+    }
     throw res->status;
 }
 
@@ -62,7 +65,7 @@ bool AirportRepository::deleteAirport(long int id, string token) {
     throw res->status;
 }
 
-bool AirportRepository::updateAirport(AirportModel airport, set<string> updates, string token) {
+AirportModel AirportRepository::updateAirport(AirportModel airport, set<string> updates, string token) {
     Client cli(GATEWAY_HOST, GATEWAY_PORT);
     Headers headers = {
         { AUTH_TOKEN_NAME, token}
@@ -83,7 +86,10 @@ bool AirportRepository::updateAirport(AirportModel airport, set<string> updates,
             update += "," + item;
     }
     auto res = cli.Post((AIRPORT_UPDATE_MAPPING + "?update=" + update), headers, airport_json.dump(), "application/json");
-    if (res->status >= 200 && res->status < 300)
-        return true;
+    if (res->status >= 200 && res->status < 300) {
+        json airports = json::parse(res->body);
+        AirportModel airport(airports["id"], airports["name"], airports["size"], airports["x"], airports["y"]);
+        return airport;
+    }
     throw res->status;
 }

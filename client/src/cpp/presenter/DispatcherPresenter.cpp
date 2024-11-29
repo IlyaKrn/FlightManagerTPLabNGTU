@@ -76,7 +76,7 @@ void DispatcherPresenter::updateDispatcher()
     if (isBannedProvided) updateFields.insert("isBanned");
 
     // Отправляем обновленного диспетчера на сервер
-    bool result = dispatcherRepo.updateDispatchers(updatedDispatcher, updateFields, token);
+    DispatcherModel result = dispatcherRepo.updateDispatchers(updatedDispatcher, updateFields, token);
 
     if (result) {
         *_output << "Dispatcher updated successfully!" << std::endl;

@@ -13,7 +13,7 @@ std::string TokenRepository::getToken() {
     return ""; // Если токен не найден, возвращаем пустую строку
 }
 
-long int TokenRepository::getUser Id() {
+long int TokenRepository::getUserId() {
     ifstream file(TOKEN_FILE_PATH);
     string line;
     long int userId = 0;
@@ -25,7 +25,7 @@ long int TokenRepository::getUser Id() {
     return userId; // Возвращаем ID пользователя
 }
 
-bool TokenRepository::setTokenAndUser Id(const std::string& token, long int userId) {
+bool TokenRepository::setTokenAndUserId(const std::string& token, long int userId) {
     ofstream file(TOKEN_FILE_PATH, ios::trunc); // Открываем файл для записи, очищая его
     if (file.is_open()) {
         file << token << endl; // Записываем токен

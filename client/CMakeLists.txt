@@ -38,11 +38,6 @@ add_executable(main src/main.cpp
         src/header/repos/IdentityRepository.h
         src/header/repos/PlaneRepository.h
         src/header/repos/TimeRepository.h
-        ../plane-service/src/cpp/models/AirportModel.cpp
-        ../plane-service/src/cpp/models/DispatcherModel.cpp
-        ../plane-service/src/cpp/models/FlightModel.cpp
-        ../plane-service/src/cpp/models/PlaneModel.cpp
-        ../plane-service/src/cpp/models/PlaneModelResponse.cpp
         src/header/presentation/DispatcherPresenter.h
         src/cpp/presenter/DispatcherPresenter.cpp
         src/header/presentation/FlightPresenter.h
@@ -53,7 +48,6 @@ add_executable(main src/main.cpp
         src/header/presentation/PlanePresenter.h
         src/cpp/presenter/TimePresenter.cpp
         src/header/presentation/TimePresenter.h
-        ../plane-service/src/cpp/repos/TimeRepository.cpp
         src/cpp/repos/TokenRepository.cpp
         src/header/repos/TokenRepository.h
 

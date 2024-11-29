@@ -37,7 +37,7 @@ list<DispatcherModel> DispatcherRepository::getDispatchers(string token)
     }
     throw res->status;
 }
-bool DispatcherRepository::updateDispatchers(DispatcherModel dispatcher, set<string> updates, string token)
+DispatcherModel DispatcherRepository::updateDispatchers(DispatcherModel dispatcher, set<string> updates, string token)
 {
     Client cli(GATEWAY_HOST, GATEWAY_PORT);
 
@@ -70,7 +70,22 @@ bool DispatcherRepository::updateDispatchers(DispatcherModel dispatcher, set<str
     }
     auto res = cli.Post(DISPATCHER_UPDATE_MAPPING + "?update" + update, headers, dispatcher_json.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
-        return true;
+    {
+        json dispatcher_json = json::parse(res->body);
+
+        set<RoleModel> Roles;
+        for (auto Role : dispatcher_json["roles"])
+        {
+            if (Role == "ADMIN")
+                Roles.insert(RoleModel::ADMIN);
+            else if (Role == "DISPATCHER")
+                Roles.insert(RoleModel::DISPATCHER);
+        }
+        DispatcherModel dispatcher(dispatcher_json["id"], dispatcher_json["firstName"], dispatcher_json["lastName"], dispatcher_json["email"], dispatcher_json["password"], dispatcher_json["isBanned"], Roles);
+
+
+        return dispatcher;
+    }
     throw res->status;
 }
 

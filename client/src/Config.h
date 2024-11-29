@@ -33,4 +33,4 @@ const std::string TIME_SKIP_MAPPING = "/api/time/skip";
 const std::string TIME_GET_MAPPING = "/api/time/get";
 
 
-const std::string TOKEN_FILE_PATH = "";
+const std::string TOKEN_FILE_PATH = "/var/lib/plane-service/data/token.txt";
