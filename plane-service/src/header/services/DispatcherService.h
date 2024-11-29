@@ -12,5 +12,5 @@ class DispatcherService
 public:
     std::list<DispatcherModel> getAllDispatchers(std::string token);
     DispatcherModel getDispatcherById(long int id, std::string token, bool isPrivate);
-    bool updateDispatcher(DispatcherModel dispatcher, std::set<std::string> update, std::string token);
+    DispatcherModel updateDispatcher(DispatcherModel dispatcher, std::set<std::string> update, std::string token);
 };
