@@ -70,6 +70,8 @@ add_executable(main src/main.cpp
         ../client/src/header/repos/PlaneRepository.h
         ../client/src/cpp/repos/TimeRepository.cpp
         ../client/src/header/repos/TimeRepository.h
+        ../client/src/cpp/presenter/AirportPresenter.cpp
+        ../client/src/cpp/models/AirportModel.cpp
 
 
 )

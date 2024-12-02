@@ -31,7 +31,7 @@ list<FlightModel> FlightRepository::getAllFlights(string token)
     throw res->status;
 }
 
-bool FlightRepository::createFlight(FlightModel flight, string token)
+FlightModel FlightRepository::createFlight(FlightModel flight, string token)
 {
     Client cli(GATEWAY_HOST, GATEWAY_PORT);
 
@@ -47,6 +47,12 @@ bool FlightRepository::createFlight(FlightModel flight, string token)
     flight_json["airportId"] = flight.getAirportId();
     auto res = cli.Post(FLIGHT_CREATE_MAPPING, headers, flight_json.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
-        return true;
+    {
+        json flights_json = json::parse(res->body);
+
+        FlightModel flight(flights_json["id"], flights_json["timestampStart"], flights_json["timestampEnd"], flights_json["dispatcherId"], flights_json["planeId"], flights_json["airportId"]);
+
+        return flight;
+    }
     throw res->status;
 }

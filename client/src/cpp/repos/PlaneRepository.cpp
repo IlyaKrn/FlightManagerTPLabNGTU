@@ -29,7 +29,7 @@ list<PlaneModelResponse> PlaneRepository::getPlanes(string token)
     }
     throw res->status;
 }
-bool PlaneRepository::createPlane(PlaneModel plane, string token)
+PlaneModel PlaneRepository::createPlane(PlaneModel plane, string token)
 {
     Client cli(GATEWAY_HOST, GATEWAY_PORT);
 
@@ -47,7 +47,11 @@ bool PlaneRepository::createPlane(PlaneModel plane, string token)
 
     auto res = cli.Post(PLANE_CREATE_MAPPING, headers, plane_json.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
-        return true;
+    {
+        json planes = json::parse(res->body);
+        PlaneModel plane(planes["id"], planes["name"],planes["pilot"], planes["builtYear"], planes["brokenPercentage"],planes["speed"], planes["minAirportSize"]);
+        return plane;
+    }
     throw res->status;
 }
 bool PlaneRepository::deletePlane(long int id, string token)
@@ -63,7 +67,7 @@ bool PlaneRepository::deletePlane(long int id, string token)
         return true;
     throw res->status;
 }
-bool PlaneRepository::updatePlane(PlaneModel plane, set<string> updates, string token)
+PlaneModel PlaneRepository::updatePlane(PlaneModel plane, set<string> updates, string token)
 {
     Client cli(GATEWAY_HOST, GATEWAY_PORT);
 
@@ -88,6 +92,10 @@ bool PlaneRepository::updatePlane(PlaneModel plane, set<string> updates, string 
     }
     auto res = cli.Post(PLANE_UPDATE_MAPPING + "?update=" + update, headers, plane_json.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
-        return true;
+    {
+        json planes = json::parse(res->body);
+        PlaneModel plane(planes["id"], planes["name"],planes["pilot"], planes["builtYear"], planes["brokenPercentage"],planes["speed"], planes["minAirportSize"]);
+        return plane;
+    }
     throw res->status;
 }
