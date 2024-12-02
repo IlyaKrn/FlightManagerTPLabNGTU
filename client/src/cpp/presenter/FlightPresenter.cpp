@@ -25,39 +25,59 @@ void FlightPresenter::getAllFlights()
     }
 }
 
-void FlightPresenter::createFlight()
-{
-    long int dispatcherId, planeId, airportId;
-    long int timestampStart, timestampEnd;
+void FlightPresenter::createFlight() {
+    try {
+        long int dispatcherId, planeId, airportId;
+        long int timestampStart, timestampEnd;
 
-    *_output << "Enter dispatcher ID: ";
-    *_input >> dispatcherId;
+        *_output << "Enter dispatcher ID: ";
+        *_input >> dispatcherId;
 
-    *_output << "Enter plane ID: ";
-    *_input >> planeId;
+        *_output << "Enter plane ID: ";
+        *_input >> planeId;
 
-    *_output << "Enter airport ID: ";
-    *_input >> airportId;
+        *_output << "Enter airport ID: ";
+        *_input >> airportId;
 
-    *_output << "Enter start timestamp: ";
-    *_input >> timestampStart;
+        *_output << "Enter start timestamp: ";
+        *_input >> timestampStart;
 
-    *_output << "Enter end timestamp: ";
-    *_input >> timestampEnd;
+        *_output << "Enter end timestamp: ";
+        *_input >> timestampEnd;
 
-    FlightModel newFlight(0, timestampStart, timestampEnd, dispatcherId, planeId, airportId); // Создаем новый объект рейса
-    FlightRepository flightRepo;
-    string token; // Здесь должен быть токен авторизации
+        FlightModel newFlight(0, timestampStart, timestampEnd, dispatcherId, planeId, airportId); // Создаем новый объект рейса
+        FlightRepository flightRepo;
+        string token; // Здесь должен быть токен авторизации
 
-    // Отправляем новый рейс на сервер и получаем результат
-    FlightModel result = flightRepo.createFlight(newFlight, token);
+        // Отправляем новый рейс на сервер и получаем результат
+        FlightModel result = flightRepo.createFlight(newFlight, token);
 
-    // Проверяем, был ли рейс успешно создан, например, по ID или другим критериям
-    if (result.getId() != 0) { // Предполагаем, что 0 - это значение, которое указывает на неудачу
-        *_output << "Flight created successfully!" << std::endl;
-        *_output << "Flight ID: " << result.getId() << std::endl; // Выводим ID созданного рейса
-    } else {
-        *_output << "Error creating flight!" << std::endl;
+        // Проверяем, был ли рейс успешно создан, например, по ID или другим критериям
+        if (result.getId() != 0) { // Предполагаем, что 0 - это значение, которое указывает на неудачу
+            *_output << "Flight created successfully!" << std::endl;
+            *_output << "Flight ID: " << result.getId() << std::endl; // Выводим ID созданного рейса
+        } else {
+            *_output << "Error creating flight!" << std::endl;
+        }
+    } catch (int& e) {
+        // Обработка ошибок
+        if (e == 500) {
+            *_output << "vse slomalos' peredelivay" << std::endl;
+        }
+        if (e == 400) {
+            *_output << "Wrong request. Pizdui otsuda" << std::endl;
+        }
+        if (e == 403) {
+            *_output << "Forbidden move. Try when u ll become more cool" << std::endl;
+        }
+        if (e == 409) {
+            *_output << "Vam naznachili strelku - CONFLICT!" << std::endl;
+        }
+        if (e == 401) {
+            *_output << "User  is unauthorized. Oluh" << std::endl;
+        } else {
+            *_output << "Call to support, +79092840120, its pizdec" << std::endl;
+        }
     }
 }
 

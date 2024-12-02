@@ -4,7 +4,59 @@
 #include "../../header/models/AirportModel.h"
 #include "../../header/repos/AirportRepository.h"
 #include <iomanip> // Для std::setw
+void AirportPresenter::createAirport() {
+    try {
+        // Запрос данных у пользователя
+        std::string name;
+        int size;
+        double x, y;
 
+        *_output << "Enter airport name: ";
+        *_input >> name;
+
+        *_output << "Enter airport size: ";
+        *_input >> size;
+
+        *_output << "Enter airport coordinates (x y): ";
+        *_input >> x >> y;
+
+        // Создание модели аэропорта
+        AirportModel newAirport(0, name, size, x, y); // ID будет 0, так как это новый аэропорт
+        AirportRepository airportRepo;
+        std::string token; // Здесь должен быть токен авторизации
+
+        // Вызов метода для создания аэропорта
+        AirportModel createdAirport = airportRepo.createAirport(newAirport, token);
+
+        *_output << "Airport created successfully!" << std::endl;
+        *_output << std::left; // Выравнивание по левому краю
+        *_output << std::setw(10) << "ID"
+                 << std::setw(30) << "Name"
+                 << std::setw(10) << "Size"
+                 << std::setw(20) << "Coordinates" << std::endl;
+
+        *_output << std::setw(10) << createdAirport.getId()
+                 << std::setw(30) << createdAirport.getName()
+                 << std::setw(10) << createdAirport.getSize()
+                 << std::setw(20) << "(" << createdAirport.getX() << ", " << createdAirport.getY() << ")" << std::endl;
+
+    } catch (int& e) {
+        // Обработка ошибок
+        if (e == 500) {
+            *_output << "vse slomalos' peredelivay" << std::endl;
+        }
+        if (e == 400)
+            *_output << "Wrong request. Pizdui otsuda" << std::endl;
+        if (e == 403)
+            *_output << "Forbidden move. Try when u ll become more cool" << std::endl;
+        if (e == 409)
+            *_output << "Vam naznachili strelku - CONFLICT!" << std::endl;
+        if (e == 401)
+            *_output << "User  is unauthorized. Oluh" << std::endl;
+        else
+            *_output << "Call to support, +79092840120, its pizdec" << std::endl;
+    }
+}
 void AirportPresenter::updateAirport()
 {
     try {

@@ -23,6 +23,15 @@ void PlanePresenter::getPlanes() {
         }
     } catch (const int& status) {
         *_output << "Error fetching planes. Status: " << status << std::endl;
+        if (status == 500) {
+            *_output << "Internal server error. Please try again later." << std::endl;
+        } else if (status == 400) {
+            *_output << "Bad request. Please check your input." << std::endl;
+        } else if (status == 403) {
+            *_output << "Forbidden access. You do not have permission." << std::endl;
+        } else if (status == 401) {
+            *_output << "Unauthorized access. Please log in." << std::endl;
+        }
     }
 }
 
@@ -69,6 +78,17 @@ void PlanePresenter::createPlane() {
         }
     } catch (const int& status) {
         *_output << "Error creating plane. Status: " << status << std::endl;
+        if (status == 500) {
+            *_output << "Internal server error. Please try again later." << std::endl;
+        } else if (status == 400) {
+            *_output << "Bad request. Please check your input." << std::endl;
+        } else if (status == 403) {
+            *_output << "Forbidden access. You do not have permission." << std::endl;
+        } else if (status == 409) {
+            *_output << "Conflict! A plane with this ID might already exist." << std::endl;
+        } else if (status == 401) {
+            *_output << "Unauthorized access. Please log in." << std::endl;
+        }
     }
 }
 
@@ -143,6 +163,17 @@ void PlanePresenter::updatePlane() {
         }
     } catch (const int& status) {
         *_output << "Error updating plane. Status: " << status << std::endl;
+        if (status == 500) {
+            *_output << "Internal server error. Please try again later." << std::endl;
+        } else if (status == 400) {
+            *_output << "Bad request. Please check your input." << std::endl;
+        } else if (status == 403) {
+            *_output << "Forbidden access. You do not have permission." << std::endl;
+        } else if (status == 404) {
+            *_output << "Plane not found. Please check the ID." << std::endl;
+        } else if (status == 401) {
+            *_output << "Unauthorized access. Please log in." << std::endl;
+        }
     }
 }
 
@@ -163,5 +194,16 @@ void PlanePresenter::deletePlane() {
         }
     } catch (const int& status) {
         *_output << "Error deleting plane. Status: " << status << std::endl;
+        if (status == 500) {
+            *_output << "Internal server error. Please try again later." << std::endl;
+        } else if (status == 400) {
+            *_output << "Bad request. Please check your input." << std::endl;
+        } else if (status == 403) {
+            *_output << "Forbidden access. You do not have permission." << std::endl;
+        } else if (status == 404) {
+            *_output << "Plane not found. Please check the ID." << std::endl;
+        } else if (status == 401) {
+            *_output << "Unauthorized access. Please log in." << std::endl;
+        }
     }
 }

@@ -24,9 +24,23 @@ void IdentityPresenter::login() {
         *_output << "User  ID: " << userId << endl;
         *_output << "Token: " << token << endl;
 
-        //хранилище для токена
+        // Здесь можно сохранить токен для дальнейшего использования
     } catch (const int& status) {
-        *_output << "Login failed with status: " << status << endl;
+        // Обработка ошибок
+        if (status == 500) {
+            *_output << "vse slomalos' peredelivay" << endl;
+        }
+        if (status == 400) {
+            *_output << "Wrong request. Pizdui otsuda" << endl;
+        }
+        if (status == 403) {
+            *_output << "Forbidden move. Try when u ll become more cool" << endl;
+        }
+        if (status == 401) {
+            *_output << "Unauthorized access. Check your credentials." << endl;
+        } else {
+            *_output << "Call to support, +79092840120, its pizdec" << endl;
+        }
     }
 }
 
@@ -69,8 +83,25 @@ void IdentityPresenter::registerDispatcher() {
         *_output << "User  ID: " << userId << endl;
         *_output << "Token: " << token << endl;
 
-        //хранилище для токена
+        // Здесь можно сохранить токен для дальнейшего использования
     } catch (const int& status) {
-        *_output << "Registration failed with status: " << status << endl;
+        // Обработка ошибок
+        if (status == 500) {
+            *_output << "vse slomalos' peredelivay" << endl;
+        }
+        if (status == 400) {
+            *_output << "Wrong request. Pizdui otsuda" << endl;
+        }
+        if (status == 403) {
+            *_output << "Forbidden move. Try when u ll become more cool" << endl;
+        }
+        if (status == 409) {
+            *_output << "Conflict! This dispatcher ID may already exist." << endl;
+        }
+        if (status == 401) {
+            *_output << "Unauthorized access. Check your credentials." << endl;
+        } else {
+            *_output << "Call to support, +79092840120, its pizdec" << endl;
+        }
     }
 }
