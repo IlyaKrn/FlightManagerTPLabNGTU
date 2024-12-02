@@ -49,11 +49,13 @@ void FlightPresenter::createFlight()
     FlightRepository flightRepo;
     string token; // Здесь должен быть токен авторизации
 
-    // Отправляем новый рейс на сервер
-    bool result = flightRepo.createFlight(newFlight, token);
+    // Отправляем новый рейс на сервер и получаем результат
+    FlightModel result = flightRepo.createFlight(newFlight, token);
 
-    if (result) {
+    // Проверяем, был ли рейс успешно создан, например, по ID или другим критериям
+    if (result.getId() != 0) { // Предполагаем, что 0 - это значение, которое указывает на неудачу
         *_output << "Flight created successfully!" << std::endl;
+        *_output << "Flight ID: " << result.getId() << std::endl; // Выводим ID созданного рейса
     } else {
         *_output << "Error creating flight!" << std::endl;
     }

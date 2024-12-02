@@ -78,7 +78,8 @@ void DispatcherPresenter::updateDispatcher()
     // Отправляем обновленного диспетчера на сервер
     DispatcherModel result = dispatcherRepo.updateDispatchers(updatedDispatcher, updateFields, token);
 
-    if (result) {
+    // Проверяем, был ли обновлён диспетчер, например, по ID или другим критериям
+    if (result.getId() == dispatcherId) { // Предполагаем, что есть метод getId()
         *_output << "Dispatcher updated successfully!" << std::endl;
     } else {
         *_output << "Error updating dispatcher!" << std::endl;

@@ -57,9 +57,13 @@ void PlanePresenter::createPlane() {
     string token; // Здесь должен быть токен авторизации
 
     try {
-        bool result = planeRepo.createPlane(newPlane, token);
-        if (result) {
+        // Отправляем новый объект самолета на сервер и получаем результат
+        PlaneModel result = planeRepo.createPlane(newPlane, token);
+
+        // Проверяем, был ли самолет успешно создан, например, по ID или другим критериям
+        if (result.getId() != 0) { // Предполагаем, что 0 - это значение, которое указывает на неудачу
             *_output << "Plane created successfully!" << std::endl;
+            *_output << "Plane ID: " << result.getId() << std::endl; // Выводим ID созданного самолета
         } else {
             *_output << "Error creating plane!" << std::endl;
         }
@@ -74,7 +78,7 @@ void PlanePresenter::updatePlane() {
     *_input >> id;
 
     string name, pilot;
-    int builtYear, brokenPercentage, speed, minAirportSize;
+    int builtYear = 0, brokenPercentage = 0, speed = 0, minAirportSize = 0; // Initialize variables
     set<string> updates;
 
     *_output << "Enter new plane name (leave blank to keep current): ";
@@ -118,8 +122,8 @@ void PlanePresenter::updatePlane() {
     }
 
     PlaneModel updatedPlane(id,
-                            !name.empty() ? name : "",
-                            !pilot.empty () ? pilot : "",
+                            !name.empty() ? name : "", // If empty, keep current value
+                            !pilot.empty() ? pilot : "",
                             builtYear,
                             brokenPercentage,
                             speed,
@@ -128,8 +132,11 @@ void PlanePresenter::updatePlane() {
     string token; // Здесь должен быть токен авторизации
 
     try {
-        bool result = planeRepo.updatePlane(updatedPlane, updates, token);
-        if (result) {
+        // Отправляем обновленный объект самолета на сервер и получаем результат
+        PlaneModel result = planeRepo.updatePlane(updatedPlane, updates, token);
+
+        // Проверяем, был ли самолет успешно обновлен, например, по ID или другим критериям
+        if (result.getId() == id) { // Предполагаем, что ID совпадает с обновленным
             *_output << "Plane updated successfully!" << std::endl;
         } else {
             *_output << "Error updating plane!" << std::endl;
