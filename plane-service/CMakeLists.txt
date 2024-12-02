@@ -12,66 +12,59 @@ execute_process(
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/libs)
 
 add_executable(main src/main.cpp
-        src/header/controllers/IController.h
         src/cpp/controllers/AirportController.cpp
-        src/header/controllers/AirportController.h
-        src/Config.h
-        src/cpp/repos/AirportRepository.cpp
-        src/header/repos/AirportRepository.h
-        src/header/models/AirportModel.h
-        src/header/models/PlaneModel.h
-        src/header/models/DispatcherModel.h
-        src/header/models/FlightModel.h
-        src/header/repos/PlaneRepository.h
-        src/header/repos/DispatcherRepository.h
-        src/header/repos/FlightRepository.h
-        src/header/services/AirportService.h
-        src/header/services/PlaneService.h
-        src/header/services/DispatcherService.h
-        src/header/services/FlightService.h
-        src/header/controllers/PlaneController.h
-        src/header/controllers/DispatcherController.h
-        src/cpp/models/AirportModel.cpp
-        src/cpp/models/PlaneModel.cpp
-        src/cpp/models/DispatcherModel.cpp
-        src/cpp/models/FlightModel.cpp
-        src/header/controllers/FlightController.h
-        src/cpp/repos/PlaneRepository.cpp
-        src/cpp/repos/DispatcherRepository.cpp
-        src/cpp/repos/FlightRepository.cpp
-        src/cpp/services/AirportService.cpp
-        src/cpp/services/PlaneService.cpp
-        src/cpp/services/FlightService.cpp
-        src/cpp/services/DispatcherService.cpp
-        src/cpp/controllers/PlaneController.cpp
         src/cpp/controllers/DispatcherController.cpp
         src/cpp/controllers/FlightController.cpp
-        src/header/models/RoleModel.h
-        src/header/repos/IdentityRepository.h
-        src/cpp/repos/IdentityRepository.cpp
-        src/header/services/TimeService.h
-        src/cpp/services/TimeService.cpp
-        src/header/controllers/TimeController.h
+        src/cpp/controllers/PlaneController.cpp
         src/cpp/controllers/TimeController.cpp
+        src/cpp/models
+        src/cpp/models/AirportModel.cpp
+        src/cpp/models/DispatcherModel.cpp
+        src/cpp/models/FlightModel.cpp
+        src/cpp/models/PlaneModel.cpp
         src/cpp/models/PlaneModelResponse.cpp
-        src/header/models/PlaneModelResponse.h
+        src/cpp/repos
+        src/cpp/repos/AirportRepository.cpp
+        src/cpp/repos/DispatcherRepository.cpp
+        src/cpp/repos/FlightRepository.cpp
+        src/cpp/repos/IdentityRepository.cpp
+        src/cpp/repos/PlaneRepository.cpp
         src/cpp/repos/TimeRepository.cpp
+        src/cpp/services
+        src/cpp/services/AirportService.cpp
+        src/cpp/services/DispatcherService.cpp
+        src/cpp/services/FlightService.cpp
+        src/cpp/services/PlaneService.cpp
+        src/cpp/services/TimeService.cpp
+        src/header
+        src/header/controllers
+        src/header/controllers/AirportController.h
+        src/header/controllers/DispatcherController.h
+        src/header/controllers/FlightController.h
+        src/header/controllers/IController.h
+        src/header/controllers/PlaneController.h
+        src/header/controllers/TimeController.h
+        src/header/models
+        src/header/models/AirportModel.h
+        src/header/models/DispatcherModel.h
+        src/header/models/FlightModel.h
+        src/header/models/PlaneModel.h
+        src/header/models/PlaneModelResponse.h
+        src/header/models/RoleModel.h
+        src/header/repos
+        src/header/repos/AirportRepository.h
+        src/header/repos/DispatcherRepository.h
+        src/header/repos/FlightRepository.h
+        src/header/repos/IdentityRepository.h
+        src/header/repos/PlaneRepository.h
         src/header/repos/TimeRepository.h
-        ../client/src/cpp/repos/AirportRepository.cpp
-        ../client/src/cpp/repos/DispatcherRepository.cpp
-        ../client/src/header/repos/DispatcherRepository.h
-        ../client/src/cpp/repos/FlightRepository.cpp
-        ../client/src/header/repos/FlightRepository.h
-        ../client/src/cpp/repos/IdentityRepository.cpp
-        ../client/src/header/repos/IdentityRepository.h
-        ../client/src/header/models/PlaneModel.h
-        ../client/src/header/models/PlaneModelResponse.h
-        ../client/src/cpp/repos/PlaneRepository.cpp
-        ../client/src/header/repos/PlaneRepository.h
-        ../client/src/cpp/repos/TimeRepository.cpp
-        ../client/src/header/repos/TimeRepository.h
-        ../client/src/cpp/presenter/AirportPresenter.cpp
-        ../client/src/cpp/models/AirportModel.cpp
+        src/header/services
+        src/header/services/AirportService.h
+        src/header/services/DispatcherService.h
+        src/header/services/FlightService.h
+        src/header/services/PlaneService.h
+        src/header/services/TimeService.h
+        src/Config.h
 
 
 )
