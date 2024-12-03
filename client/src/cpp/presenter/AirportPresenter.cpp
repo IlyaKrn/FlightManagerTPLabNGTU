@@ -3,19 +3,59 @@
 #include <set>
 #include "../../header/models/AirportModel.h"
 #include "../../header/repos/AirportRepository.h"
-#include <iomanip> // Для std::setw
+#include <iomanip> // Для setw
 
+using namespace std;
 void AirportPresenter::getAirports() {
+    try {
+        AirportRepository airportRepo;
+        string token; // Здесь должен быть токен авторизации
 
-    ////////////////////////////////
-    ///
-    ////////////////////////////////
+        // Получаем список аэропортов
+        list<AirportModel> airports = airportRepo.getAllAirports(token);
+
+        // Проверяем, есть ли аэропорты
+        if (airports.empty()) {
+            *_output << "No airports found." << endl;
+            return;
+        }
+
+        // Выводим заголовки таблицы
+        *_output << left; // Выравнивание по левому краю
+        *_output << setw(10) << "ID"
+                 << setw(30) << "Name"
+                 << setw(10) << "Size"
+                 << setw(20) << "Coordinates" << endl;
+
+        // Выводим информацию о каждом аэропорте
+        for (const auto& airport : airports) {
+            *_output << setw(10) << airport.getId()
+                     << setw(30) << airport.getName()
+                     << setw(10) << airport.getSize()
+                     << setw(20) << "(" << airport.getX() << ", " << airport.getY() << ")" << endl;
+        }
+
+    } catch (int& e) {
+        // Обработка ошибок
+        if (e == 500) {
+            *_output << "vse slomalos' peredelivay" << endl;
+        }
+        if (e == 400)
+            *_output << "Wrong request. Pizdui otsuda" << endl;
+        if (e == 403)
+            *_output << "Forbidden move. Try when u ll become more cool" << endl;
+        if (e == 409)
+            *_output << "Vam naznachili strelku - CONFLICT!" << endl;
+        if (e == 401)
+            *_output << "User  is unauthorized. Oluh" << endl;
+        else
+            *_output << "Call to support, +79092840120, its pizdec" << endl;
+    }
 }
-
 void AirportPresenter::createAirport() {
     try {
         // Запрос данных у пользователя
-        std::string name;
+        string name;
         int size;
         double x, y;
 
@@ -31,38 +71,38 @@ void AirportPresenter::createAirport() {
         // Создание модели аэропорта
         AirportModel newAirport(0, name, size, x, y); // ID будет 0, так как это новый аэропорт
         AirportRepository airportRepo;
-        std::string token; // Здесь должен быть токен авторизации
+        string token; // Здесь должен быть токен авторизации
 
         // Вызов метода для создания аэропорта
         AirportModel createdAirport = airportRepo.createAirport(newAirport, token);
 
-        *_output << "Airport created successfully!" << std::endl;
-        *_output << std::left; // Выравнивание по левому краю
-        *_output << std::setw(10) << "ID"
-                 << std::setw(30) << "Name"
-                 << std::setw(10) << "Size"
-                 << std::setw(20) << "Coordinates" << std::endl;
+        *_output << "Airport created successfully!" << endl;
+        *_output << left; // Выравнивание по левому краю
+        *_output << setw(10) << "ID"
+                 << setw(30) << "Name"
+                 << setw(10) << "Size"
+                 << setw(20) << "Coordinates" << endl;
 
-        *_output << std::setw(10) << createdAirport.getId()
-                 << std::setw(30) << createdAirport.getName()
-                 << std::setw(10) << createdAirport.getSize()
-                 << std::setw(20) << "(" << createdAirport.getX() << ", " << createdAirport.getY() << ")" << std::endl;
+        *_output << setw(10) << createdAirport.getId()
+                 << setw(30) << createdAirport.getName()
+                 << setw(10) << createdAirport.getSize()
+                 << setw(20) << "(" << createdAirport.getX() << ", " << createdAirport.getY() << ")" << endl;
 
     } catch (int& e) {
         // Обработка ошибок
         if (e == 500) {
-            *_output << "vse slomalos' peredelivay" << std::endl;
+            *_output << "vse slomalos' peredelivay" << endl;
         }
         if (e == 400)
-            *_output << "Wrong request. Pizdui otsuda" << std::endl;
+            *_output << "Wrong request. Pizdui otsuda" << endl;
         if (e == 403)
-            *_output << "Forbidden move. Try when u ll become more cool" << std::endl;
+            *_output << "Forbidden move. Try when u ll become more cool" << endl;
         if (e == 409)
-            *_output << "Vam naznachili strelku - CONFLICT!" << std::endl;
+            *_output << "Vam naznachili strelku - CONFLICT!" << endl;
         if (e == 401)
-            *_output << "User  is unauthorized. Oluh" << std::endl;
+            *_output << "User  is unauthorized. Oluh" << endl;
         else
-            *_output << "Call to support, +79092840120, its pizdec" << std::endl;
+            *_output << "Call to support, +79092840120, its pizdec" << endl;
     }
 }
 void AirportPresenter::updateAirport()
@@ -72,7 +112,7 @@ void AirportPresenter::updateAirport()
         *_output << "Enter airport ID to update: ";
         *_input >> airportId;
 
-        std::string newName;
+        string newName;
         int newSize;
         double newX, newY;
 
@@ -87,8 +127,8 @@ void AirportPresenter::updateAirport()
 
         AirportModel updatedAirport(airportId, newName.empty() ? "" : newName, newSize > 0 ? newSize : -1, newX >= 0 ? newX : -1, newY >= 0 ? newY : -1);
         AirportRepository airportRepo;
-        std::string token; // токен
-        std::set<std::string> updateFields;
+        string token; // токен
+        set<string> updateFields;
 
         if (!newName.empty()) updateFields.insert("name");
         if (newSize > 0) updateFields.insert("size");
@@ -97,27 +137,27 @@ void AirportPresenter::updateAirport()
 
         AirportModel result = airportRepo.updateAirport(updatedAirport, updateFields, token);
 
-        *_output << "Airport updated successfully!" << std::endl;
-        *_output << std::left; // Выравнивание по левому краю
-        *_output << std::setw(10) << "ID"
-            << std::setw(30) << "Name"
-            << std::setw(10) << "Size"
-            << std::setw(20) << "Coordinates" << std::endl;
-        *_output << "Error updating airport!" << std::endl;
+        *_output << "Airport updated successfully!" << endl;
+        *_output << left; // Выравнивание по левому краю
+        *_output << setw(10) << "ID"
+            << setw(30) << "Name"
+            << setw(10) << "Size"
+            << setw(20) << "Coordinates" << endl;
+        *_output << "Error updating airport!" << endl;
     } catch (int& e) {
         if (e == 500) {
-            *_output << "vse slomalos' peredelivay" << std::endl;
+            *_output << "vse slomalos' peredelivay" << endl;
         }
         if (e == 400)
-            *_output << "Wrong request. Pizdui otsuda" << std::endl;
+            *_output << "Wrong request. Pizdui otsuda" << endl;
         if (e == 403)
-            *_output << "Forbidden move. Try when u ll become more cool" << std::endl;
+            *_output << "Forbidden move. Try when u ll become more cool" << endl;
         if (e == 409)
-            *_output << "Vam naznachili strelku - CONFLICT!" << std::endl;
+            *_output << "Vam naznachili strelku - CONFLICT!" << endl;
         if (e == 401)
-            *_output << "User  is unauthorized. Oluh" << std::endl;
+            *_output << "User  is unauthorized. Oluh" << endl;
         else
-            *_output << "Call to support, +79092840120, its pizdec" << std::endl;
+            *_output << "Call to support, +79092840120, its pizdec" << endl;
     }
 }
 
@@ -129,28 +169,28 @@ void AirportPresenter::deleteAirport()
         *_input >> airportId;
 
         AirportRepository airportRepo;
-        std::string token; // токен
+        string token; // токен
 
         bool result = airportRepo.deleteAirport(airportId, token);
 
         if (result) {
-            *_output << "Airport deleted successfully, good boy!" << std::endl;
+            *_output << "Airport deleted successfully, good boy!" << endl;
         } else {
-            *_output << "Error deleting airport, dolbaeb!" << std::endl;
+            *_output << "Error deleting airport, dolbaeb!" << endl;
         }
     } catch (int& e) {
         if (e == 500) {
-            *_output << "vse slomalos' peredelivay" << std::endl;
+            *_output << "vse slomalos' peredelivay" << endl;
         }
         if (e == 400)
-            *_output << "Wrong request. Pizdui otsuda" << std::endl;
+            *_output << "Wrong request. Pizdui otsuda" << endl;
         if (e == 403)
-            *_output << "Forbidden move. Try when u ll become more cool" << std::endl;
+            *_output << "Forbidden move. Try when u ll become more cool" << endl;
         if (e == 409)
-            *_output << "Vam naznachili strelku - CONFLICT!" << std::endl;
+            *_output << "Vam naznachili strelku - CONFLICT!" << endl;
         if (e == 401)
-            *_output << "User  is unauthorized. Oluh" << std::endl;
+            *_output << "User  is unauthorized. Oluh" << endl;
         else
-            *_output << "Call to support, +79092840120, its pizdec" << std::endl;
+            *_output << "Call to support, +79092840120, its pizdec" << endl;
     }
 }
