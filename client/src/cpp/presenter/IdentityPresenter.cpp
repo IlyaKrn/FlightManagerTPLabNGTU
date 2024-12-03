@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void IdentityPresenter::login() {
+bool IdentityPresenter::login() {
     string email, password;
 
     *_output << "Enter your email: ";
@@ -22,15 +22,17 @@ void IdentityPresenter::login() {
         string token = *(++loginInfo.begin());
 
         *_output << "Login successful!" << endl;
-        *_output << "User  ID: " << userId << endl;
+        *_output << "User   ID: " << userId << endl;
         *_output << "Token: " << token << endl;
 
         // Сохраняем токен и ID пользователя для дальнейшего использования
         TokenRepository tokenRepo;
         if (tokenRepo.setTokenAndUserId(token, stol(userId))) {
             *_output << "Token and User ID saved successfully." << endl;
+            return true; // Успешный вход
         } else {
             *_output << "Failed to save token and User ID." << endl;
+            return false; // Неудачный вход
         }
     } catch (const int& status) {
         // Обработка ошибок
@@ -51,10 +53,11 @@ void IdentityPresenter::login() {
                 *_output << "An unexpected error occurred. Please contact support." << endl;
                 break;
         }
+        return false; // Неудачный вход
     }
 }
 
-void IdentityPresenter::registerDispatcher() {
+bool IdentityPresenter::registerDispatcher() {
     long int id;
     string firstName, lastName, email, password;
     bool isBanned;
@@ -90,15 +93,17 @@ void IdentityPresenter::registerDispatcher() {
         string token = *(++registrationInfo.begin());
 
         *_output << "Registration successful!" << endl;
-        *_output << "User  ID: " << userId << endl;
+        *_output << "User   ID: " << userId << endl;
         *_output << "Token: " << token << endl;
 
         // Сохраняем токен и ID пользователя для дальнейшего использования
         TokenRepository tokenRepo;
         if (tokenRepo.setTokenAndUserId(token, stol(userId))) {
             *_output << "Token and User ID saved successfully." << endl;
+            return true; // Успешная регистрация
         } else {
             *_output << "Failed to save token and User ID." << endl;
+            return false; // Неудачная регистрация
         }
     } catch (const int& status) {
         // Обработка ошибок
@@ -122,5 +127,6 @@ void IdentityPresenter::registerDispatcher() {
                 *_output << "An unexpected error occurred. Please contact support." << endl;
                 break;
         }
+        return false; // Неудачная регистрация
     }
 }

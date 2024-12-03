@@ -10,6 +10,38 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
+    IdentityPresenter identityPresenter(&cout, &cin);
+    bool isAuthenticated = false;
+
+    // Цикл для входа или регистрации
+    while (!isAuthenticated) {
+        cout << "Select action:" << endl;
+        cout << "1. Register" << endl;
+        cout << "2. Login" << endl;
+
+        string command;
+        cin >> command;
+
+        if (command == "1") {
+            isAuthenticated = identityPresenter.registerDispatcher();
+            if (isAuthenticated) {
+                cout << "Registration successful! You are now logged in." << endl;
+            } else {
+                cout << "Registration failed. Please try again." << endl;
+            }
+        } else if (command == "2") {
+            isAuthenticated = identityPresenter.login();
+            if (isAuthenticated) {
+                cout << "Login successful! Welcome back." << endl;
+            } else {
+                cout << "Login failed. Please check your credentials." << endl;
+            }
+        } else {
+            cout << "Invalid command! Please select 1 or 2." << endl;
+        }
+    }
+
+    // Основной цикл для управления
     while (true) {
         cout << "Select action:" << endl;
         cout << "1. Manage Airports" << endl;
@@ -74,9 +106,7 @@ int main(int argc, char* argv[])
             PlanePresenter planePresenter(&cout, &cin);
             cout << "Select action for Planes:" << endl;
             cout << "1. Get Planes" << endl;
-            cout << "2. Create Plane" << endl;
-            cout << "3. Update Plane" << endl;
-            cout << "4. Delete Plane" << endl;
+            cout << "2. Add Plane" << endl;
             string planeAction;
             cin >> planeAction;
 
@@ -84,33 +114,29 @@ int main(int argc, char* argv[])
                 planePresenter.getPlanes();
             } else if (planeAction == "2") {
                 planePresenter.createPlane();
-            } else if (planeAction == "3") {
-                planePresenter.updatePlane();
-            } else if (planeAction == "4") {
-                planePresenter.deletePlane();
             } else {
                 cout << "Invalid action for Planes!" << endl;
             }
         } else if (command == "5") {
             TimePresenter timePresenter(&cout, &cin);
-            cout << "Select action for Time:" << endl;
-            cout << "1. Get Current Time" << endl;
-            cout << "2. Add Time" << endl;
+            cout << "Select action for Time Management:" << endl;
+            cout << "1. Set Time" << endl;
+            cout << "2. Get Current Time" << endl;
             string timeAction;
             cin >> timeAction;
 
             if (timeAction == "1") {
-                timePresenter.getCurrentTime();
-            } else if (timeAction == "2") {
                 timePresenter.addTime();
+            } else if (timeAction == "2") {
+                timePresenter.getCurrentTime();
             } else {
-                cout << "Invalid action for Time!" << endl;
+                cout << "Invalid action for Time Management!" << endl;
             }
         } else if (command == "6") {
-            cout << "Exiting..." << endl;
-            break; // Выход из цикла и завершение программы
+            cout << "Exiting the program." << endl;
+            break; // Выход из программы
         } else {
-            cout << "Invalid command!" << endl;
+            cout << "Invalid command! Please select a valid option." << endl;
         }
     }
 
