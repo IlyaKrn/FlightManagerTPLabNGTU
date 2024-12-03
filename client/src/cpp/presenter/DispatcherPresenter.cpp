@@ -3,6 +3,7 @@
 #include <set>
 #include <string>
 #include <iostream>
+#include "../../header/repos/TokenRepository.h" // Include TokenRepository header
 
 using namespace std;
 
@@ -11,7 +12,7 @@ void DispatcherPresenter::getDispatchers()
     *_output << "Dispatchers: " << std::endl;
 
     DispatcherRepository dispatcherRepo;
-    string token; // Здесь должен быть токен авторизации
+    string token = TokenRepository().getToken(); // Получаем токен
     list<DispatcherModel> dispatchers = dispatcherRepo.getDispatchers(token); // Получаем диспетчеров из репозитория
 
     // Выводим список диспетчеров
@@ -65,7 +66,7 @@ void DispatcherPresenter::updateDispatcher() {
                                           set<RoleModel>()); // Здесь можно обновить роли
 
         DispatcherRepository dispatcherRepo;
-        string token; // Здесь должен быть токен авторизации
+        string token = TokenRepository().getToken(); // Получаем токен
         set<string> updateFields;
 
         // Определяем, какие поля нужно обновить

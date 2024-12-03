@@ -1,11 +1,12 @@
 #include "../../header/presentation/TimePresenter.h"
 #include <iostream>
+#include "../../header/repos/TokenRepository.h" // Include TokenRepository header
 
 using namespace std;
 
 void TimePresenter::getCurrentTime() {
-    string token; // Здесь должен быть токен авторизации
     TimeRepository timeRepo;
+    string token = TokenRepository().getToken(); // Получаем токен авторизации
 
     try {
         long int currentTime = timeRepo.getCurrentTime(token);
@@ -29,8 +30,8 @@ void TimePresenter::addTime() {
     *_output << "Enter time to add (in seconds): ";
     *_input >> timeToAdd;
 
-    string token; // Здесь должен быть токен авторизации
     TimeRepository timeRepo;
+    string token = TokenRepository().getToken(); // Получаем токен авторизации
 
     try {
         bool result = timeRepo.addTime(timeToAdd, token);

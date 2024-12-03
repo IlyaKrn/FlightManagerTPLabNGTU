@@ -1,5 +1,6 @@
 #include "../../header/presentation/IdentityPresenter.h"
 #include <iostream>
+#include "../../header/repos/TokenRepository.h" // Include TokenRepository header
 
 using namespace std;
 
@@ -24,22 +25,31 @@ void IdentityPresenter::login() {
         *_output << "User  ID: " << userId << endl;
         *_output << "Token: " << token << endl;
 
-        // Здесь можно сохранить токен для дальнейшего использования
+        // Сохраняем токен и ID пользователя для дальнейшего использования
+        TokenRepository tokenRepo;
+        if (tokenRepo.setTokenAndUserId(token, stol(userId))) {
+            *_output << "Token and User ID saved successfully." << endl;
+        } else {
+            *_output << "Failed to save token and User ID." << endl;
+        }
     } catch (const int& status) {
         // Обработка ошибок
-        if (status == 500) {
-            *_output << "vse slomalos' peredelivay" << endl;
-        }
-        if (status == 400) {
-            *_output << "Wrong request. Pizdui otsuda" << endl;
-        }
-        if (status == 403) {
-            *_output << "Forbidden move. Try when u ll become more cool" << endl;
-        }
-        if (status == 401) {
-            *_output << "Unauthorized access. Check your credentials." << endl;
-        } else {
-            *_output << "Call to support, +79092840120, its pizdec" << endl;
+        switch (status) {
+            case 500:
+                *_output << "Internal server error. Please try again later." << endl;
+                break;
+            case 400:
+                *_output << "Wrong request. Please check your input." << endl;
+                break;
+            case 403:
+                *_output << "Forbidden access. You do not have permission." << endl;
+                break;
+            case 401:
+                *_output << "Unauthorized access. Check your credentials." << endl;
+                break;
+            default:
+                *_output << "An unexpected error occurred. Please contact support." << endl;
+                break;
         }
     }
 }
@@ -83,25 +93,34 @@ void IdentityPresenter::registerDispatcher() {
         *_output << "User  ID: " << userId << endl;
         *_output << "Token: " << token << endl;
 
-        // Здесь можно сохранить токен для дальнейшего использования
+        // Сохраняем токен и ID пользователя для дальнейшего использования
+        TokenRepository tokenRepo;
+        if (tokenRepo.setTokenAndUserId(token, stol(userId))) {
+            *_output << "Token and User ID saved successfully." << endl;
+        } else {
+            *_output << "Failed to save token and User ID." << endl;
+        }
     } catch (const int& status) {
         // Обработка ошибок
-        if (status == 500) {
-            *_output << "vse slomalos' peredelivay" << endl;
-        }
-        if (status == 400) {
-            *_output << "Wrong request. Pizdui otsuda" << endl;
-        }
-        if (status == 403) {
-            *_output << "Forbidden move. Try when u ll become more cool" << endl;
-        }
-        if (status == 409) {
-            *_output << "Conflict! This dispatcher ID may already exist." << endl;
-        }
-        if (status == 401) {
-            *_output << "Unauthorized access. Check your credentials." << endl;
-        } else {
-            *_output << "Call to support, +79092840120, its pizdec" << endl;
+        switch (status) {
+            case 500:
+                *_output << "Internal server error. Please try again later." << endl;
+                break;
+            case 400:
+                *_output << "Wrong request. Please check your input." << endl;
+                break;
+            case 403:
+                *_output << "Forbidden access. You do not have permission." << endl;
+                break;
+            case 409:
+                *_output << "Conflict! This dispatcher ID may already exist." << endl;
+                break;
+            case 401:
+                *_output << "Unauthorized access. Check your credentials." << endl;
+                break;
+            default:
+                *_output << "An unexpected error occurred. Please contact support." << endl;
+                break;
         }
     }
 }
