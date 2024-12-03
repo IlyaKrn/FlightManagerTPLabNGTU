@@ -4,12 +4,14 @@
 #include "../../header/models/AirportModel.h"
 #include "../../header/repos/AirportRepository.h"
 #include <iomanip> // Для setw
+#include "../../header/repos/TokenRepository.h"
 
 using namespace std;
+
 void AirportPresenter::getAirports() {
     try {
         AirportRepository airportRepo;
-        string token; // Здесь должен быть токен авторизации
+        string token = TokenRepository().getToken();
 
         // Получаем список аэропортов
         list<AirportModel> airports = airportRepo.getAllAirports(token);
@@ -28,7 +30,7 @@ void AirportPresenter::getAirports() {
                  << setw(20) << "Coordinates" << endl;
 
         // Выводим информацию о каждом аэропорте
-        for (const auto& airport : airports) {
+        for (auto airport : airports) {
             *_output << setw(10) << airport.getId()
                      << setw(30) << airport.getName()
                      << setw(10) << airport.getSize()
@@ -52,6 +54,7 @@ void AirportPresenter::getAirports() {
             *_output << "Call to support, +79092840120, its pizdec" << endl;
     }
 }
+
 void AirportPresenter::createAirport() {
     try {
         // Запрос данных у пользователя
@@ -71,7 +74,7 @@ void AirportPresenter::createAirport() {
         // Создание модели аэропорта
         AirportModel newAirport(0, name, size, x, y); // ID будет 0, так как это новый аэропорт
         AirportRepository airportRepo;
-        string token; // Здесь должен быть токен авторизации
+        string token = TokenRepository().getToken(); // Получаем токен
 
         // Вызов метода для создания аэропорта
         AirportModel createdAirport = airportRepo.createAirport(newAirport, token);
@@ -105,8 +108,8 @@ void AirportPresenter::createAirport() {
             *_output << "Call to support, +79092840120, its pizdec" << endl;
     }
 }
-void AirportPresenter::updateAirport()
-{
+
+void AirportPresenter::updateAirport() {
     try {
         long int airportId;
         *_output << "Enter airport ID to update: ";
@@ -127,7 +130,7 @@ void AirportPresenter::updateAirport()
 
         AirportModel updatedAirport(airportId, newName.empty() ? "" : newName, newSize > 0 ? newSize : -1, newX >= 0 ? newX : -1, newY >= 0 ? newY : -1);
         AirportRepository airportRepo;
-        string token; // токен
+        string token = TokenRepository().getToken(); // Получаем токен
         set<string> updateFields;
 
         if (!newName.empty()) updateFields.insert("name");
@@ -140,10 +143,15 @@ void AirportPresenter::updateAirport()
         *_output << "Airport updated successfully!" << endl;
         *_output << left; // Выравнивание по левому краю
         *_output << setw(10) << "ID"
-            << setw(30) << "Name"
-            << setw(10) << "Size"
-            << setw(20) << "Coordinates" << endl;
-        *_output << "Error updating airport!" << endl;
+                 << setw(30) << "Name"
+                 << setw(10) << "Size"
+                 << setw(20) << "Coordinates" << endl;
+
+        *_output << setw(10) << result.getId()
+                 << setw(30) << result.getName()
+                 << setw(10) << result.getSize()
+                 << setw(20) << "(" << result.getX() << ", " << result.getY() << ")" << endl;
+
     } catch (int& e) {
         if (e == 500) {
             *_output << "vse slomalos' peredelivay" << endl;
@@ -161,15 +169,14 @@ void AirportPresenter::updateAirport()
     }
 }
 
-void AirportPresenter::deleteAirport()
-{
+void AirportPresenter::deleteAirport() {
     try {
         long int airportId;
         *_output << "Enter airport ID to delete: ";
         *_input >> airportId;
 
         AirportRepository airportRepo;
-        string token; // токен
+        string token = TokenRepository().getToken(); // Получаем токен
 
         bool result = airportRepo.deleteAirport(airportId, token);
 
