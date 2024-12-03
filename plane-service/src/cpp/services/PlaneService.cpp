@@ -123,7 +123,7 @@ PlaneModel PlaneService::updatePlane(PlaneModel plane, set<string> update, strin
     long int planeId = plane.getId();
     list<FlightModel> flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr, &planeId);
     flights.sort(PlaneSortByTime);
-    if (flights.front().getTimestampEnd() > timer.getAddedTime())
+    if (flights.front().getTimestampEnd() > timer.getAddedTime() or update.count("brokenPercentage") > 0)
         throw 409;
     PlaneModel res = repo.updatePlane(plane, update);
     return res;
