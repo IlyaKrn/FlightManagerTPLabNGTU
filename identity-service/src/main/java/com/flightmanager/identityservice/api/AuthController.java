@@ -44,6 +44,7 @@ public class AuthController {
             log.info("login successful: id={} [code 200]", response.getId());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            log.debug("Error during login: {}", e.getMessage(), e);
             log.warn("login failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -64,9 +65,11 @@ public class AuthController {
             log.info("register successful: id={} [code 200]", response.getId());
             return ResponseEntity.ok(response);
         } catch (HTTP400Exception e) {
+            log.debug("Error during registration: {}, id={}", e.getMessage(), e);
             log.warn("register failed: invalid register data [code 400]");
             return ResponseEntity.status(400).build();
         } catch (Exception e) {
+            log.debug("Error during registration: {}", e.getMessage(), e);
             log.warn("register failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -79,6 +82,7 @@ public class AuthController {
             log.info("authorize successful: value={} [code 200]", authorize);
             return ResponseEntity.ok(authorize);
         } catch (Exception e) {
+            log.debug("Error during authorization: {}", e.getMessage(), e);
             log.warn("authorize failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -95,6 +99,7 @@ public class AuthController {
             log.info("id-by-token successful: id={} [code 200]", id);
             return ResponseEntity.ok(id);
         } catch (Exception e) {
+            log.debug("Error during id-by-token: {}", e.getMessage(), e);
             log.warn("id-by-token failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }

@@ -27,6 +27,7 @@ public class RoutesConfig {
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder) {
         RouteLocatorBuilder.Builder b = builder.routes();
+        try {
 
         String[] mappingsIdentity = identityServiceRoutes.getMappings();
         for (String mapping : mappingsIdentity) {
@@ -49,6 +50,12 @@ public class RoutesConfig {
             log.info("added route: Path={}, Target URL={}", planeServiceRoutes.getUrl(), mapping);
         }
         log.debug("All routes configured successfully.");
+        catch (Exception e) {
+
+                StringWriter errors = new StringWriter();
+                e.printStackTrace(new PrintWriter(errors));
+                log.error("Route configuration failed: " + errors);
+            }
 
         return b.build();
     }
