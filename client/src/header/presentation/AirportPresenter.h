@@ -4,6 +4,8 @@
 class AirportPresenter : public IPresenter {
 
 public:
+    AirportPresenter(std::ostream *output, std::istream *input): IPresenter(output, input) {}
+
     void getAirports();
     void createAirport();
     void updateAirport();

@@ -4,6 +4,14 @@
 #include "../../header/models/AirportModel.h"
 #include "../../header/repos/AirportRepository.h"
 #include <iomanip> // Для std::setw
+
+void AirportPresenter::getAirports() {
+
+    ////////////////////////////////
+    ///
+    ////////////////////////////////
+}
+
 void AirportPresenter::createAirport() {
     try {
         // Запрос данных у пользователя

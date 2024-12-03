@@ -7,6 +7,8 @@
 
 class IdentityPresenter : public IPresenter {
 public:
+    IdentityPresenter(std::ostream *output, std::istream *input): IPresenter(output, input) {}
+
     void login();
     void registerDispatcher();
 };
