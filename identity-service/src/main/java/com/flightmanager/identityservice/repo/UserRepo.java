@@ -25,6 +25,7 @@ public class UserRepo {
 
     public List<UserModel> getById(long id) throws HTTPException {
         String url = properties.getDatabaseServiceUrl() + properties.getUserGet() + "/?id=" + id;
+        log.debug("Sending GET request to URL: {}", url);
         ResponseEntity<UserModel[]> r = restTemplate.getForEntity(url, UserModel[].class);
         if (r.getStatusCode().is2xxSuccessful())
             return r.getBody() == null ? null : new ArrayList<>(Arrays.asList(r.getBody()));
@@ -41,6 +42,7 @@ public class UserRepo {
 
     public List<UserModel> getByEmail(String email) throws HTTPException {
         String url = properties.getDatabaseServiceUrl() + properties.getUserGet() + "/?email=" + email;
+        log.debug("Sending GET request to URL: {}", url);
         ResponseEntity<UserModel[]> r = restTemplate.getForEntity(url, UserModel[].class);
         if (r.getStatusCode().is2xxSuccessful())
             return r.getBody() == null ? null : new ArrayList<>(Arrays.asList(r.getBody()));
@@ -57,6 +59,8 @@ public class UserRepo {
 
     public UserModel create(UserModel data) throws HTTPException {
         String url = properties.getDatabaseServiceUrl() + properties.getUserCreate();
+        log.debug("Sending POST request to URL: {}", url);
+        log.debug("Request body: {}", data);
         ResponseEntity<UserModel> r = restTemplate.postForEntity(url, data, UserModel.class);
         if (r.getStatusCode().is2xxSuccessful())
             return r.getBody();
@@ -69,5 +73,6 @@ public class UserRepo {
         if (r.getStatusCode().value() == 401)
             throw new HTTP500Exception("POST '" + url + "' return code" + r.getStatusCode().value());
         throw new HTTP500Exception("POST '" + url + "' return unchecked code" + r.getStatusCode().value());
+
     }
 }

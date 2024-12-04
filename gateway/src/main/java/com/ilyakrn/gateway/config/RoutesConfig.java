@@ -27,24 +27,36 @@ public class RoutesConfig {
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder) {
         RouteLocatorBuilder.Builder b = builder.routes();
+        try {
 
         String[] mappingsIdentity = identityServiceRoutes.getMappings();
         for (String mapping : mappingsIdentity) {
+            log.debug("Configuring route for Identity Service: Path={}, Target URL={}", mapping, identityServiceRoutes.getUrl());
+
             b = b.route(p -> p
                     .path(mapping)
                     .filters(f -> f.addRequestHeader(cfg.getServiceTokenHeader(), cfg.getServiceToken()))
                     .uri(identityServiceRoutes.getUrl()));
-            log.info("added route: {} {}", identityServiceRoutes.getUrl(), mapping);
+            log.info("added route: Path={}, Target URL={}", identityServiceRoutes.getUrl(), mapping);
         }
 
         String[] mappingsPlane = planeServiceRoutes.getMappings();
         for (String mapping : mappingsPlane) {
+            log.debug("Configuring route for Plane Service: Path={}, Target URL={}", mapping, planeServiceRoutes.getUrl());
             b = b.route(p -> p
                     .path(mapping)
                     .filters(f -> f.addRequestHeader(cfg.getServiceTokenHeader(), cfg.getServiceToken()))
                     .uri(planeServiceRoutes.getUrl()));
-            log.info("added route: {} {}", planeServiceRoutes.getUrl(), mapping);
+            log.info("added route: Path={}, Target URL={}", planeServiceRoutes.getUrl(), mapping);
         }
+        log.debug("All routes configured successfully.");
+        catch (Exception e) {
+
+                StringWriter errors = new StringWriter();
+                e.printStackTrace(new PrintWriter(errors));
+                log.error("Route configuration failed: " + errors);
+            }
+
         return b.build();
     }
 }

@@ -32,10 +32,16 @@ public class JwtUtil {
             claims.put("email", ((UserAuth) userDetails).getEmail());
             claims.put("roles", ((UserAuth) userDetails).getRoles());
         }
+        log.debug("User details for token generation: ID={}, Email={}, Roles={}",
+                claims.get("id"), claims.get("email"), claims.get("roles"));
         return generateToken(claims, userDetails);
     }
 
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        String subject = userDetails.getUsername();
+
+        log.debug("Creating token for subject: {}", subject);
+
         return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 100000 * 60 * 24))
@@ -44,25 +50,35 @@ public class JwtUtil {
 
     public boolean isTokenExpired(String token) {
         try {
+            boolean expired = extractAllClaims(token).getExpiration().before(new Date());
+            log.debug("Token expiration status: {}", expired ? "Expired" : "Valid");
             return extractAllClaims(token).getExpiration().before(new Date());
         } catch (NullPointerException e) {
+            log.debug("Error while checking token expiration", e);
+
             return false;
         }
     }
 
     public String extractId(String token) {
         try {
+            String id = extractAllClaims(token).get("id").toString();
+            log.debug("Extracted ID from token: {}", id);
             return extractAllClaims(token).get("id").toString();
         } catch (NullPointerException e) {
+            log.debug("Error extracting ID from token", e);
             return null;
         }
     }
 
     private Claims extractAllClaims(String token) {
         try {
+
             return Jwts.parser().setSigningKey(getSigningKey()).parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
+            log.error("Error extracting claims from token", e);
+
             return null;
         }
     }
