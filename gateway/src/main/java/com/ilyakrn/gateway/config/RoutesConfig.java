@@ -47,7 +47,7 @@ public class RoutesConfig {
             }
             log.debug("All routes configured successfully.");
         } catch (Exception e) {
-            log.error("Route configuration failed: " + e.getMessage());
+            log.error("Route configuration failed: {}", e.getMessage());
         }
 
         return b.build();

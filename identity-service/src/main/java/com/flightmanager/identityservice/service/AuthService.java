@@ -6,8 +6,6 @@ import com.flightmanager.identityservice.models.RoleModel;
 import com.flightmanager.identityservice.models.TokenResponse;
 import com.flightmanager.identityservice.models.UserModel;
 import com.flightmanager.identityservice.repo.UserRepo;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +16,6 @@ import java.util.Set;
 
 @Service
 public class AuthService {
-    private final Logger log = LogManager.getLogger(AuthService.class);
 
 
     @Autowired
