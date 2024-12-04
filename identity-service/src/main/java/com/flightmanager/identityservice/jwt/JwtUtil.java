@@ -1,7 +1,6 @@
 package com.flightmanager.identityservice.jwt;
 
 import com.flightmanager.identityservice.config.PropertiesConfig;
-import com.flightmanager.identityservice.security.ServiceTokenFilter;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -20,7 +19,7 @@ import java.util.Map;
 
 @Service
 public class JwtUtil {
-    private Logger log = LogManager.getLogger(JwtUtil.class);
+    private final Logger log = LogManager.getLogger(JwtUtil.class);
 
     @Autowired
     private PropertiesConfig properties;

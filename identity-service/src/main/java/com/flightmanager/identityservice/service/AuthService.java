@@ -18,7 +18,7 @@ import java.util.Set;
 
 @Service
 public class AuthService {
-    private Logger log = LogManager.getLogger(AuthService.class);
+    private final Logger log = LogManager.getLogger(AuthService.class);
 
 
     @Autowired

@@ -19,8 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 @RequiredArgsConstructor
 public class ServiceTokenFilter extends GenericFilterBean {
-    private Logger log = LogManager.getLogger(ServiceTokenFilter.class);
-
+    private final Logger log = LogManager.getLogger(ServiceTokenFilter.class);
 
 
     @Autowired
@@ -45,7 +44,7 @@ public class ServiceTokenFilter extends GenericFilterBean {
         try {
             fc.doFilter(request, response);
         } catch (Exception e) {
-            log.debug("Error during ServiceTokenFilter doFilter:{}, request={},response={}", e.getMessage(),request,response, e);
+            log.debug("Error during ServiceTokenFilter doFilter:{}, request={},response={}", e.getMessage(), request, response, e);
             log.warn(e.getMessage());
             ((HttpServletResponse) response).setStatus(400);
         }

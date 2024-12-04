@@ -1,6 +1,5 @@
 package com.flightmanager.databaseservice.security;
 
-import com.flightmanager.databaseservice.api.FlightController;
 import com.flightmanager.databaseservice.config.PropertiesConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ServiceAuthorizer {
-    private Logger log = LogManager.getLogger(ServiceAuthorizer.class);
+    private final Logger log = LogManager.getLogger(ServiceAuthorizer.class);
 
 
     @Autowired

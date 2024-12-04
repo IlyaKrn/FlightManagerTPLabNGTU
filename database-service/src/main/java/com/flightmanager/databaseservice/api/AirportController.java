@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @RestController
 public class AirportController {
-    private Logger log = LogManager.getLogger(AirportController.class);
+    private final Logger log = LogManager.getLogger(AirportController.class);
 
     @Autowired
     private AirportRepo repo;
@@ -46,7 +46,7 @@ public class AirportController {
             log.info("get airports successful ({} entities) [code 200]", models.size());
             return ResponseEntity.ok(models);
         } catch (Exception e) {
-            log.debug("Error get airport retrial:{},input parameters:id={}, name={}, x={}, size={}", e.getMessage(), id,name,x,y,size,e);
+            log.debug("Error get airport retrial:{},input parameters:id={}, name={}, x={}, size={}", e.getMessage(), id, name, x, y, size, e);
             log.warn("get airports failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -117,7 +117,7 @@ public class AirportController {
             log.warn("delete airport failed: id={} not exists [code 200]", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            log.debug("Error during airport delete:{},input parameters:id={}", e.getMessage(),id, e);
+            log.debug("Error during airport delete:{},input parameters:id={}", e.getMessage(), id, e);
             log.warn("delete airport failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }

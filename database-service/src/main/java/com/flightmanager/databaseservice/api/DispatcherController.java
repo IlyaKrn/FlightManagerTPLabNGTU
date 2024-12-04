@@ -3,7 +3,6 @@ package com.flightmanager.databaseservice.api;
 import com.flightmanager.databaseservice.models.DispatcherModel;
 import com.flightmanager.databaseservice.models.RoleModel;
 import com.flightmanager.databaseservice.repos.DispatcherRepo;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 
 @RestController
 public class DispatcherController {
-    private Logger log = LogManager.getLogger(DispatcherController.class);
+    private final Logger log = LogManager.getLogger(DispatcherController.class);
 
     @Autowired
     private DispatcherRepo repo;
@@ -69,7 +68,7 @@ public class DispatcherController {
             log.info("get dispatcher successful ({} entities) [code 200]", models.size());
             return ResponseEntity.ok(models);
         } catch (Exception e) {
-            log.debug("Error get dispatcher retrial:{},input parameters:id={}, firstName={}, email={}, password={}, isBanned={}, roles={}", e.getMessage(), id,firstName,email,password,isBanned,roles,e);
+            log.debug("Error get dispatcher retrial:{},input parameters:id={}, firstName={}, email={}, password={}, isBanned={}, roles={}", e.getMessage(), id, firstName, email, password, isBanned, roles, e);
             log.warn("get dispatcher failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -128,7 +127,7 @@ public class DispatcherController {
             log.info("update dispatcher successful: id={} [code 200]", model.getId());
             return ResponseEntity.ok(model);
         } catch (Exception e) {
-            log.debug("Error dispatcher update:{},input data: {}, update fields: {}", e.getMessage(), data,update, e);
+            log.debug("Error dispatcher update:{},input data: {}, update fields: {}", e.getMessage(), data, update, e);
             log.warn("update dispatcher failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -144,7 +143,7 @@ public class DispatcherController {
             log.warn("delete dispatcher failed: id={} not exists [code 200]", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            log.debug("Error dispatcher delete:{},input parameters:id={}", e.getMessage(),id, e);
+            log.debug("Error dispatcher delete:{},input parameters:id={}", e.getMessage(), id, e);
             log.warn("delete dispatcher failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
