@@ -12,13 +12,13 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RoutesConfig {
+    private final Logger log = LogManager.getLogger(RoutesConfig.class);
     @Autowired
     IdentityServiceRoutes identityServiceRoutes;
     @Autowired
     PlaneServiceRoutes planeServiceRoutes;
     @Autowired
     PropertiesConfig cfg;
-    private final Logger log = LogManager.getLogger(RoutesConfig.class);
 
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder) {
@@ -46,13 +46,10 @@ public class RoutesConfig {
                 log.info("added route: Path={}, Target URL={}", planeServiceRoutes.getUrl(), mapping);
             }
             log.debug("All routes configured successfully.");
-        catch(Exception e){
-
-                StringWriter errors = new StringWriter();
-                e.printStackTrace(new PrintWriter(errors));
-                log.error("Route configuration failed: " + errors);
-            }
-
-            return b.build();
+        } catch (Exception e) {
+            log.error("Route configuration failed: " + e.getMessage());
         }
+
+        return b.build();
     }
+}
