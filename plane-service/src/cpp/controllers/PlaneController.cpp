@@ -7,7 +7,16 @@
 using namespace nlohmann;
 using namespace httplib;
 using namespace std;
-
+bool containsNullFields(json req_body)
+{
+    return req_body["id"].is_null()
+    || req_body["name"].is_null()
+    || req_body["builtYear"].is_null()
+    || req_body["brokenPercentage"].is_null()
+    || req_body["pilot"].is_null()
+    || req_body["minAirportSize"].is_null()
+    || req_body["speed"].is_null();
+}
 void PlaneController::configure(Server* server)
 {
     server->Get(PLANE_GET_ALL_MAPPING, [this](const Request& req, Response& res)
@@ -55,19 +64,21 @@ void PlaneController::configure(Server* server)
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
-            json plane_json = json::parse(req.body);
-            PlaneModel plane(plane_json["id"], plane_json["name"], plane_json["pilot"], plane_json["builtYear"], plane_json["brokenPercentage"], plane_json["speed"], plane_json["minAirportSize"]);
+            json request = json::parse(req.body);
+            if (containsNullFields(request))
+                throw 400;
+            PlaneModel plane(request["id"], request["name"], request["pilot"], request["builtYear"], request["brokenPercentage"], request["speed"], request["minAirportSize"]);
             PlaneModel created = serv.createPlane(plane, header);
-            json result;
-            result["id"] = created.getId();
-            result["name"] = created.getName();
-            result["pilot"] = created.getPilot();
-            result["builtYear"] = created.getBuiltYear();
-            result["brokenPercentage"] = created.getBrokenPercentage();
-            result["speed"] = created.getSpeed();
-            result["minAirportSize"] = created.getMinAirportSize();
+            json plane_json;
+            plane_json["id"] = created.getId();
+            plane_json["name"] = created.getName();
+            plane_json["pilot"] = created.getPilot();
+            plane_json["builtYear"] = created.getBuiltYear();
+            plane_json["brokenPercentage"] = created.getBrokenPercentage();
+            plane_json["speed"] = created.getSpeed();
+            plane_json["minAirportSize"] = created.getMinAirportSize();
             res.status = 200;
-            res.set_content(result.dump(), "application/json");
+            res.set_content(plane_json.dump(), "application/json");
         } catch (int& e)
         {
             cout << "exception occured " << e << endl;
@@ -97,8 +108,10 @@ void PlaneController::configure(Server* server)
                 if (!item.empty())
                     updates.insert(item);
             }
-            json result = json::parse(req.body);
-            PlaneModel plane(result["id"], result["name"], result["pilot"], result["builtYear"], result["brokenPercentage"], result["speed"], result["minAirportSize"]);
+            json request = json::parse(req.body);
+            if (containsNullFields(request))
+                throw 400;
+            PlaneModel plane(request["id"], request["name"], request["pilot"], request["builtYear"], request["brokenPercentage"], request["speed"], request["minAirportSize"]);
             PlaneModel updated = serv.updatePlane(plane, updates, header);
             updates.clear();
             json plane_json;

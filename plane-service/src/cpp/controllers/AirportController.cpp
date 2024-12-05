@@ -7,6 +7,14 @@ using namespace nlohmann;
 using namespace httplib;
 using namespace std;
 
+bool containsNullFields(json req_body)
+{
+    return req_body["id"].is_null()
+    || req_body["name"].is_null()
+    || req_body["size"].is_null()
+    || req_body["x"].is_null()
+    || req_body["y"].is_null();
+}
 void AirportController::configure(Server* server)
 {
     // sample request handlers
@@ -50,8 +58,10 @@ void AirportController::configure(Server* server)
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
-            json result = json::parse(req.body);
-            AirportModel created = serv.createAirport(AirportModel(result["id"], result["name"], result["size"],  result["x"], result["y"]), header);
+            json request = json::parse(req.body);
+            if (containsNullFields(request))
+                throw 400;
+            AirportModel created = serv.createAirport(AirportModel(request["id"], request["name"], request["size"],  request["x"], request["y"]), header);
             json airport_json;
             airport_json["id"] = created.getId();
             airport_json["name"] = created.getName();
@@ -90,8 +100,10 @@ void AirportController::configure(Server* server)
                 if (!item.empty())
                     updates.insert(item);
             }
-            json result = json::parse(req.body);
-            AirportModel airport(result["id"], result["name"], result["size"], result["x"], result["y"]);
+            json request = json::parse(req.body);
+            if (containsNullFields(request))
+                throw 400;
+            AirportModel airport(request["id"], request["name"], request["size"], request["x"], request["y"]);
             AirportModel updated = serv.updateAirport(airport, updates, header);
             updates.clear();
             json airport_json;
@@ -124,9 +136,7 @@ void AirportController::configure(Server* server)
         long int id = stol(req.matches[1]);
         bool deleted = serv.deleteAirport(id, header);
         if (deleted)
-        {
             res.status = 200;
-        }
     }  catch (int& e)
     {
         cout << "exception occured " << e << endl;

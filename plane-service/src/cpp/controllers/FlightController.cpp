@@ -7,6 +7,15 @@
 using namespace nlohmann;
 using namespace httplib;
 using namespace std;
+bool containsNullFields(json req_body)
+{
+    return req_body["id"].is_null()
+    || req_body["timestampStart"].is_null()
+    || req_body["timestampEnd"].is_null()
+    || req_body["planeId"].is_null()
+    || req_body["airportId"].is_null()
+    || req_body["dispatcherId"].is_null();
+}
 
 void FlightController::configure(Server* server)
 {
@@ -20,7 +29,7 @@ void FlightController::configure(Server* server)
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             list<FlightModel> flights = serv.getAllFlights(header);
-            json result = json::array();
+            json flights_json = json::array();
             for (auto flight : flights)
             {
                 json flight_json;
@@ -30,10 +39,10 @@ void FlightController::configure(Server* server)
                 flight_json["dispatcherId"] = flight.getDispatcherId();
                 flight_json["planeId"] = flight.getPlaneId();
                 flight_json["airportId"] = flight.getAirportId();
-                result.push_back(flight_json);
+                flights_json.push_back(flight_json);
             }
             res.status = 200;
-            res.set_content(result.dump(), "application/json");
+            res.set_content(flights_json.dump(), "application/json");
         } catch (int& e)
         {
             cout << "exception occured " << e << endl;
@@ -52,18 +61,20 @@ void FlightController::configure(Server* server)
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
-            json flight_json = json::parse(req.body);
-            FlightModel flight(flight_json["id"], flight_json["timestampStart"], flight_json["timestampEnd"], flight_json["dispatcherId"], flight_json["planeId"], flight_json["airportId"]);
+            json request = json::parse(req.body);
+            if (containsNullFields(request))
+                throw 400;
+            FlightModel flight(request["id"], request["timestampStart"], request["timestampEnd"], request["dispatcherId"], request["planeId"], request["airportId"]);
             FlightModel created = serv.createFlight(flight, header);
-            json result;
-            result["id"] = created.getId();
-            result["timestampStart"] = created.getTimestampStart();
-            result["timestampEnd"] = created.getTimestampEnd();
-            result["dispatcherId"] = created.getDispatcherId();
-            result["planeId"] = created.getPlaneId();
-            result["airportId"] = created.getAirportId();
+            json flight_json;
+            flight_json["id"] = created.getId();
+            flight_json["timestampStart"] = created.getTimestampStart();
+            flight_json["timestampEnd"] = created.getTimestampEnd();
+            flight_json["dispatcherId"] = created.getDispatcherId();
+            flight_json["planeId"] = created.getPlaneId();
+            flight_json["airportId"] = created.getAirportId();
             res.status = 200;
-            res.set_content(result.dump(), "application/json");
+            res.set_content(flight_json.dump(), "application/json");
         } catch (int& e)
         {
             cout << "exception occured " << e << endl;
