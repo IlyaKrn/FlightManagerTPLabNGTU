@@ -9,7 +9,7 @@ using namespace httplib;
 using namespace nlohmann;
 
 list<AirportModel> AirportRepository::getAllAirports(string token) {
-    Client cli(GATEWAY_HOST, GATEWAY_PORT);
+    Client cli(GATEWAY_HOST_PORT);
 
     Headers headers = {
         {AUTH_TOKEN_NAME, token}
@@ -31,7 +31,7 @@ list<AirportModel> AirportRepository::getAllAirports(string token) {
 }
 
 AirportModel AirportRepository::createAirport(AirportModel airport, string token) {
-    Client cli(GATEWAY_HOST, GATEWAY_PORT);
+    Client cli(GATEWAY_HOST_PORT);
 
     Headers headers = {
         { AUTH_TOKEN_NAME, token }
@@ -54,7 +54,7 @@ AirportModel AirportRepository::createAirport(AirportModel airport, string token
 
 bool AirportRepository::deleteAirport(long int id, string token) {
 
-    Client cli(GATEWAY_HOST, GATEWAY_PORT);
+    Client cli(GATEWAY_HOST_PORT);
 
     Headers headers = {
         { AUTH_TOKEN_NAME, token }
@@ -66,7 +66,7 @@ bool AirportRepository::deleteAirport(long int id, string token) {
 }
 
 AirportModel AirportRepository::updateAirport(AirportModel airport, set<string> updates, string token) {
-    Client cli(GATEWAY_HOST, GATEWAY_PORT);
+    Client cli(GATEWAY_HOST_PORT);
     Headers headers = {
         { AUTH_TOKEN_NAME, token}
     };

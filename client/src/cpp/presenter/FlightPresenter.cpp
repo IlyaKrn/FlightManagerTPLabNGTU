@@ -2,6 +2,7 @@
 #include <list>
 #include <string>
 #include <iostream>
+#include "../../header/repos/TokenRepository.h" // Include TokenRepository header
 
 using namespace std;
 
@@ -10,7 +11,7 @@ void FlightPresenter::getAllFlights()
     *_output << "Flights: " << std::endl;
 
     FlightRepository flightRepo;
-    string token; // Здесь должен быть токен авторизации
+    string token = TokenRepository().getToken(); // Получаем токен
     list<FlightModel> flights = flightRepo.getAllFlights(token); // Получаем рейсы из репозитория
 
     // Выводим список рейсов
@@ -47,7 +48,7 @@ void FlightPresenter::createFlight() {
 
         FlightModel newFlight(0, timestampStart, timestampEnd, dispatcherId, planeId, airportId); // Создаем новый объект рейса
         FlightRepository flightRepo;
-        string token; // Здесь должен быть токен авторизации
+        string token = TokenRepository().getToken(); // Получаем токен
 
         // Отправляем новый рейс на сервер и получаем результат
         FlightModel result = flightRepo.createFlight(newFlight, token);
@@ -80,4 +81,3 @@ void FlightPresenter::createFlight() {
         }
     }
 }
-

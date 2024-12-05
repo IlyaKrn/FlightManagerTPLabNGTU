@@ -10,7 +10,7 @@ using namespace nlohmann;
 
 list<PlaneModelResponse> PlaneRepository::getPlanes(string token)
 {
-    Client cli(GATEWAY_HOST, GATEWAY_PORT);
+    Client cli(GATEWAY_HOST_PORT);
 
     Headers headers = {
         { AUTH_TOKEN_NAME, token }
@@ -31,7 +31,7 @@ list<PlaneModelResponse> PlaneRepository::getPlanes(string token)
 }
 PlaneModel PlaneRepository::createPlane(PlaneModel plane, string token)
 {
-    Client cli(GATEWAY_HOST, GATEWAY_PORT);
+    Client cli(GATEWAY_HOST_PORT);
 
     Headers headers = {
         { AUTH_TOKEN_NAME, token }
@@ -56,7 +56,7 @@ PlaneModel PlaneRepository::createPlane(PlaneModel plane, string token)
 }
 bool PlaneRepository::deletePlane(long int id, string token)
 {
-    Client cli(GATEWAY_HOST, GATEWAY_PORT);
+    Client cli(GATEWAY_HOST_PORT);
 
     Headers headers = {
         { AUTH_TOKEN_NAME, token }
@@ -69,7 +69,7 @@ bool PlaneRepository::deletePlane(long int id, string token)
 }
 PlaneModel PlaneRepository::updatePlane(PlaneModel plane, set<string> updates, string token)
 {
-    Client cli(GATEWAY_HOST, GATEWAY_PORT);
+    Client cli(GATEWAY_HOST_PORT);
 
     Headers headers = {
         { AUTH_TOKEN_NAME, token }

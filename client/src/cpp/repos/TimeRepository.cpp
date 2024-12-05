@@ -9,7 +9,7 @@ using namespace httplib;
 using namespace nlohmann;
 
 long int TimeRepository::getCurrentTime(string token) {
-    Client cli(GATEWAY_HOST, GATEWAY_PORT);
+    Client cli(GATEWAY_HOST_PORT);
 
     Headers headers = {
         { AUTH_TOKEN_NAME, token }
@@ -25,7 +25,7 @@ long int TimeRepository::getCurrentTime(string token) {
 }
 
 bool TimeRepository::addTime(long int time, string token) {
-    Client cli(GATEWAY_HOST, GATEWAY_PORT);
+    Client cli(GATEWAY_HOST_PORT);
     Headers headers = {
         { AUTH_TOKEN_NAME, token }
     };

@@ -6,8 +6,8 @@
 
 class DispatcherPresenter : public IPresenter {
 public:
+    DispatcherPresenter(std::ostream *output, std::istream *input): IPresenter(output, input) {}
+
     void getDispatchers();
-    void createDispatcher();
     void updateDispatcher();
-    void deleteDispatcher();
 };

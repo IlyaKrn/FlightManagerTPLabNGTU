@@ -1,11 +1,12 @@
 #include "../../header/presentation/PlanePresenter.h"
 #include <iostream>
+#include "../../header/repos/TokenRepository.h" // Include TokenRepository header
 
 using namespace std;
 
 void PlanePresenter::getPlanes() {
-    string token; // Здесь должен быть токен авторизации
     PlaneRepository planeRepo;
+    string token = TokenRepository().getToken(); // Получаем токен авторизации
 
     try {
         list<PlaneModelResponse> planes = planeRepo.getPlanes(token);
@@ -63,7 +64,7 @@ void PlanePresenter::createPlane() {
 
     PlaneModel newPlane(id, name, pilot, builtYear, brokenPercentage, speed, minAirportSize);
     PlaneRepository planeRepo;
-    string token; // Здесь должен быть токен авторизации
+    string token = TokenRepository().getToken(); // Получаем токен авторизации
 
     try {
         // Отправляем новый объект самолета на сервер и получаем результат
@@ -149,7 +150,7 @@ void PlanePresenter::updatePlane() {
                             speed,
                             minAirportSize);
     PlaneRepository planeRepo;
-    string token; // Здесь должен быть токен авторизации
+    string token = TokenRepository().getToken(); // Получаем токен авторизации
 
     try {
         // Отправляем обновленный объект самолета на сервер и получаем результат
@@ -183,7 +184,7 @@ void PlanePresenter::deletePlane() {
     *_input >> id;
 
     PlaneRepository planeRepo;
-    string token; // Здесь должен быть токен авторизации
+    string token = TokenRepository().getToken(); // Получаем токен авторизации
 
     try {
         bool result = planeRepo.deletePlane(id, token);
