@@ -63,5 +63,5 @@ const std::string TIME_SKIP_MAPPING = "/api/time/skip";
 const std::string TIME_GET_MAPPING = "/api/time/get";
 
 // path to the time file
-const std::string TIME_FILE_PATH = "/var/lib/plane-service/data/addedTime.txt";
+const std::string TIME_FILE_PATH = std::string(std::getenv("TIME_FILE_PATH"));
 const int addingBrokenPercentage = 3600;
