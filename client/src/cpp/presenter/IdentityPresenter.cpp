@@ -58,12 +58,7 @@ bool IdentityPresenter::login() {
 }
 
 bool IdentityPresenter::registerDispatcher() {
-    long int id;
     string firstName, lastName, email, password;
-    bool isBanned;
-
-    *_output << "Enter dispatcher ID: ";
-    *_input >> id;
 
     *_output << "Enter first name: ";
     *_input >> firstName;
@@ -77,13 +72,8 @@ bool IdentityPresenter::registerDispatcher() {
     *_output << "Enter password: ";
     *_input >> password;
 
-    *_output << "Is banned (1 for Yes, 0 for No): ";
-    int bannedInput;
-    *_input >> bannedInput;
-    isBanned = (bannedInput == 1);
-
     // Создаем объект DispatcherModel
-    DispatcherModel newDispatcher(id, firstName, lastName, email, password, isBanned, set<RoleModel>());
+    DispatcherModel newDispatcher(0, firstName, lastName, email, password, false, set<RoleModel>());
 
     IdentityRepository identityRepo;
 
@@ -93,14 +83,14 @@ bool IdentityPresenter::registerDispatcher() {
         string token = *(++registrationInfo.begin());
 
         *_output << "Registration successful!" << endl;
-        *_output << "User   ID: " << userId << endl;
+        *_output << "User ID: " << userId << endl;
         *_output << "Token: " << token << endl;
 
-        // Сохраняем токен и ID пользователя для дальнейшего использования
+         //Сохраняем токен и ID пользователя для дальнейшего использования
         TokenRepository tokenRepo;
         if (tokenRepo.setTokenAndUserId(token, stol(userId))) {
             *_output << "Token and User ID saved successfully." << endl;
-            return true; // Успешная регистрация
+           return true; // Успешная регистрация
         } else {
             *_output << "Failed to save token and User ID." << endl;
             return false; // Неудачная регистрация

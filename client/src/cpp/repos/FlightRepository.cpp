@@ -10,7 +10,7 @@ using namespace nlohmann;
 
 list<FlightModel> FlightRepository::getAllFlights(string token)
 {
-    Client cli(GATEWAY_HOST, GATEWAY_PORT);
+    Client cli(GATEWAY_HOST_PORT);
 
     Headers headers = {
         { AUTH_TOKEN_NAME, token }
@@ -33,7 +33,7 @@ list<FlightModel> FlightRepository::getAllFlights(string token)
 
 FlightModel FlightRepository::createFlight(FlightModel flight, string token)
 {
-    Client cli(GATEWAY_HOST, GATEWAY_PORT);
+    Client cli(GATEWAY_HOST_PORT);
 
     Headers headers = {
         { AUTH_TOKEN_NAME, token }

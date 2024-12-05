@@ -11,10 +11,10 @@ function clean {
 function build {
     echo "[script] building $service_name exec ..."
     mkdir build
-    cmake -G "MinGW Makefiles" -B ./build
+    cmake -G "Unix Makefiles" -B ./build
     cd build || exit
     make
-    cd ../
+    cd ..
     echo "[script] building $service_name exec finished"
 }
 

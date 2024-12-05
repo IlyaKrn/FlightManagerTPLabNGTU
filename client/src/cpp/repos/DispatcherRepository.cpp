@@ -8,7 +8,7 @@ using namespace nlohmann;
 
 list<DispatcherModel> DispatcherRepository::getDispatchers(string token)
 {
-    Client cli(GATEWAY_HOST, GATEWAY_PORT);
+    Client cli(GATEWAY_HOST_PORT);
 
     Headers headers = {
         { AUTH_TOKEN_NAME, token }
@@ -39,7 +39,7 @@ list<DispatcherModel> DispatcherRepository::getDispatchers(string token)
 }
 DispatcherModel DispatcherRepository::updateDispatchers(DispatcherModel dispatcher, set<string> updates, string token)
 {
-    Client cli(GATEWAY_HOST, GATEWAY_PORT);
+    Client cli(GATEWAY_HOST_PORT);
 
     Headers headers = {
         { AUTH_TOKEN_NAME, token }
@@ -90,7 +90,7 @@ DispatcherModel DispatcherRepository::updateDispatchers(DispatcherModel dispatch
 }
 
 DispatcherModel DispatcherRepository::getDispatcherById(long int id, std::string token) {
-    Client cli(GATEWAY_HOST, GATEWAY_PORT);
+    Client cli(GATEWAY_HOST_PORT);
     Headers headers = {
         { AUTH_TOKEN_NAME, token }
     };
