@@ -4,6 +4,7 @@ set service_name=plane-service
 if "%1" EQU "-cl" goto clean
 if "%1" EQU "-bdl" goto build-docker-less
 if "%1" EQU "-bd" goto build-docker
+goto end
 
 :clean
 echo [script] cleaning %service_name% ...
@@ -22,7 +23,7 @@ goto end
 
 :build-docker
 echo [script] building %service_name% image ...
-call docker rmi --force $(docker images -q '%service_name%')
+call docker rmi --force $(docker images '%service_name%')
 call docker build . -t %service_name%
 echo [script] building %service_name% image finished
 goto end

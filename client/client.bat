@@ -3,6 +3,7 @@ set service_name=client
 
 if "%1" EQU "-cl" goto clean
 if "%1" EQU "-b" goto build
+goto end
 
 :clean
 echo [script] cleaning %service_name% ...

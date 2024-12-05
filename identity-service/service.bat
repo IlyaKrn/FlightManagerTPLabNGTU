@@ -23,7 +23,7 @@ goto end
 
 :build-docker
 echo [script] building %service_name% image ...
-call docker rmi --force $(docker images -q '%service_name%')
+call docker rmi --force $(docker images '%service_name%')
 call docker build . -t %service_name%
 echo [script] building %service_name% image finished
 goto end
