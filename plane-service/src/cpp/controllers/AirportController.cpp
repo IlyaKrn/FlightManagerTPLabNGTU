@@ -7,7 +7,7 @@ using namespace nlohmann;
 using namespace httplib;
 using namespace std;
 
-bool containsNullFields(json req_body)
+bool AirportContainsNullFields(json req_body)
 {
     return req_body["id"].is_null()
     || req_body["name"].is_null()
@@ -59,7 +59,7 @@ void AirportController::configure(Server* server)
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             json request = json::parse(req.body);
-            if (containsNullFields(request))
+            if (AirportContainsNullFields(request))
                 throw 400;
             AirportModel created = serv.createAirport(AirportModel(request["id"], request["name"], request["size"],  request["x"], request["y"]), header);
             json airport_json;
@@ -101,7 +101,7 @@ void AirportController::configure(Server* server)
                     updates.insert(item);
             }
             json request = json::parse(req.body);
-            if (containsNullFields(request))
+            if (AirportContainsNullFields(request))
                 throw 400;
             AirportModel airport(request["id"], request["name"], request["size"], request["x"], request["y"]);
             AirportModel updated = serv.updateAirport(airport, updates, header);

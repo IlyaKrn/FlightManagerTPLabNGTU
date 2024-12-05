@@ -8,7 +8,7 @@ using namespace nlohmann;
 using namespace httplib;
 using namespace std;
 
-bool containsNullFields(json req_body)
+bool DispatcherContainsNullFields(json req_body)
 {
     return req_body["id"].is_null()
     || req_body["firstName"].is_null()
@@ -84,7 +84,7 @@ void DispatcherController::configure(Server* server)
                     updates.insert(item);
             }
             json request = json::parse(req.body);
-            if (containsNullFields(request))
+            if (DispatcherContainsNullFields(request))
                 throw 400;
             set<RoleModel> roles;
             for (auto role : request["roles"])

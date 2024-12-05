@@ -7,7 +7,7 @@
 using namespace nlohmann;
 using namespace httplib;
 using namespace std;
-bool containsNullFields(json req_body)
+bool PlaneContainsNullFields(json req_body)
 {
     return req_body["id"].is_null()
     || req_body["name"].is_null()
@@ -65,7 +65,7 @@ void PlaneController::configure(Server* server)
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             json request = json::parse(req.body);
-            if (containsNullFields(request))
+            if (PlaneContainsNullFields(request))
                 throw 400;
             PlaneModel plane(request["id"], request["name"], request["pilot"], request["builtYear"], request["brokenPercentage"], request["speed"], request["minAirportSize"]);
             PlaneModel created = serv.createPlane(plane, header);
@@ -109,7 +109,7 @@ void PlaneController::configure(Server* server)
                     updates.insert(item);
             }
             json request = json::parse(req.body);
-            if (containsNullFields(request))
+            if (PlaneContainsNullFields(request))
                 throw 400;
             PlaneModel plane(request["id"], request["name"], request["pilot"], request["builtYear"], request["brokenPercentage"], request["speed"], request["minAirportSize"]);
             PlaneModel updated = serv.updatePlane(plane, updates, header);

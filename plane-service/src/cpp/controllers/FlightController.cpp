@@ -7,7 +7,7 @@
 using namespace nlohmann;
 using namespace httplib;
 using namespace std;
-bool containsNullFields(json req_body)
+bool FlightsContainsNullFields(json req_body)
 {
     return req_body["id"].is_null()
     || req_body["timestampStart"].is_null()
@@ -62,7 +62,7 @@ void FlightController::configure(Server* server)
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             json request = json::parse(req.body);
-            if (containsNullFields(request))
+            if (FlightsContainsNullFields(request))
                 throw 400;
             FlightModel flight(request["id"], request["timestampStart"], request["timestampEnd"], request["dispatcherId"], request["planeId"], request["airportId"]);
             FlightModel created = serv.createFlight(flight, header);
