@@ -60,6 +60,7 @@ int main(int argc, char* argv[])
             cout << "1. Create Airport" << endl;
             cout << "2. Update Airport" << endl;
             cout << "3. Delete Airport" << endl;
+            cout << "4. Get Airports" << endl;
             string airportAction;
             cin >> airportAction;
 
@@ -69,6 +70,8 @@ int main(int argc, char* argv[])
                 airportPresenter.updateAirport();
             } else if (airportAction == "3") {
                 airportPresenter.deleteAirport();
+            } else if (airportAction == "4") {
+                airportPresenter.getAirports();
             } else {
                 cout << "Invalid action for Airports!" << endl;
             }
