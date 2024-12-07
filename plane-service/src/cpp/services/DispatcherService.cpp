@@ -43,6 +43,13 @@ DispatcherModel DispatcherService::updateDispatcher(DispatcherModel dispatcher, 
         permissions.insert("dispatcher-update-public " + to_string(dispatcher.getId()));
     if (!ident.authorize(permissions, token))
          throw 401;
+    long int dispId = ident.getIdByToken(token);
+    list<DispatcherModel> dispatchers = repo.getDispatchers(&dispId);
+    if (!dispatchers.front().getRoles().count(RoleModel::ADMIN))
+    {
+        if (update.count("isBanned") > 0 || update.count("roles") > 0)
+            throw 409;
+    }
     DispatcherModel res = repo.updateDispatchers(dispatcher, update);
     return res;
 }
