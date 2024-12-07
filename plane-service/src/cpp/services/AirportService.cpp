@@ -37,6 +37,10 @@ AirportModel AirportService::updateAirport(AirportModel airport, set<string> upd
     for (auto fly : flights)
     {
         long int planeId = fly.getPlaneId();
+        if (plane.getPlanes(&planeId).empty())
+        {
+            continue;
+        }
         list<FlightModel> flights2 = flight.getFlights(nullptr, nullptr, nullptr, nullptr, &planeId);
         flights2.sort(AirportSortByTime);
         auto it = flights2.begin();
@@ -71,6 +75,10 @@ bool AirportService::deleteAirport(long int id, string token)
     for (auto fly : flights)
     {
         long int planeId = fly.getPlaneId();
+        if (plane.getPlanes(&planeId).empty())
+        {
+            continue;
+        }
         list<FlightModel> flights2 = flight.getFlights(nullptr, nullptr, nullptr, nullptr, &planeId);
         flights2.sort(AirportSortByTime);
         auto it = flights2.begin();

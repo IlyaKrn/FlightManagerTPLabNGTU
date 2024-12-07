@@ -2,8 +2,6 @@
 #include "../../Config.h"
 #include <json/single_include/nlohmann/json.hpp>
 
-
-
 using namespace nlohmann;
 using namespace httplib;
 using namespace std;
