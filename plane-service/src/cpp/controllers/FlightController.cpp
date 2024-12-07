@@ -7,15 +7,7 @@
 using namespace nlohmann;
 using namespace httplib;
 using namespace std;
-bool FlightsContainsNullFields(json req_body)
-{
-    return req_body["id"].is_null()
-    || req_body["timestampStart"].is_null()
-    || req_body["timestampEnd"].is_null()
-    || req_body["planeId"].is_null()
-    || req_body["airportId"].is_null()
-    || req_body["dispatcherId"].is_null();
-}
+
 
 void FlightController::configure(Server* server)
 {
@@ -61,10 +53,27 @@ void FlightController::configure(Server* server)
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
-            json request = json::parse(req.body);
-            if (FlightsContainsNullFields(request))
+            json request;
+            try
+            {
+                request = json::parse(req.body);
+            } catch (...)
+            {
                 throw 400;
-            FlightModel flight(request["id"], request["timestampStart"], request["timestampEnd"], request["dispatcherId"], request["planeId"], request["airportId"]);
+            }
+            long int timestampStart, timestampEnd, dispatcherId, planeId, airportId;
+            try
+            {
+                timestampStart = request["timestampStart"];
+                timestampEnd = request["timestampEnd"];
+                dispatcherId = request["dispatcherId"];
+                planeId = request["planeId"];
+                airportId = request["airportId"];
+            } catch (...)
+            {
+                throw 400;
+            }
+            FlightModel flight(request["id"], timestampStart, timestampEnd, dispatcherId, planeId, airportId);
             FlightModel created = serv.createFlight(flight, header);
             json flight_json;
             flight_json["id"] = created.getId();

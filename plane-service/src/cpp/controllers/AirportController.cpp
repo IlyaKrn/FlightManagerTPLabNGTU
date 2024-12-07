@@ -7,14 +7,6 @@ using namespace nlohmann;
 using namespace httplib;
 using namespace std;
 
-bool AirportContainsNullFields(json req_body)
-{
-    return req_body["id"].is_null()
-    || req_body["name"].is_null()
-    || req_body["size"].is_null()
-    || req_body["x"].is_null()
-    || req_body["y"].is_null();
-}
 void AirportController::configure(Server* server)
 {
     // sample request handlers
@@ -58,10 +50,28 @@ void AirportController::configure(Server* server)
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
-            json request = json::parse(req.body);
-            if (AirportContainsNullFields(request))
+            json request;
+            try
+            {
+                request = json::parse(req.body);
+            } catch (...)
+            {
                 throw 400;
-            AirportModel created = serv.createAirport(AirportModel(request["id"], request["name"], request["size"],  request["x"], request["y"]), header);
+            }
+            string name;
+            int size;
+            double x,y;
+            try
+            {
+                name = request["name"];
+                size = request["size"];
+                x = request["x"];
+                y = request["y"];
+            } catch (...)
+            {
+                throw 400;
+            }
+            AirportModel created = serv.createAirport(AirportModel(request["id"], name, size, x, y), header);
             json airport_json;
             airport_json["id"] = created.getId();
             airport_json["name"] = created.getName();
@@ -102,7 +112,14 @@ void AirportController::configure(Server* server)
                 if (!item.empty())
                     updates.insert(item);
             }
-            json request = json::parse(req.body);
+            json request;
+            try
+            {
+                request = json::parse(req.body);
+            } catch (...)
+            {
+                throw 400;
+            }
             for (auto update : updates)
             {
                 if (request["id"].is_null())
@@ -113,10 +130,16 @@ void AirportController::configure(Server* server)
             string name;
             int size;
             double x, y;
-            if (!request["name"].is_null()) name = request["name"]; else  name = "string";
-            if (!request["size"].is_null()) size = request["size"]; else size = 0;
-            if (!request["x"].is_null()) x = request["x"]; else  x = 0;
-            if (!request["y"].is_null()) y = request["y"]; else  x = 0;
+            try
+            {
+                if (!request["name"].is_null()) name = request["name"]; else  name = "string";
+                if (!request["size"].is_null()) size = request["size"]; else size = 0;
+                if (!request["x"].is_null()) x = request["x"]; else x = 0;
+                if (!request["y"].is_null()) y = request["y"]; else y = 0;
+            } catch (...)
+            {
+                throw 400;
+            }
             AirportModel airport(request["id"], name, size, x, y);
             AirportModel updated = serv.updateAirport(airport, updates, header);
             updates.clear();

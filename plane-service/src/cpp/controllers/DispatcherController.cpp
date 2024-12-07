@@ -8,16 +8,6 @@ using namespace nlohmann;
 using namespace httplib;
 using namespace std;
 
-bool DispatcherContainsNullFields(json req_body)
-{
-    return req_body["id"].is_null()
-    || req_body["firstName"].is_null()
-    || req_body["lastName"].is_null()
-    || req_body["email"].is_null()
-    || req_body["password"].is_null()
-    || req_body["isBanned"].is_null()
-    || req_body["roles"].is_null();
-}
 
 void DispatcherController::configure(Server* server)
 {
@@ -85,31 +75,44 @@ void DispatcherController::configure(Server* server)
                 if (!item.empty())
                     updates.insert(item);
             }
-            json request = json::parse(req.body);
+            json request;
+            try
+            {
+                request = json::parse(req.body);
+            } catch (...)
+            {
+                throw 400;
+            }
             for (auto update : updates)
             {
                 if (request[update].is_null())
                     throw 400;
             }
             set<RoleModel> roles;
-            if (!request["roles"].is_null())
-            {
-                for (auto role : request["roles"])
-                {
-                    if (role == "ADMIN")
-                        roles.insert(RoleModel::ADMIN);
-                    else if (role == "DISPATCHER")
-                        roles.insert(RoleModel::DISPATCHER);
-                }
-            } else
-                roles = set<RoleModel>();
             bool isBanned;
             string firstName, lastName, email, password;
-            if (!request["isBanned"].is_null()) isBanned = request["isBanned"]; else isBanned = false;
-            if (!request["lastName"].is_null()) lastName = request["lastName"]; else lastName = "string";
-            if (!request["firstName"].is_null()) firstName = request["firstName"]; else firstName = "string";
-            if (!request["email"].is_null()) email = request["email"]; else email = "string";
-            if (!request["password"].is_null()) password = request["password"]; else password = "string";
+            try
+            {
+                if (!request["roles"].is_null())
+                {
+                    for (auto role : request["roles"])
+                    {
+                        if (role == "ADMIN")
+                            roles.insert(RoleModel::ADMIN);
+                        else if (role == "DISPATCHER")
+                            roles.insert(RoleModel::DISPATCHER);
+                    }
+                } else
+                    roles = set<RoleModel>();
+                if (!request["isBanned"].is_null()) isBanned = request["isBanned"]; else isBanned = false;
+                if (!request["lastName"].is_null()) lastName = request["lastName"]; else lastName = "string";
+                if (!request["firstName"].is_null()) firstName = request["firstName"]; else firstName = "string";
+                if (!request["email"].is_null()) email = request["email"]; else email = "string";
+                if (!request["password"].is_null()) password = request["password"]; else password = "string";
+            } catch (...)
+            {
+                throw 400;
+            }
             DispatcherModel dispatcher(request["id"], firstName, lastName, email, password, isBanned, roles);
             DispatcherModel updated = serv.updateDispatcher(dispatcher, updates, header);
             updates.clear();
