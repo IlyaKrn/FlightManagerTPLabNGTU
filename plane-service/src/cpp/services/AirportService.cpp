@@ -33,17 +33,29 @@ AirportModel AirportService::updateAirport(AirportModel airport, set<string> upd
     if (!ident.authorize(permissions, token))
          throw 401;
     long int airId = airport.getId();
-    list<FlightModel> flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr, nullptr, &airId);
-    flights.sort(AirportSortByTime);
+    list<FlightModel> flights = flight.getFlights();
     for (auto fly : flights)
     {
-        if (fly.getTimestampEnd() > timer.getAddedTime() + static_cast<long int>(time(nullptr)))
-            throw 409;
         long int planeId = fly.getPlaneId();
-        list<FlightModel> n_flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr, &planeId, &airId);
-        n_flights.sort(AirportSortByTime);
-        if (n_flights.front().getAirportId() == airId)
+        list<FlightModel> flights2 = flight.getFlights(nullptr, nullptr, nullptr, nullptr, &planeId);
+        flights2.sort(AirportSortByTime);
+        auto it = flights2.begin();
+        if (it->getAirportId() == airId)
             throw 409;
+        if (flights2.size() > 1)
+        {
+            if (it->getTimestampEnd() < timer.getAddedTime() + static_cast<long int>(time(nullptr)))
+            {
+                it++;
+                if (it->getAirportId() == airId)
+                    throw 409;
+            }
+        } else
+        {
+            list<AirportModel> airports = repo.getAirports();
+            if (airports.front().getId() == airId)
+                throw 409;
+        }
     }
     AirportModel res = repo.updateAirport(airport, update);
     return res;
@@ -55,17 +67,30 @@ bool AirportService::deleteAirport(long int id, string token)
     permissions.insert("airport-delete");
     if (!ident.authorize(permissions, token))
         throw 401;
-    list<FlightModel> flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr, nullptr, &id);
-    flights.sort(AirportSortByTime);
+    list<FlightModel> flights = flight.getFlights();
     for (auto fly : flights)
     {
-        if (fly.getTimestampEnd() > timer.getAddedTime() + static_cast<long int>(time(nullptr)))
-            throw 409;
         long int planeId = fly.getPlaneId();
-        list<FlightModel> n_flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr, &planeId, &id);
-        n_flights.sort(AirportSortByTime);
-        if (n_flights.front().getAirportId() == id)
+        list<FlightModel> flights2 = flight.getFlights(nullptr, nullptr, nullptr, nullptr, &planeId);
+        flights2.sort(AirportSortByTime);
+        auto it = flights2.begin();
+        if (it->getAirportId() == id)
             throw 409;
+        if (it->getTimestampEnd() > timer.getAddedTime() + static_cast<long int>(time(nullptr)))
+        {
+
+            if (flights2.size() > 1)
+            {
+                it++;
+                if (it->getAirportId() == id)
+                    throw 409;
+            } else
+            {
+                list<AirportModel> airports = repo.getAirports();
+                if (airports.front().getId() == id)
+                    throw 409;
+            }
+        }
     }
     bool res = repo.deleteAirport(id);
     return res;

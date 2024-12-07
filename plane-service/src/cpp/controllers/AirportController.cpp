@@ -87,6 +87,8 @@ void AirportController::configure(Server* server)
         {
             auto header = req.get_header_value("Authorization");
             string fields = req.get_param_value("update");
+            if (fields.empty())
+                throw 400;
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
@@ -101,9 +103,21 @@ void AirportController::configure(Server* server)
                     updates.insert(item);
             }
             json request = json::parse(req.body);
-            if (AirportContainsNullFields(request))
-                throw 400;
-            AirportModel airport(request["id"], request["name"], request["size"], request["x"], request["y"]);
+            for (auto update : updates)
+            {
+                if (request["id"].is_null())
+                    throw 400;
+                if (request[update].is_null())
+                    throw 400;
+            }
+            string name;
+            int size;
+            double x, y;
+            if (!request["name"].is_null()) name = request["name"]; else  name = "string";
+            if (!request["size"].is_null()) size = request["size"]; else size = 0;
+            if (!request["x"].is_null()) x = request["x"]; else  x = 0;
+            if (!request["y"].is_null()) y = request["y"]; else  x = 0;
+            AirportModel airport(request["id"], name, size, x, y);
             AirportModel updated = serv.updateAirport(airport, updates, header);
             updates.clear();
             json airport_json;
@@ -125,7 +139,7 @@ void AirportController::configure(Server* server)
         }
     });
 
-    server->Delete(AIRPORT_DELETE_MAPPING + R"(/(\d+))", [this](const Request& req, Response& res)
+    server->Delete(AIRPORT_DELETE_MAPPING, [this](const Request& req, Response& res)
 {
     try
     {
@@ -133,7 +147,7 @@ void AirportController::configure(Server* server)
         string service_token = req.get_header_value("Service-Token");
         if (service_token != SERVICE_TOKEN_VALUE)
             res.status = 403;
-        long int id = stol(req.matches[1]);
+        long int id = stol(req.get_param_value("id"));
         bool deleted = serv.deleteAirport(id, header);
         if (deleted)
             res.status = 200;

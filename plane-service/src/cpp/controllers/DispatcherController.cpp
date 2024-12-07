@@ -73,6 +73,8 @@ void DispatcherController::configure(Server* server)
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             string fields = req.get_param_value("update");
+            if (fields.empty())
+                throw 400;
             stringstream ss(fields);
             string item;
             set<string> updates;
@@ -84,21 +86,31 @@ void DispatcherController::configure(Server* server)
                     updates.insert(item);
             }
             json request = json::parse(req.body);
-            if (DispatcherContainsNullFields(request))
-                throw 400;
-            set<RoleModel> roles;
-            for (auto role : request["roles"])
+            for (auto update : updates)
             {
-                if (role == "ADMIN")
-                {
-                    roles.insert(RoleModel::ADMIN);
-                } else if (role == "DISPATCHER")
-                {
-                    roles.insert(RoleModel::DISPATCHER);
-                }
+                if (request[update].is_null())
+                    throw 400;
             }
-            bool isBanned = request["isBanned"];
-            DispatcherModel dispatcher(request["id"], request["firstName"], request["lastName"], request["email"], request["password"], isBanned, roles);
+            set<RoleModel> roles;
+            if (!request["roles"].is_null())
+            {
+                for (auto role : request["roles"])
+                {
+                    if (role == "ADMIN")
+                        roles.insert(RoleModel::ADMIN);
+                    else if (role == "DISPATCHER")
+                        roles.insert(RoleModel::DISPATCHER);
+                }
+            } else
+                roles = set<RoleModel>();
+            bool isBanned;
+            string firstName, lastName, email, password;
+            if (!request["isBanned"].is_null()) isBanned = request["isBanned"]; else isBanned = false;
+            if (!request["lastName"].is_null()) lastName = request["lastName"]; else lastName = "string";
+            if (!request["firstName"].is_null()) firstName = request["firstName"]; else firstName = "string";
+            if (!request["email"].is_null()) email = request["email"]; else email = "string";
+            if (!request["password"].is_null()) password = request["password"]; else password = "string";
+            DispatcherModel dispatcher(request["id"], firstName, lastName, email, password, isBanned, roles);
             DispatcherModel updated = serv.updateDispatcher(dispatcher, updates, header);
             updates.clear();
             json dispatcher_json;

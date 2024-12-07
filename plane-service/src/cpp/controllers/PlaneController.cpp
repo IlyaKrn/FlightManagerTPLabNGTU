@@ -98,6 +98,8 @@ void PlaneController::configure(Server* server)
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
             string fields = req.get_param_value("update");
+            if (fields.empty())
+                throw 400;
             stringstream ss(fields);
             string item;
             set<string> updates;
@@ -109,9 +111,20 @@ void PlaneController::configure(Server* server)
                     updates.insert(item);
             }
             json request = json::parse(req.body);
-            if (PlaneContainsNullFields(request))
-                throw 400;
-            PlaneModel plane(request["id"], request["name"], request["pilot"], request["builtYear"], request["brokenPercentage"], request["speed"], request["minAirportSize"]);
+            for (auto update : updates)
+            {
+                if (request[update].is_null())
+                    throw 400;
+            }
+            string name, pilot;
+            int builtYear, brokenPercentage, speed, minAirportSize;
+            if (!request["name"].is_null()) name = request["name"]; else name = "string";
+            if (!request["pilot"].is_null()) pilot = request["pilot"]; else pilot = "string";
+            if (!request["builtYear"].is_null()) builtYear = request["builtYear"]; else builtYear = 0;
+            if (!request["brokenPercentage"].is_null()) brokenPercentage = request["brokenPercentage"]; else brokenPercentage = 0;
+            if (!request["speed"].is_null()) speed = request["speed"]; else speed = 0;
+            if (!request["minAirportSize"].is_null()) minAirportSize = request["minAirportSize"]; else minAirportSize = 0;
+            PlaneModel plane(request["id"], name, pilot, builtYear, brokenPercentage, speed, minAirportSize);
             PlaneModel updated = serv.updatePlane(plane, updates, header);
             updates.clear();
             json plane_json;
@@ -134,7 +147,7 @@ void PlaneController::configure(Server* server)
             res.status = 500;
         }
     });
-    server->Delete(PLANE_DELETE_MAPPING + R"(/(\d+))", [&](const Request& req, Response& res)
+    server->Delete(PLANE_DELETE_MAPPING, [&](const Request& req, Response& res)
     {
         try
         {
@@ -142,7 +155,7 @@ void PlaneController::configure(Server* server)
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 res.status = 403;
-            int id = stoi(req.matches[1]);
+            long int id = stol(req.get_param_value("id"));
             bool deleted = serv.deletePlane(id, header);
             if (deleted)
             {

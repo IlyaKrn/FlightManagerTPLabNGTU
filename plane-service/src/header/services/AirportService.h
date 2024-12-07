@@ -6,6 +6,7 @@
 #include "../../header/repos/IdentityRepository.h"
 #include "../../header/repos/FlightRepository.h"
 #include "../../header/services/TimeService.h"
+#include "../repos/PlaneRepository.h"
 
 class AirportService
 {
@@ -13,6 +14,7 @@ class AirportService
     IdentityRepository ident;
     FlightRepository flight;
     TimeRepository timer;
+    PlaneRepository plane;
 public:
     std::list<AirportModel> getAllAirports(std::string token);
     AirportModel updateAirport(AirportModel airport, std::set<std::string> update, std::string token);
