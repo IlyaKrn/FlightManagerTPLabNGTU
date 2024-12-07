@@ -98,6 +98,7 @@ PlaneModel PlaneService::createPlane(PlaneModel plane, string token)
          throw 401;
     if (plane.getSpeed() == 0)
          throw 400;
+    plane.setBrokenPercentage(0);
     PlaneModel res = repo.createPlane(plane);
     return res;
 }
