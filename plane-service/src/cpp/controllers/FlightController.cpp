@@ -19,7 +19,7 @@ void FlightController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             list<FlightModel> flights = serv.getAllFlights(header);
             json flights_json = json::array();
             for (auto flight : flights)
@@ -52,7 +52,7 @@ void FlightController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             json request;
             try
             {

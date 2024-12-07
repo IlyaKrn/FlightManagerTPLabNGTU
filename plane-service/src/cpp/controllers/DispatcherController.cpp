@@ -19,7 +19,7 @@ void DispatcherController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             list<DispatcherModel> dispatchers = serv.getAllDispatchers(header);
             json dispatchers_json = json::array();
             for (auto dispatcher : dispatchers)
@@ -61,7 +61,7 @@ void DispatcherController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             string fields = req.get_param_value("update");
             if (fields.empty())
                 throw 400;
@@ -152,7 +152,7 @@ void DispatcherController::configure(Server* server)
             string service_token = req.get_header_value("Service-Token");
             auto isPrivate = req.get_param_value("private");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             int id = stoi(req.get_param_value("id"));
             DispatcherModel dispatcher = serv.getDispatcherById(id, header, isPrivate == "true");
             json dispatcher_json;

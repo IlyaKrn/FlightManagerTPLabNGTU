@@ -17,7 +17,7 @@ void PlaneController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             list<PlaneModelResponse> planes = serv.getAllPlanes(header);
             json planes_json = json::array();
             for (auto plane : planes)
@@ -54,7 +54,7 @@ void PlaneController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             json request;
             try
             {
@@ -106,7 +106,7 @@ void PlaneController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             string fields = req.get_param_value("update");
             if (fields.empty())
                 throw 400;
@@ -177,7 +177,7 @@ void PlaneController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             long int id = stol(req.get_param_value("id"));
             bool deleted = serv.deletePlane(id, header);
             if (deleted)

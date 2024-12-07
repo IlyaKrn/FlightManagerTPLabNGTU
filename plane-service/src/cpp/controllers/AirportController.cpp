@@ -17,7 +17,7 @@ void AirportController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             list<AirportModel> airports = serv.getAllAirports(header);
             json airports_json = json::array();
             for (auto airport : airports) {
@@ -49,7 +49,7 @@ void AirportController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             json request;
             try
             {
@@ -101,7 +101,7 @@ void AirportController::configure(Server* server)
                 throw 400;
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             stringstream ss(fields);
             string item;
             set<string> updates;
@@ -169,7 +169,7 @@ void AirportController::configure(Server* server)
         auto header = req.get_header_value("Authorization");
         string service_token = req.get_header_value("Service-Token");
         if (service_token != SERVICE_TOKEN_VALUE)
-            res.status = 403;
+            throw 403;
         long int id = stol(req.get_param_value("id"));
         bool deleted = serv.deleteAirport(id, header);
         if (deleted)
