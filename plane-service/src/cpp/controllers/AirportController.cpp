@@ -31,9 +31,10 @@ void AirportController::configure(Server* server)
             }
             res.status = 200;
             res.set_content(airports_json.dump(), "application/json");
+            log.info("get airports successful");
         } catch (int& e)
         {
-            cout << "exception occured " << e << endl;
+            log.warn("exception occured: " + to_string(e));
             res.status = e;
         } catch (const exception& e)
         {
