@@ -57,6 +57,8 @@ add_executable(main src/main.cpp
         src/header/repos/TimeRepository.h
         src/header/repos/TokenRepository.h
         src/Config.h
+        src/header/utils/ClientLogger.h
+        src/cpp/utils/ClientLogger.cpp
 
 
 )

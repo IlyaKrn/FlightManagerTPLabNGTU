@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-class Logger
+class PlaneLogger
 {
 public:
     void info(std::string inf);
