@@ -68,8 +68,11 @@ void AirportPresenter::createAirport() {
         *_output << "Enter airport size: ";
         *_input >> size;
 
-        *_output << "Enter airport coordinates (x y): ";
-        *_input >> x >> y;
+        *_output << "Enter airport coordinates (x): ";
+        *_input >> x;
+
+        *_output << "Enter airport coordinates (y): ";
+        *_input >> y;
 
         // Создание модели аэропорта
         AirportModel newAirport(0, name, size, x, y); // ID будет 0, так как это новый аэропорт
