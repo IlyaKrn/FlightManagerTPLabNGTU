@@ -16,9 +16,13 @@ long int TimeRepository::getCurrentTime(string token) {
     };
     auto res = cli.Get(TIME_GET_MAPPING, headers);
     if (res->status >= 200 && res->status < 300) {
-        json zalupka = json::parse(res->body);
-        long int time = zalupka["time"];
-        return time;
+        try {
+            long int time = stol(res->body);
+            return time;
+        } catch (...)
+        {
+            throw 500;
+        }
     }
 
     throw res->status;
@@ -30,10 +34,7 @@ bool TimeRepository::addTime(long int time, string token) {
         { AUTH_TOKEN_NAME, token }
     };
 
-    Params params = {
-        {"skip", to_string(time)}
-    };
-    auto res = cli.Post(TIME_SKIP_MAPPING, headers, params);
+    auto res = cli.Post(TIME_SKIP_MAPPING + "?skip=" + to_string(time), headers);
     if (res->status >= 200 && res->status < 300)
         return true;
     throw res->status;

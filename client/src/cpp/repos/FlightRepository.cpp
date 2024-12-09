@@ -39,7 +39,6 @@ FlightModel FlightRepository::createFlight(FlightModel flight, string token)
         { AUTH_TOKEN_NAME, token }
     };
     json flight_json;
-    flight_json["id"] = flight.getId();
     flight_json["timestampStart"] = flight.getTimestampStart();
     flight_json["timestampEnd"] = flight.getTimestampEnd();
     flight_json["dispatcherId"] = flight.getDispatcherId();

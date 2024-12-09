@@ -89,12 +89,13 @@ DispatcherModel DispatcherRepository::updateDispatchers(DispatcherModel dispatch
     throw res->status;
 }
 
-DispatcherModel DispatcherRepository::getDispatcherById(long int id, std::string token) {
+DispatcherModel DispatcherRepository::getDispatcherById(long int id, std::string token, bool isPrivate) {
     Client cli(GATEWAY_HOST_PORT);
     Headers headers = {
         { AUTH_TOKEN_NAME, token }
     };
-    auto res = cli.Get(DISPATCHER_GET_BY_ID_MAPPING, headers);
+
+    auto res = cli.Get(DISPATCHER_GET_BY_ID_MAPPING + "?id=" + to_string(id) + "&private=" + to_string(isPrivate), headers);
     if (res->status >= 200 && res->status < 300)
     {
         json dispatcher_json = json::parse(res->body);
