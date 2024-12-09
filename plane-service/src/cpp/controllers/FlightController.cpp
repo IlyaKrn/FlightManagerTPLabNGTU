@@ -61,9 +61,10 @@ void FlightController::configure(Server* server)
             {
                 throw 400;
             }
-            long int timestampStart, timestampEnd, dispatcherId, planeId, airportId;
+            long int id, timestampStart, timestampEnd, dispatcherId, planeId, airportId;
             try
             {
+                id = request["time"];
                 timestampStart = request["timestampStart"];
                 timestampEnd = request["timestampEnd"];
                 dispatcherId = request["dispatcherId"];
@@ -73,7 +74,7 @@ void FlightController::configure(Server* server)
             {
                 throw 400;
             }
-            FlightModel flight(request["id"], timestampStart, timestampEnd, dispatcherId, planeId, airportId);
+            FlightModel flight(id, timestampStart, timestampEnd, dispatcherId, planeId, airportId);
             FlightModel created = serv.createFlight(flight, header);
             json flight_json;
             flight_json["id"] = created.getId();

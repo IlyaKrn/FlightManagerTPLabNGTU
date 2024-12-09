@@ -63,8 +63,10 @@ void PlaneController::configure(Server* server)
             }
             string name, pilot;
             int builtYear, brokenPercentage, speed, minAirportSize;
+            long int id;
             try
             {
+                id = request["id"];
                 name = request["name"];
                 pilot = request["pilot"];
                 builtYear = request["builtYear"];
@@ -75,7 +77,7 @@ void PlaneController::configure(Server* server)
             {
                 throw 400;
             }
-            PlaneModel plane(request["id"], name, pilot, builtYear, brokenPercentage, speed, minAirportSize);
+            PlaneModel plane(id, name, pilot, builtYear, brokenPercentage, speed, minAirportSize);
             PlaneModel created = serv.createPlane(plane, header);
             json plane_json;
             plane_json["id"] = created.getId();
@@ -128,7 +130,7 @@ void PlaneController::configure(Server* server)
             }
             for (auto update : updates)
             {
-                if (request[update].is_null())
+                if (request[update].is_null() || request["id"].is_null())
                     throw 400;
             }
             string name, pilot;
@@ -176,7 +178,15 @@ void PlaneController::configure(Server* server)
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 throw 403;
-            long int id = stol(req.get_param_value("id"));
+            long int id;
+            try
+            {
+                id = stol(req.get_param_value("id"));
+            } catch (...)
+            {
+                throw 400;
+            }
+
             bool deleted = serv.deletePlane(id, header);
             if (deleted)
             {

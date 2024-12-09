@@ -62,9 +62,14 @@ void DispatcherController::configure(Server* server)
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
                 throw 403;
-            string fields = req.get_param_value("update");
-            if (fields.empty())
+            string fields;
+            try
+            {
+                fields = req.get_param_value("update");
+            } catch (...)
+            {
                 throw 400;
+            }
             stringstream ss(fields);
             string item;
             set<string> updates;
@@ -85,7 +90,7 @@ void DispatcherController::configure(Server* server)
             }
             for (auto update : updates)
             {
-                if (request[update].is_null())
+                if (request[update].is_null() || request["id"].is_null())
                     throw 400;
             }
             set<RoleModel> roles;
@@ -117,14 +122,14 @@ void DispatcherController::configure(Server* server)
             DispatcherModel updated = serv.updateDispatcher(dispatcher, updates, header);
             updates.clear();
             json dispatcher_json;
-            dispatcher_json["id"] = dispatcher.getId();
-            dispatcher_json["firstName"] = dispatcher.getFirstname();
-            dispatcher_json["lastName"] = dispatcher.getLastname();
-            dispatcher_json["email"] = dispatcher.getEmail();
-            dispatcher_json["password"] = dispatcher.getPassword();
-            dispatcher_json["isBanned"] = dispatcher.getIsBanned();
+            dispatcher_json["id"] = updated.getId();
+            dispatcher_json["firstName"] = updated.getFirstname();
+            dispatcher_json["lastName"] = updated.getLastname();
+            dispatcher_json["email"] = updated.getEmail();
+            dispatcher_json["password"] = updated.getPassword();
+            dispatcher_json["isBanned"] = updated.getIsBanned();
             dispatcher_json["roles"] = json::array();
-            for (auto role: dispatcher.getRoles())
+            for (auto role: updated.getRoles())
             {
                 switch (role)
                 {
@@ -153,7 +158,14 @@ void DispatcherController::configure(Server* server)
             auto isPrivate = req.get_param_value("private");
             if (service_token != SERVICE_TOKEN_VALUE)
                 throw 403;
-            int id = stoi(req.get_param_value("id"));
+            long int id;
+            try
+            {
+                id = stol(req.get_param_value("id"));
+            } catch (...)
+            {
+                throw 400;
+            }
             DispatcherModel dispatcher = serv.getDispatcherById(id, header, isPrivate == "true");
             json dispatcher_json;
             dispatcher_json["id"] = dispatcher.getId();
