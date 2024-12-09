@@ -79,8 +79,8 @@ bool IdentityPresenter::registerDispatcher() {
 
     try {
         set<string> registrationInfo = identityRepo.regist(newDispatcher);
-        string userId = *registrationInfo.begin();
-        string token = *(++registrationInfo.begin());
+        string token = *registrationInfo.begin();
+        string userId = *(++registrationInfo.begin());
 
         *_output << "Registration successful!" << endl;
         *_output << "User ID: " << userId << endl;

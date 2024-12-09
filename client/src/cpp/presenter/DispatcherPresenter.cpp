@@ -102,7 +102,11 @@ void DispatcherPresenter::updateDispatcher() {
         if (e == 401) {
             *_output << "User  is unauthorized. Oluh" << std::endl;
         } else {
-            *_output << "Call to support, +79092840120, its pizdec" << std::endl;
+            *_output << "Call to support, +79092840120, its pizdec" << e << std::endl;
         }
+    }
+    catch (...) {
+            *_output << "Call to support, +79092840120, its sovsem pizdec pryam polniy" << std::endl;
+
     }
 }

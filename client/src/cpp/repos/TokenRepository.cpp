@@ -1,5 +1,8 @@
 #include <fstream>
 #include "../../header/repos/TokenRepository.h"
+
+#include <iostream>
+
 #include "../../Config.h"
 
 using namespace std;

@@ -40,13 +40,7 @@ void FlightPresenter::createFlight() {
         *_output << "Enter airport ID: ";
         *_input >> airportId;
 
-        *_output << "Enter start timestamp: ";
-        *_input >> timestampStart;
-
-        *_output << "Enter end timestamp: ";
-        *_input >> timestampEnd;
-
-        FlightModel newFlight(0, timestampStart, timestampEnd, dispatcherId, planeId, airportId); // Создаем новый объект рейса
+        FlightModel newFlight(0, 0, 0, dispatcherId, planeId, airportId); // Создаем новый объект рейса
         FlightRepository flightRepo;
         string token = TokenRepository().getToken(); // Получаем токен
 

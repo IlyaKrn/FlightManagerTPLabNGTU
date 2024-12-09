@@ -41,9 +41,6 @@ void PlanePresenter::createPlane() {
     string name, pilot;
     int builtYear, brokenPercentage, speed, minAirportSize;
 
-    *_output << "Enter plane ID: ";
-    *_input >> id;
-
     *_output << "Enter plane name: ";
     *_input >> name;
 
@@ -52,9 +49,6 @@ void PlanePresenter::createPlane() {
 
     *_output << "Enter built year: ";
     *_input >> builtYear;
-
-    *_output << "Enter broken percentage: ";
-    *_input >> brokenPercentage;
 
     *_output << "Enter speed: ";
     *_input >> speed;
