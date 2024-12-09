@@ -17,7 +17,7 @@ int IdentityRepository::getIdByToken(string token)
     auto res = cli.Post(IDENTITY_GET_ID_BY_TOKEN_MAPPING ,headers, token,  "application/json");
     if (res->status >= 200 && res->status < 300)
     {
-        int id = stoi(res->body);
+        long int id = stol(res->body);
         return id;
     }
     throw res->status;

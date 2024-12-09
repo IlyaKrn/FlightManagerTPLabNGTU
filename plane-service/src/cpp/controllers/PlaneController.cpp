@@ -2,21 +2,10 @@
 #include "../../Config.h"
 #include <json/single_include/nlohmann/json.hpp>
 
-
-
 using namespace nlohmann;
 using namespace httplib;
 using namespace std;
-bool PlaneContainsNullFields(json req_body)
-{
-    return req_body["id"].is_null()
-    || req_body["name"].is_null()
-    || req_body["builtYear"].is_null()
-    || req_body["brokenPercentage"].is_null()
-    || req_body["pilot"].is_null()
-    || req_body["minAirportSize"].is_null()
-    || req_body["speed"].is_null();
-}
+
 void PlaneController::configure(Server* server)
 {
     server->Get(PLANE_GET_ALL_MAPPING, [this](const Request& req, Response& res)
@@ -26,7 +15,7 @@ void PlaneController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             list<PlaneModelResponse> planes = serv.getAllPlanes(header);
             json planes_json = json::array();
             for (auto plane : planes)
@@ -63,11 +52,30 @@ void PlaneController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
-            json request = json::parse(req.body);
-            if (PlaneContainsNullFields(request))
+                throw 403;
+            json request;
+            try
+            {
+                request = json::parse(req.body);
+            } catch (...)
+            {
                 throw 400;
-            PlaneModel plane(request["id"], request["name"], request["pilot"], request["builtYear"], request["brokenPercentage"], request["speed"], request["minAirportSize"]);
+            }
+            string name, pilot;
+            int builtYear, brokenPercentage, speed, minAirportSize;
+            try
+            {
+                name = request["name"];
+                pilot = request["pilot"];
+                builtYear = request["builtYear"];
+                brokenPercentage = request["brokenPercentage"];
+                speed = request["speed"];
+                minAirportSize = request["minAirportSize"];
+            } catch (...)
+            {
+                throw 400;
+            }
+            PlaneModel plane(request["id"], name, pilot, builtYear, brokenPercentage, speed, minAirportSize);
             PlaneModel created = serv.createPlane(plane, header);
             json plane_json;
             plane_json["id"] = created.getId();
@@ -96,8 +104,10 @@ void PlaneController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             string fields = req.get_param_value("update");
+            if (fields.empty())
+                throw 400;
             stringstream ss(fields);
             string item;
             set<string> updates;
@@ -108,10 +118,34 @@ void PlaneController::configure(Server* server)
                 if (!item.empty())
                     updates.insert(item);
             }
-            json request = json::parse(req.body);
-            if (PlaneContainsNullFields(request))
+            json request;
+            try
+            {
+                request = json::parse(req.body);
+            } catch (...)
+            {
                 throw 400;
-            PlaneModel plane(request["id"], request["name"], request["pilot"], request["builtYear"], request["brokenPercentage"], request["speed"], request["minAirportSize"]);
+            }
+            for (auto update : updates)
+            {
+                if (request[update].is_null())
+                    throw 400;
+            }
+            string name, pilot;
+            int builtYear, brokenPercentage, speed, minAirportSize;
+            try
+            {
+                if (!request["name"].is_null()) name = request["name"]; else name = "string";
+                if (!request["pilot"].is_null()) pilot = request["pilot"]; else pilot = "string";
+                if (!request["builtYear"].is_null()) builtYear = request["builtYear"]; else builtYear = 0;
+                if (!request["brokenPercentage"].is_null()) brokenPercentage = request["brokenPercentage"]; else brokenPercentage = 0;
+                if (!request["speed"].is_null()) speed = request["speed"]; else speed = 0;
+                if (!request["minAirportSize"].is_null()) minAirportSize = request["minAirportSize"]; else minAirportSize = 0;
+            } catch (...)
+            {
+                throw 400;
+            }
+            PlaneModel plane(request["id"], name, pilot, builtYear, brokenPercentage, speed, minAirportSize);
             PlaneModel updated = serv.updatePlane(plane, updates, header);
             updates.clear();
             json plane_json;
@@ -134,15 +168,15 @@ void PlaneController::configure(Server* server)
             res.status = 500;
         }
     });
-    server->Delete(PLANE_DELETE_MAPPING + R"(/(\d+))", [&](const Request& req, Response& res)
+    server->Delete(PLANE_DELETE_MAPPING, [&](const Request& req, Response& res)
     {
         try
         {
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
-            int id = stoi(req.matches[1]);
+                throw 403;
+            long int id = stol(req.get_param_value("id"));
             bool deleted = serv.deletePlane(id, header);
             if (deleted)
             {

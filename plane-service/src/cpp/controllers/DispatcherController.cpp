@@ -8,16 +8,6 @@ using namespace nlohmann;
 using namespace httplib;
 using namespace std;
 
-bool DispatcherContainsNullFields(json req_body)
-{
-    return req_body["id"].is_null()
-    || req_body["firstName"].is_null()
-    || req_body["lastName"].is_null()
-    || req_body["email"].is_null()
-    || req_body["password"].is_null()
-    || req_body["isBanned"].is_null()
-    || req_body["roles"].is_null();
-}
 
 void DispatcherController::configure(Server* server)
 {
@@ -29,7 +19,7 @@ void DispatcherController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             list<DispatcherModel> dispatchers = serv.getAllDispatchers(header);
             json dispatchers_json = json::array();
             for (auto dispatcher : dispatchers)
@@ -71,8 +61,10 @@ void DispatcherController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             string fields = req.get_param_value("update");
+            if (fields.empty())
+                throw 400;
             stringstream ss(fields);
             string item;
             set<string> updates;
@@ -83,22 +75,45 @@ void DispatcherController::configure(Server* server)
                 if (!item.empty())
                     updates.insert(item);
             }
-            json request = json::parse(req.body);
-            if (DispatcherContainsNullFields(request))
-                throw 400;
-            set<RoleModel> roles;
-            for (auto role : request["roles"])
+            json request;
+            try
             {
-                if (role == "ADMIN")
-                {
-                    roles.insert(RoleModel::ADMIN);
-                } else if (role == "DISPATCHER")
-                {
-                    roles.insert(RoleModel::DISPATCHER);
-                }
+                request = json::parse(req.body);
+            } catch (...)
+            {
+                throw 400;
             }
-            bool isBanned = request["isBanned"];
-            DispatcherModel dispatcher(request["id"], request["firstName"], request["lastName"], request["email"], request["password"], isBanned, roles);
+            for (auto update : updates)
+            {
+                if (request[update].is_null())
+                    throw 400;
+            }
+            set<RoleModel> roles;
+            bool isBanned;
+            string firstName, lastName, email, password;
+            try
+            {
+                if (!request["roles"].is_null())
+                {
+                    for (auto role : request["roles"])
+                    {
+                        if (role == "ADMIN")
+                            roles.insert(RoleModel::ADMIN);
+                        else if (role == "DISPATCHER")
+                            roles.insert(RoleModel::DISPATCHER);
+                    }
+                } else
+                    roles = set<RoleModel>();
+                if (!request["isBanned"].is_null()) isBanned = request["isBanned"]; else isBanned = false;
+                if (!request["lastName"].is_null()) lastName = request["lastName"]; else lastName = "string";
+                if (!request["firstName"].is_null()) firstName = request["firstName"]; else firstName = "string";
+                if (!request["email"].is_null()) email = request["email"]; else email = "string";
+                if (!request["password"].is_null()) password = request["password"]; else password = "string";
+            } catch (...)
+            {
+                throw 400;
+            }
+            DispatcherModel dispatcher(request["id"], firstName, lastName, email, password, isBanned, roles);
             DispatcherModel updated = serv.updateDispatcher(dispatcher, updates, header);
             updates.clear();
             json dispatcher_json;
@@ -137,7 +152,7 @@ void DispatcherController::configure(Server* server)
             string service_token = req.get_header_value("Service-Token");
             auto isPrivate = req.get_param_value("private");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             int id = stoi(req.get_param_value("id"));
             DispatcherModel dispatcher = serv.getDispatcherById(id, header, isPrivate == "true");
             json dispatcher_json;
