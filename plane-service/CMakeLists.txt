@@ -65,6 +65,8 @@ add_executable(main src/main.cpp
         src/header/services/PlaneService.h
         src/header/services/TimeService.h
         src/Config.h
+        src/header/utils/Logger.h
+        src/cpp/utils/Logger.cpp
 
 
 )

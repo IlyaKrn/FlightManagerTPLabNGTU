@@ -7,14 +7,6 @@ using namespace nlohmann;
 using namespace httplib;
 using namespace std;
 
-bool AirportContainsNullFields(json req_body)
-{
-    return req_body["id"].is_null()
-    || req_body["name"].is_null()
-    || req_body["size"].is_null()
-    || req_body["x"].is_null()
-    || req_body["y"].is_null();
-}
 void AirportController::configure(Server* server)
 {
     // sample request handlers
@@ -25,7 +17,7 @@ void AirportController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             list<AirportModel> airports = serv.getAllAirports(header);
             json airports_json = json::array();
             for (auto airport : airports) {
@@ -57,11 +49,29 @@ void AirportController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
-            json request = json::parse(req.body);
-            if (AirportContainsNullFields(request))
+                throw 403;
+            json request;
+            try
+            {
+                request = json::parse(req.body);
+            } catch (...)
+            {
                 throw 400;
-            AirportModel created = serv.createAirport(AirportModel(request["id"], request["name"], request["size"],  request["x"], request["y"]), header);
+            }
+            string name;
+            int size;
+            double x,y;
+            try
+            {
+                name = request["name"];
+                size = request["size"];
+                x = request["x"];
+                y = request["y"];
+            } catch (...)
+            {
+                throw 400;
+            }
+            AirportModel created = serv.createAirport(AirportModel(0, name, size, x, y), header);
             json airport_json;
             airport_json["id"] = created.getId();
             airport_json["name"] = created.getName();
@@ -87,9 +97,11 @@ void AirportController::configure(Server* server)
         {
             auto header = req.get_header_value("Authorization");
             string fields = req.get_param_value("update");
+            if (fields.empty())
+                throw 400;
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
-                res.status = 403;
+                throw 403;
             stringstream ss(fields);
             string item;
             set<string> updates;
@@ -100,10 +112,33 @@ void AirportController::configure(Server* server)
                 if (!item.empty())
                     updates.insert(item);
             }
-            json request = json::parse(req.body);
-            if (AirportContainsNullFields(request))
+            json request;
+            try
+            {
+                request = json::parse(req.body);
+            } catch (...)
+            {
                 throw 400;
-            AirportModel airport(request["id"], request["name"], request["size"], request["x"], request["y"]);
+            }
+            for (auto update : updates)
+            {
+                if (request[update].is_null() || request["id"].is_null())
+                    throw 400;
+            }
+            string name;
+            int size;
+            double x, y;
+            try
+            {
+                if (!request["name"].is_null()) name = request["name"]; else  name = "string";
+                if (!request["size"].is_null()) size = request["size"]; else size = 0;
+                if (!request["x"].is_null()) x = request["x"]; else x = 0;
+                if (!request["y"].is_null()) y = request["y"]; else y = 0;
+            } catch (...)
+            {
+                throw 400;
+            }
+            AirportModel airport(request["id"], name, size, x, y);
             AirportModel updated = serv.updateAirport(airport, updates, header);
             updates.clear();
             json airport_json;
@@ -125,15 +160,23 @@ void AirportController::configure(Server* server)
         }
     });
 
-    server->Delete(AIRPORT_DELETE_MAPPING + R"(/(\d+))", [this](const Request& req, Response& res)
+    server->Delete(AIRPORT_DELETE_MAPPING, [this](const Request& req, Response& res)
 {
     try
     {
         auto header = req.get_header_value("Authorization");
         string service_token = req.get_header_value("Service-Token");
         if (service_token != SERVICE_TOKEN_VALUE)
-            res.status = 403;
-        long int id = stol(req.matches[1]);
+            throw 403;
+        long int id;
+        try
+        {
+            id = stol(req.get_param_value("id"));
+        } catch (...)
+        {
+            throw 400;
+        }
+
         bool deleted = serv.deleteAirport(id, header);
         if (deleted)
             res.status = 200;

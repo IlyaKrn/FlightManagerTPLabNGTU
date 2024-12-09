@@ -98,6 +98,7 @@ PlaneModel PlaneService::createPlane(PlaneModel plane, string token)
          throw 401;
     if (plane.getSpeed() == 0)
          throw 400;
+    plane.setBrokenPercentage(0);
     PlaneModel res = repo.createPlane(plane);
     return res;
 }
@@ -109,7 +110,7 @@ bool PlaneService::deletePlane(long int id, string token)
          throw 401;
     list<FlightModel> flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr, &id);
     flights.sort(PlaneSortByTime);
-    if (flights.front().getTimestampEnd() > timer.getAddedTime())
+    if (flights.front().getTimestampEnd() > static_cast<long int>(time(nullptr)) + timer.getAddedTime())
         throw 409;
     bool res = repo.deletePlane(id);
     return res;
@@ -123,7 +124,7 @@ PlaneModel PlaneService::updatePlane(PlaneModel plane, set<string> update, strin
     long int planeId = plane.getId();
     list<FlightModel> flights = flight.getFlights(nullptr, nullptr, nullptr, nullptr, &planeId);
     flights.sort(PlaneSortByTime);
-    if (flights.front().getTimestampEnd() > timer.getAddedTime())
+    if (flights.front().getTimestampEnd() > static_cast<long int>(time(nullptr)) + timer.getAddedTime())
         throw 409;
     if (update.count("brokenPercentage") > 0)
         throw 400;
