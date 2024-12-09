@@ -60,11 +60,9 @@ void AirportController::configure(Server* server)
             }
             string name;
             int size;
-            long int id;
             double x,y;
             try
             {
-                id = request["id"];
                 name = request["name"];
                 size = request["size"];
                 x = request["x"];
@@ -73,7 +71,7 @@ void AirportController::configure(Server* server)
             {
                 throw 400;
             }
-            AirportModel created = serv.createAirport(AirportModel(id, name, size, x, y), header);
+            AirportModel created = serv.createAirport(AirportModel(0, name, size, x, y), header);
             json airport_json;
             airport_json["id"] = created.getId();
             airport_json["name"] = created.getName();

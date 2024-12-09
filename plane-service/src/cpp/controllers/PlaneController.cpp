@@ -63,10 +63,8 @@ void PlaneController::configure(Server* server)
             }
             string name, pilot;
             int builtYear, brokenPercentage, speed, minAirportSize;
-            long int id;
             try
             {
-                id = request["id"];
                 name = request["name"];
                 pilot = request["pilot"];
                 builtYear = request["builtYear"];
@@ -77,7 +75,7 @@ void PlaneController::configure(Server* server)
             {
                 throw 400;
             }
-            PlaneModel plane(id, name, pilot, builtYear, brokenPercentage, speed, minAirportSize);
+            PlaneModel plane(0, name, pilot, builtYear, brokenPercentage, speed, minAirportSize);
             PlaneModel created = serv.createPlane(plane, header);
             json plane_json;
             plane_json["id"] = created.getId();
