@@ -73,7 +73,7 @@ void FlightController::configure(Server* server)
             {
                 throw 400;
             }
-            FlightModel flight(request["id"], timestampStart, timestampEnd, dispatcherId, planeId, airportId);
+            FlightModel flight(0, timestampStart, timestampEnd, dispatcherId, planeId, airportId);
             FlightModel created = serv.createFlight(flight, header);
             json flight_json;
             flight_json["id"] = created.getId();

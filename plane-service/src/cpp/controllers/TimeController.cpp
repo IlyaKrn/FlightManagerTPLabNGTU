@@ -35,7 +35,13 @@ void TimeController::configure(Server* server)
             if (service_token != SERVICE_TOKEN_VALUE)
                 throw 403;
             long int skip = 0;
-            skip = stol(req.get_param_value("skip"));
+            try
+            {
+                skip = stol(req.get_param_value("skip"));
+            } catch (...)
+            {
+                throw 400;
+            }
             serv.skipTime(skip, header);
             res.status = 200;
             res.set_content("skipped " + to_string(skip) + " seconds", "text/plain");

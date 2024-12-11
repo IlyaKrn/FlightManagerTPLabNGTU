@@ -37,11 +37,9 @@ PlaneModel PlaneRepository::createPlane(PlaneModel plane, string token)
         { AUTH_TOKEN_NAME, token }
     };
     json plane_json;
-    plane_json["id"] = plane.getId();
     plane_json["name"] = plane.getName();
     plane_json["pilot"] = plane.getPilot();
     plane_json["builtYear"] = plane.getBuiltYear();
-    plane_json["brokenPercentage"] = plane.getBrokenPercentage();
     plane_json["speed"] = plane.getSpeed();
     plane_json["minAirportSize"] = plane.getMinAirportSize();
 
@@ -62,7 +60,7 @@ bool PlaneRepository::deletePlane(long int id, string token)
         { AUTH_TOKEN_NAME, token }
     };
 
-    auto res = cli.Delete(PLANE_DELETE_MAPPING + "/" + to_string(id), headers);
+    auto res = cli.Delete(PLANE_DELETE_MAPPING + "?id=" + to_string(id), headers);
     if (res->status >= 200 && res->status < 300)
         return true;
     throw res->status;
@@ -79,7 +77,6 @@ PlaneModel PlaneRepository::updatePlane(PlaneModel plane, set<string> updates, s
     plane_json["name"] = plane.getName();
     plane_json["pilot"] = plane.getPilot();
     plane_json["builtYear"] = plane.getBuiltYear();
-    plane_json["brokenPercentage"] = plane.getBrokenPercentage();
     plane_json["speed"] = plane.getSpeed();
     plane_json["minAirportSize"] = plane.getMinAirportSize();
     string update;

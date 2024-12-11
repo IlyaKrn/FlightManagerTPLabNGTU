@@ -37,9 +37,8 @@ void PlanePresenter::getPlanes() {
 }
 
 void PlanePresenter::createPlane() {
-    long int id;
     string name, pilot;
-    int builtYear, brokenPercentage, speed, minAirportSize;
+    int builtYear, speed, minAirportSize;
 
     *_output << "Enter plane name: ";
     *_input >> name;
@@ -56,7 +55,7 @@ void PlanePresenter::createPlane() {
     *_output << "Enter minimum airport size: ";
     *_input >> minAirportSize;
 
-    PlaneModel newPlane(id, name, pilot, builtYear, brokenPercentage, speed, minAirportSize);
+    PlaneModel newPlane(0, name, pilot, builtYear, 0, speed, minAirportSize);
     PlaneRepository planeRepo;
     string token = TokenRepository().getToken(); // Получаем токен авторизации
 
@@ -93,7 +92,7 @@ void PlanePresenter::updatePlane() {
     *_input >> id;
 
     string name, pilot;
-    int builtYear = 0, brokenPercentage = 0, speed = 0, minAirportSize = 0; // Initialize variables
+    int builtYear = 0, speed = 0, minAirportSize = 0; // Initialize variables
     set<string> updates;
 
     *_output << "Enter new plane name (leave blank to keep current): ";
@@ -110,14 +109,6 @@ void PlanePresenter::updatePlane() {
     if (!builtYearInput.empty()) {
         builtYear = stoi(builtYearInput);
         updates.insert("builtYear");
-    }
-
-    *_output << "Enter new broken percentage (leave blank to keep current): ";
-    string brokenPercentageInput;
-    *_input >> brokenPercentageInput;
-    if (!brokenPercentageInput.empty()) {
-        brokenPercentage = stoi(brokenPercentageInput);
-        updates.insert("brokenPercentage");
     }
 
     *_output << "Enter new speed (leave blank to keep current): ";
@@ -140,7 +131,7 @@ void PlanePresenter::updatePlane() {
                             !name.empty() ? name : "", // If empty, keep current value
                             !pilot.empty() ? pilot : "",
                             builtYear,
-                            brokenPercentage,
+                            0,
                             speed,
                             minAirportSize);
     PlaneRepository planeRepo;
