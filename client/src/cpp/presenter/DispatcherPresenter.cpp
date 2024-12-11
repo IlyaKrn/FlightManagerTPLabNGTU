@@ -9,7 +9,7 @@ using namespace std;
 
 void DispatcherPresenter::getDispatchers()
 {
-    *_output << "Dispatchers: " << std::endl;
+    *_output << "Dispatchers: " << endl;
 
     DispatcherRepository dispatcherRepo;
     string token = TokenRepository().getToken(); // Получаем токен
@@ -22,7 +22,7 @@ void DispatcherPresenter::getDispatchers()
                  << ", Last Name: " << dispatcher.getLastname()
                  << ", Email: " << dispatcher.getEmail()
                  << ", Is Banned: " << (dispatcher.getIsBanned() ? "Yes" : "No")
-                 << std::endl;
+                 << endl;
     }
 }
 
@@ -56,7 +56,12 @@ void DispatcherPresenter::updateDispatcher() {
             newIsBanned = (isBannedInput == "1"); // Устанавливаем значение в зависимости от ввода
             isBannedProvided = true; // Устанавливаем флаг
         }
-
+        cout << "New first name: " << newFirstName << endl;
+        cout << "New last name: " << newLastName << endl;
+        cout << "New email: " << newEmail << endl;
+        cout << "New password: " << newPassword << endl;
+        cout << newIsBanned << endl;
+        cout << isBannedProvided << endl;
         DispatcherModel updatedDispatcher(dispatcherId,
                                           newFirstName.empty() ? "" : newFirstName,
                                           newLastName.empty() ? "" : newLastName,
@@ -81,32 +86,32 @@ void DispatcherPresenter::updateDispatcher() {
 
         // Проверяем, был ли обновлён диспетчер, например, по ID или другим критериям
         if (result.getId() == dispatcherId) { // Предполагаем, что есть метод getId()
-            *_output << "Dispatcher updated successfully!" << std::endl;
+            *_output << "Dispatcher updated successfully!" << endl;
         } else {
-            *_output << "Error updating dispatcher!" << std::endl;
+            *_output << "Error updating dispatcher!" << endl;
         }
     } catch (int& e) {
         // Обработка ошибок
         if (e == 500) {
-            *_output << "vse slomalos' peredelivay" << std::endl;
+            *_output << "vse slomalos' peredelivay" << endl;
         }
         if (e == 400) {
-            *_output << "Wrong request. Pizdui otsuda" << std::endl;
+            *_output << "Wrong request. Pizdui otsuda" << endl;
         }
         if (e == 403) {
-            *_output << "Forbidden move. Try when u ll become more cool" << std::endl;
+            *_output << "Forbidden move. Try when u ll become more cool" << endl;
         }
         if (e == 409) {
-            *_output << "Vam naznachili strelku - CONFLICT!" << std::endl;
+            *_output << "Vam naznachili strelku - CONFLICT!" << endl;
         }
         if (e == 401) {
-            *_output << "User  is unauthorized. Oluh" << std::endl;
+            *_output << "User  is unauthorized. Oluh" << endl;
         } else {
-            *_output << "Call to support, +79092840120, its pizdec" << e << std::endl;
+            *_output << "Call to support, +79092840120, its pizdec" << e << endl;
         }
     }
     catch (...) {
-            *_output << "Call to support, +79092840120, its sovsem pizdec pryam polniy" << std::endl;
+            *_output << "Call to support, +79092840120, its sovsem pizdec pryam polniy" << endl;
 
     }
 }

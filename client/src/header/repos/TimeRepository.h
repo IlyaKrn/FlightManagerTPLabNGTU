@@ -6,6 +6,6 @@
 class TimeRepository
 {
 public:
-    long int getCurrentTime(std::string token);
+    std::string getCurrentTime(std::string token);
     bool addTime(long int time, std::string token);
 };

@@ -59,7 +59,7 @@ bool AirportRepository::deleteAirport(long int id, string token) {
     Headers headers = {
         { AUTH_TOKEN_NAME, token }
     };
-    auto res = cli.Delete(AIRPORT_DELETE_MAPPING + "/" + to_string(id), headers);
+    auto res = cli.Delete(AIRPORT_DELETE_MAPPING + "?id="+to_string(id), headers);
     if (res->status >= 200 && res->status < 300)
         return true;
     throw res->status;

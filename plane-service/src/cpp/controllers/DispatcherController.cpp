@@ -153,7 +153,7 @@ void DispatcherController::configure(Server* server)
             auto isPrivate = req.get_param_value("private");
             if (service_token != SERVICE_TOKEN_VALUE)
                 throw 403;
-            int id = stoi(req.get_param_value("id"));
+            long int id = stol(req.get_param_value("id"));
             DispatcherModel dispatcher = serv.getDispatcherById(id, header, isPrivate == "true");
             json dispatcher_json;
             dispatcher_json["id"] = dispatcher.getId();

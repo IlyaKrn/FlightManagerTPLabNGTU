@@ -5,7 +5,7 @@
 #include "../../header/repos/AirportRepository.h"
 #include <iomanip> // Для setw
 #include "../../header/repos/TokenRepository.h"
-
+#include "iostream"
 using namespace std;
 
 void AirportPresenter::getAirports() {
@@ -186,6 +186,7 @@ void AirportPresenter::deleteAirport() {
             *_output << "Error deleting airport, dolbaeb!" << endl;
         }
     } catch (int& e) {
+        std::cout << e << endl;
         if (e == 500) {
             *_output << "vse slomalos' peredelivay" << endl;
         }
@@ -199,5 +200,6 @@ void AirportPresenter::deleteAirport() {
             *_output << "User  is unauthorized. Oluh" << endl;
         else
             *_output << "Call to support, +79092840120, its pizdec" << endl;
+            std::cout << e << endl;
     }
 }
