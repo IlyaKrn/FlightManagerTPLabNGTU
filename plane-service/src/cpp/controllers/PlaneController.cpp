@@ -62,20 +62,19 @@ void PlaneController::configure(Server* server)
                 throw 400;
             }
             string name, pilot;
-            int builtYear, brokenPercentage, speed, minAirportSize;
+            int builtYear, speed, minAirportSize;
             try
             {
                 name = request["name"];
                 pilot = request["pilot"];
                 builtYear = request["builtYear"];
-                brokenPercentage = request["brokenPercentage"];
                 speed = request["speed"];
                 minAirportSize = request["minAirportSize"];
             } catch (...)
             {
                 throw 400;
             }
-            PlaneModel plane(0, name, pilot, builtYear, brokenPercentage, speed, minAirportSize);
+            PlaneModel plane(0, name, pilot, builtYear, 0, speed, minAirportSize);
             PlaneModel created = serv.createPlane(plane, header);
             json plane_json;
             plane_json["id"] = created.getId();
@@ -132,20 +131,19 @@ void PlaneController::configure(Server* server)
                     throw 400;
             }
             string name, pilot;
-            int builtYear, brokenPercentage, speed, minAirportSize;
+            int builtYear, speed, minAirportSize;
             try
             {
                 if (!request["name"].is_null()) name = request["name"]; else name = "string";
                 if (!request["pilot"].is_null()) pilot = request["pilot"]; else pilot = "string";
                 if (!request["builtYear"].is_null()) builtYear = request["builtYear"]; else builtYear = 0;
-                if (!request["brokenPercentage"].is_null()) brokenPercentage = request["brokenPercentage"]; else brokenPercentage = 0;
                 if (!request["speed"].is_null()) speed = request["speed"]; else speed = 0;
                 if (!request["minAirportSize"].is_null()) minAirportSize = request["minAirportSize"]; else minAirportSize = 0;
             } catch (...)
             {
                 throw 400;
             }
-            PlaneModel plane(request["id"], name, pilot, builtYear, brokenPercentage, speed, minAirportSize);
+            PlaneModel plane(request["id"], name, pilot, builtYear, 0, speed, minAirportSize);
             PlaneModel updated = serv.updatePlane(plane, updates, header);
             updates.clear();
             json plane_json;

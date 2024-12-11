@@ -20,7 +20,8 @@ void PlanePresenter::getPlanes() {
                      << ", Broken Percentage: " << plane.getBrokenPercentage()
                      << ", Speed: " << plane.getSpeed()
                      << ", Min Airport Size: " << plane.getMinAirportSize()
-                     << std::endl;
+                     << ", x:" << plane.getX()
+                     << ", y:" << plane.getY() << std::endl;
         }
     } catch (const int& status) {
         *_output << "Error fetching planes. Status: " << status << std::endl;

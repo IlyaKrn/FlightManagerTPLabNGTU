@@ -29,8 +29,6 @@ void FlightPresenter::getAllFlights()
 void FlightPresenter::createFlight() {
     try {
         long int dispatcherId, planeId, airportId;
-        long int timestampStart, timestampEnd;
-
         *_output << "Enter dispatcher ID: ";
         *_input >> dispatcherId;
 
@@ -42,8 +40,7 @@ void FlightPresenter::createFlight() {
 
         FlightModel newFlight(0, 0, 0, dispatcherId, planeId, airportId); // Создаем новый объект рейса
         FlightRepository flightRepo;
-        string token = TokenRepository().getToken(); // Получаем токен
-
+        string token = TokenRepository().getToken();
         // Отправляем новый рейс на сервер и получаем результат
         FlightModel result = flightRepo.createFlight(newFlight, token);
 
@@ -59,16 +56,16 @@ void FlightPresenter::createFlight() {
         if (e == 500) {
             *_output << "vse slomalos' peredelivay" << std::endl;
         }
-        if (e == 400) {
+        else if (e == 400) {
             *_output << "Wrong request. Pizdui otsuda" << std::endl;
         }
-        if (e == 403) {
+        else if (e == 403) {
             *_output << "Forbidden move. Try when u ll become more cool" << std::endl;
         }
-        if (e == 409) {
+        else if (e == 409) {
             *_output << "Vam naznachili strelku - CONFLICT!" << std::endl;
         }
-        if (e == 401) {
+        else if (e == 401) {
             *_output << "User  is unauthorized. Oluh" << std::endl;
         } else {
             *_output << "Call to support, +79092840120, its pizdec" << std::endl;
