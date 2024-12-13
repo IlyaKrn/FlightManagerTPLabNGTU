@@ -2,8 +2,8 @@ package com.flightmanager.identityservice.security;
 
 import com.flightmanager.identityservice.config.PropertiesConfig;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -39,13 +39,13 @@ public class ServiceTokenFilter extends GenericFilterBean {
                 SecurityContextHolder.getContext().setAuthentication(appInfoToken);
             }
         } catch (Exception e) {
-            log.debug("Error during ServiceTokenFilter doFilter:{}", e.getMessage(), e);
+            log.debug("Error during ServiceTokenFilter doFilter:{} " + e.getMessage());
             log.warn(e.getMessage());
         }
         try {
             fc.doFilter(request, response);
         } catch (Exception e) {
-            log.debug("Error during ServiceTokenFilter doFilter:{}, request={},response={}", e.getMessage(),request,response, e);
+            log.debug("Error during ServiceTokenFilter doFilter:{}" + e.getMessage() + ", request={}" + request + ",response={}"+response);
             log.warn(e.getMessage());
             ((HttpServletResponse) response).setStatus(400);
         }

@@ -40,7 +40,7 @@ public class JwtUtil {
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         String subject = userDetails.getUsername();
 
-        log.debug("Creating token for subject: {}", subject);
+        log.debug("Creating token for subject: {}" + subject);
 
         return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
