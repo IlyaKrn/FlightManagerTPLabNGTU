@@ -61,12 +61,9 @@ void FlightController::configure(Server* server)
             {
                 throw 400;
             }
-            long int id, timestampStart, timestampEnd, dispatcherId, planeId, airportId;
+            long int dispatcherId, planeId, airportId;
             try
             {
-                id = request["time"];
-                timestampStart = request["timestampStart"];
-                timestampEnd = request["timestampEnd"];
                 dispatcherId = request["dispatcherId"];
                 planeId = request["planeId"];
                 airportId = request["airportId"];
@@ -74,7 +71,7 @@ void FlightController::configure(Server* server)
             {
                 throw 400;
             }
-            FlightModel flight(id, timestampStart, timestampEnd, dispatcherId, planeId, airportId);
+            FlightModel flight(0, 0, 0, dispatcherId, planeId, airportId);
             FlightModel created = serv.createFlight(flight, header);
             json flight_json;
             flight_json["id"] = created.getId();
@@ -87,6 +84,7 @@ void FlightController::configure(Server* server)
             res.set_content(flight_json.dump(), "application/json");
         } catch (int& e)
         {
+            cout << "gay" << endl;
             cout << "exception occured " << e << endl;
             res.status = e;
         } catch (const exception& e)
