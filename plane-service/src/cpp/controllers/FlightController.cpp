@@ -84,7 +84,6 @@ void FlightController::configure(Server* server)
             res.set_content(flight_json.dump(), "application/json");
         } catch (int& e)
         {
-            cout << "gay" << endl;
             cout << "exception occured " << e << endl;
             res.status = e;
         } catch (const exception& e)

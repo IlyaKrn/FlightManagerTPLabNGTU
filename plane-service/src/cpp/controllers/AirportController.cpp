@@ -60,7 +60,6 @@ void AirportController::configure(Server* server)
             }
             string name;
             int size;
-            long int id;
             double x,y;
             try
             {
