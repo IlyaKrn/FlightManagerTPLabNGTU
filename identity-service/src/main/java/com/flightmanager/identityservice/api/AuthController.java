@@ -32,6 +32,7 @@ public class AuthController {
                     tokenRequest.getPassword() == null ||
                     tokenRequest.getPassword().isEmpty()
             ) {
+
                 log.warn("login failed: invalid login data [code 400]");
                 return ResponseEntity.status(400).build();
             }
@@ -43,7 +44,7 @@ public class AuthController {
             log.info("login successful: id={} [code 200]", response.getId());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            log.debug("Error during login: {}", e.getMessage(), e);
+            log.debug("Error during login: {}"+ e.getMessage());
             log.warn("login failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -64,11 +65,11 @@ public class AuthController {
             log.info("register successful: id={} [code 200]", response.getId());
             return ResponseEntity.ok(response);
         } catch (HTTP400Exception e) {
-            log.debug("Error during registration: {}, id={}", e.getMessage(), e);
+            log.debug("Error during registration: {}" + e.getMessage() + ", id={}");
             log.warn("register failed: invalid register data [code 400]");
             return ResponseEntity.status(400).build();
         } catch (Exception e) {
-            log.debug("Error during registration: {}", e.getMessage(), e);
+            log.debug("Error during registration: {}"+ e.getMessage());
             log.warn("register failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -78,10 +79,11 @@ public class AuthController {
     public ResponseEntity<Boolean> authorize(@RequestBody AuthorizeRequest authorizeRequest) {
         try {
             boolean authorize = authService.authorize(authorizeRequest.getToken(), authorizeRequest.getPermissions());
+            log.debug("authorize successful: value=" + authorize + "permissions count=" + authorizeRequest.getPermissions().size());
             log.info("authorize successful: value={} [code 200]", authorize);
             return ResponseEntity.ok(authorize);
         } catch (Exception e) {
-            log.debug("Error during authorization: {}", e.getMessage(), e);
+            log.debug("Error during authorization: {}"+ e.getMessage());
             log.warn("authorize failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -98,7 +100,7 @@ public class AuthController {
             log.info("id-by-token successful: id={} [code 200]", id);
             return ResponseEntity.ok(id);
         } catch (Exception e) {
-            log.debug("Error during id-by-token: {}", e.getMessage(), e);
+            log.debug("Error during id-by-token: {}" + e.getMessage());
             log.warn("id-by-token failed: {} [code 500]", e.getMessage());
             return ResponseEntity.status(500).build();
         }
