@@ -10,4 +10,5 @@ public:
 
     void getDispatchers();
     void updateDispatcher();
+    void getDispatcherById();
 };

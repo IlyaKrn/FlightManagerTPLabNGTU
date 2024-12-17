@@ -61,6 +61,7 @@ FlightModel FlightService::createFlight(FlightModel flight, string token)
     update.insert("brokenPercentage");
     planes.front().setBrokenPercentage(flightTime / addingBrokenPercentage);
     planeRepo.updatePlane(planes.front(), update);
+    flight.setTimestampStart(timer.getAddedTime() + static_cast<long int>(time(nullptr)));
     long int timestampEnd = flight.getTimestampStart() + flightTime;
     flight.setTimestampEnd(timestampEnd);
     FlightModel res = repo.createFlight(flight);

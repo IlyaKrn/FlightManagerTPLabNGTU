@@ -90,7 +90,7 @@ bool IdentityPresenter::registerDispatcher() {
         TokenRepository tokenRepo;
         if (tokenRepo.setTokenAndUserId(token, stol(userId))) {
             *_output << "Token and User ID saved successfully." << endl;
-           return true; // Успешная регистрация
+            return true; // Успешная регистрация
         } else {
             *_output << "Failed to save token and User ID." << endl;
             return false; // Неудачная регистрация

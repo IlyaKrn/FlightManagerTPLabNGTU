@@ -47,8 +47,8 @@ PlaneModel PlaneRepository::createPlane(PlaneModel plane, string token)
     if (res->status >= 200 && res->status < 300)
     {
         json planes = json::parse(res->body);
-        PlaneModel plane(planes["id"], planes["name"],planes["pilot"], planes["builtYear"], planes["brokenPercentage"],planes["speed"], planes["minAirportSize"]);
-        return plane;
+        PlaneModel n_plane(planes["id"], planes["name"],planes["pilot"], planes["builtYear"], planes["brokenPercentage"],planes["speed"], planes["minAirportSize"]);
+        return n_plane;
     }
     throw res->status;
 }
@@ -80,7 +80,7 @@ PlaneModel PlaneRepository::updatePlane(PlaneModel plane, set<string> updates, s
     plane_json["speed"] = plane.getSpeed();
     plane_json["minAirportSize"] = plane.getMinAirportSize();
     string update;
-    for (auto item: update)
+    for (auto item: updates)
     {
         if (update.empty())
             update = item;
@@ -91,8 +91,8 @@ PlaneModel PlaneRepository::updatePlane(PlaneModel plane, set<string> updates, s
     if (res->status >= 200 && res->status < 300)
     {
         json planes = json::parse(res->body);
-        PlaneModel plane(planes["id"], planes["name"],planes["pilot"], planes["builtYear"], planes["brokenPercentage"],planes["speed"], planes["minAirportSize"]);
-        return plane;
+        PlaneModel n_plane(planes["id"], planes["name"],planes["pilot"], planes["builtYear"], planes["brokenPercentage"],planes["speed"], planes["minAirportSize"]);
+        return n_plane;
     }
     throw res->status;
 }

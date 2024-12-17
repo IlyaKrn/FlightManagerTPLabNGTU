@@ -49,7 +49,7 @@ set<string> IdentityRepository::regist(DispatcherModel dispatcher) {
         json jopa = json::parse(res->body);
         set<string> reg;
         reg.insert(to_string(jopa["id"]));
-        reg.insert(to_string(jopa["token"]));
+        reg.insert(jopa["token"]);
         return reg;
     }
     throw res->status;

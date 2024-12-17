@@ -27,8 +27,15 @@ using namespace std;
 
 void TimePresenter::addTime() {
     long int timeToAdd;
-    *_output << "Enter time to add (in seconds): ";
-    *_input >> timeToAdd;
+    try {
+        string timeToAdd1;
+        *_output << "Enter time to add (in seconds): ";
+        *_input >> timeToAdd1;
+        timeToAdd = stol(timeToAdd1);
+    } catch(...) {
+        throw 400;
+    }
+
 
     TimeRepository timeRepo;
     string token = TokenRepository().getToken(); // Получаем токен авторизации
