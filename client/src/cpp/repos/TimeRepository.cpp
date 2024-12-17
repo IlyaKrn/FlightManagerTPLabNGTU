@@ -8,7 +8,7 @@ using namespace std;
 using namespace httplib;
 using namespace nlohmann;
 
-long int TimeRepository::getCurrentTime(string token) {
+string TimeRepository::getCurrentTime(string token) {
     Client cli(GATEWAY_HOST_PORT);
 
     Headers headers = {
@@ -16,11 +16,9 @@ long int TimeRepository::getCurrentTime(string token) {
     };
     auto res = cli.Get(TIME_GET_MAPPING, headers);
     if (res->status >= 200 && res->status < 300) {
-        json zalupka = json::parse(res->body);
-        long int time = zalupka["time"];
+        auto time = res->body;
         return time;
     }
-
     throw res->status;
 }
 

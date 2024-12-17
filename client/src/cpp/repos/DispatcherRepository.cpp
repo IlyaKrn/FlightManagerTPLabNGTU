@@ -61,30 +61,27 @@ DispatcherModel DispatcherRepository::updateDispatchers(DispatcherModel dispatch
         }
     }
     string update;
-    for (auto dispatcher_json : updates)
+    for (auto item : updates)
     {
         if (update.empty())
-            update = dispatcher_json;
+            update = item;
         else
-            update += "," + dispatcher_json;
+            update += "," + item;
     }
-    auto res = cli.Post(DISPATCHER_UPDATE_MAPPING + "?update" + update, headers, dispatcher_json.dump(), "application/json");
+    auto res = cli.Post(DISPATCHER_UPDATE_MAPPING + "?update=" + update, headers, dispatcher_json.dump(), "application/json");
     if (res->status >= 200 && res->status < 300)
     {
-        json dispatcher_json = json::parse(res->body);
-
+        json dispatcher_hitler = json::parse(res->body);
         set<RoleModel> Roles;
-        for (auto Role : dispatcher_json["roles"])
+        for (auto Role : dispatcher_hitler["roles"])
         {
             if (Role == "ADMIN")
                 Roles.insert(RoleModel::ADMIN);
             else if (Role == "DISPATCHER")
                 Roles.insert(RoleModel::DISPATCHER);
         }
-        DispatcherModel dispatcher(dispatcher_json["id"], dispatcher_json["firstName"], dispatcher_json["lastName"], dispatcher_json["email"], dispatcher_json["password"], dispatcher_json["isBanned"], Roles);
-
-
-        return dispatcher;
+        DispatcherModel dispatcher_update(dispatcher_hitler["id"], dispatcher_hitler["firstName"], dispatcher_hitler["lastName"], dispatcher_hitler["email"], dispatcher_hitler["password"], dispatcher_hitler["isBanned"], Roles);
+        return dispatcher_update;
     }
     throw res->status;
 }
@@ -94,7 +91,8 @@ DispatcherModel DispatcherRepository::getDispatcherById(long int id, std::string
     Headers headers = {
         { AUTH_TOKEN_NAME, token }
     };
-    auto res = cli.Get(DISPATCHER_GET_BY_ID_MAPPING, headers);
+
+    auto res = cli.Get(DISPATCHER_GET_BY_ID_MAPPING + "?id=" + to_string(id), headers);
     if (res->status >= 200 && res->status < 300)
     {
         json dispatcher_json = json::parse(res->body);

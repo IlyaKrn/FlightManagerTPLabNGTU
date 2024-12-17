@@ -1,5 +1,8 @@
 #include <fstream>
 #include "../../header/repos/TokenRepository.h"
+
+#include <iostream>
+
 #include "../../Config.h"
 
 using namespace std;
@@ -9,8 +12,8 @@ std::string TokenRepository::getToken() {
     string token;
     if (getline(file, token)) {
         return token; // Возвращаем токен
-    }
-    return ""; // Если токен не найден, возвращаем пустую строку
+    }// Если токен не найден, возвращаем пустую строку
+    return "";
 }
 
 long int TokenRepository::getUserId() {
@@ -26,11 +29,12 @@ long int TokenRepository::getUserId() {
 }
 
 bool TokenRepository::setTokenAndUserId(const std::string& token, long int userId) {
-    ofstream file(TOKEN_FILE_PATH, ios::trunc); // Открываем файл для записи, очищая его
-    if (file.is_open()) {
+    ofstream file(TOKEN_FILE_PATH, ios::trunc);
+    if (file.is_open()) {// Открываем файл для записи, очищая его
         file << token << endl; // Записываем токен
-        file << userId << endl; // Записываем ID пользователя
+        file << userId << endl;
+        file.close();
         return true; // Успешно записано
     }
-    return false; // Ошибка при открытии файла
+    return false;
 }

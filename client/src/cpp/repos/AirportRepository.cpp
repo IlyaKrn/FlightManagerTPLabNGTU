@@ -37,7 +37,6 @@ AirportModel AirportRepository::createAirport(AirportModel airport, string token
         { AUTH_TOKEN_NAME, token }
     };
     json airport_json;
-    airport_json["id"] = airport.getId();
     airport_json["name"] = airport.getName();
     airport_json["size"] = airport.getSize();
     airport_json["x"] = airport.getX();
@@ -59,7 +58,7 @@ bool AirportRepository::deleteAirport(long int id, string token) {
     Headers headers = {
         { AUTH_TOKEN_NAME, token }
     };
-    auto res = cli.Delete(AIRPORT_DELETE_MAPPING + "/" + to_string(id), headers);
+    auto res = cli.Delete(AIRPORT_DELETE_MAPPING + "?id=" + to_string(id), headers);
     if (res->status >= 200 && res->status < 300)
         return true;
     throw res->status;
