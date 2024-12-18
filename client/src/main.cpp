@@ -65,21 +65,21 @@ int main(int argc, char* argv[])
             if (command == "1") {
                 AirportPresenter airportPresenter(&cout, &cin);
                 cout << "Select action for Airports:" << endl;
-                cout << "1. Create Airport" << endl;
-                cout << "2. Update Airport" << endl;
-                cout << "3. Delete Airport" << endl;
-                cout << "4. Get Airports" << endl;
+                cout << "1. Get Airport" << endl;
+                cout << "2. Create Airport" << endl;
+                cout << "3. Update Airport" << endl;
+                cout << "4. Delete Airports" << endl;
                 string airportAction;
                 cin >> airportAction;
 
                 if (airportAction == "1") {
-                    airportPresenter.createAirport();
-                } else if (airportAction == "2") {
-                    airportPresenter.updateAirport();
-                } else if (airportAction == "3") {
-                    airportPresenter.deleteAirport();
-                } else if (airportAction == "4") {
                     airportPresenter.getAirports();
+                } else if (airportAction == "2") {
+                    airportPresenter.createAirport();
+                } else if (airportAction == "3") {
+                    airportPresenter.updateAirport();
+                } else if (airportAction == "4") {
+                    airportPresenter.deleteAirport();
                 } else {
                     cout << "Invalid action for Airports!" << endl;
                 }
@@ -87,17 +87,19 @@ int main(int argc, char* argv[])
                 DispatcherPresenter dispatcherPresenter(&cout, &cin);
                 cout << "Select action for Dispatchers:" << endl;
                 cout << "1. Get Dispatchers" << endl;
-                cout << "2. Update Dispatcher" << endl;
+                cout << "2. Get Dispatcher By Id" << endl;
+                cout << "3. Update Dispatcher" << endl;
                 string dispatcherAction;
                 cin >> dispatcherAction;
 
                 if (dispatcherAction == "1") {
                     dispatcherPresenter.getDispatchers();
                 } else if (dispatcherAction == "2") {
+                    dispatcherPresenter.getDispatcherById();
+                } else if (dispatcherAction == "3") {
                     dispatcherPresenter.updateDispatcher();
-                } else {
+                } else
                     cout << "Invalid action for Dispatchers!" << endl;
-                }
             } else if (command == "3") {
                 FlightPresenter flightPresenter(&cout, &cin);
                 cout << "Select action for Flights:" << endl;
@@ -117,7 +119,9 @@ int main(int argc, char* argv[])
                 PlanePresenter planePresenter(&cout, &cin);
                 cout << "Select action for Planes:" << endl;
                 cout << "1. Get Planes" << endl;
-                cout << "2. Add Plane" << endl;
+                cout << "2. Create Plane" << endl;
+                cout << "3. Update Plane" << endl;
+                cout << "4. Delete Plane" << endl;
                 string planeAction;
                 cin >> planeAction;
 
@@ -125,6 +129,10 @@ int main(int argc, char* argv[])
                     planePresenter.getPlanes();
                 } else if (planeAction == "2") {
                     planePresenter.createPlane();
+                } else if (planeAction == "3") {
+                    planePresenter.updatePlane();
+                } else if (planeAction == "4") {
+                    planePresenter.deletePlane();
                 } else {
                     cout << "Invalid action for Planes!" << endl;
                 }
