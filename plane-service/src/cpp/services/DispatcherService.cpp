@@ -48,7 +48,7 @@ DispatcherModel DispatcherService::updateDispatcher(DispatcherModel dispatcher, 
     if (!dispatchers.front().getRoles().count(RoleModel::ADMIN))
     {
         if (update.count("isBanned") > 0 || update.count("roles") > 0)
-            throw 409;
+            throw 401;
     }
     DispatcherModel res = repo.updateDispatchers(dispatcher, update);
     return res;
