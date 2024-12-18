@@ -1,5 +1,5 @@
-#include <cpp-httplib/httplib.h>
-#include <json/single_include/nlohmann/json.hpp>
+#include <httplib.h>
+#include <nlohmann/json.hpp>
 #include "../../Config.h"
 #include "../../header/repos/DispatcherRepository.h"
 using namespace std;

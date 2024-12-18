@@ -1,7 +1,7 @@
 #include "../../header/repos/FlightRepository.h"
 
-#include <cpp-httplib/httplib.h>
-#include <json/single_include/nlohmann/json.hpp>
+#include <httplib.h>
+#include <nlohmann/json.hpp>
 
 #include "../../Config.h"
 using namespace std;

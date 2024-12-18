@@ -62,7 +62,7 @@ for /f "tokens=*" %%a in (docker-less.env) do (
 cd client
 call ./client -b
 cd ../
-call .\client\build\main.exe
+call .\client\build\src\client.exe
 goto end
 
 :end
