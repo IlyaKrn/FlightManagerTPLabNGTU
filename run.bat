@@ -59,8 +59,10 @@ goto end
 for /f "tokens=*" %%a in (docker-less.env) do (
     set %%a
 )
+
 cd client
-call ./client -b
+if "%2" EQU "-t" call ./client -t
+else call ./client -b
 cd ../
 call .\client\build\src\client.exe
 goto end
