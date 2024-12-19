@@ -1,11 +1,7 @@
-#include "header/presentation/AirportPresenter.h"
-#include "header/presentation/DispatcherPresenter.h"
-#include "header/presentation/FlightPresenter.h"
-#include "header/presentation/IdentityPresenter.h"
-#include "header/presentation/IPresenter.h"
-#include "header/presentation/PlanePresenter.h"
-#include "header/presentation/TimePresenter.h"
+#include "include/srclib.h"
+#include <iostream>
 
+using namespace src;
 using namespace std;
 
 int main(int argc, char* argv[])

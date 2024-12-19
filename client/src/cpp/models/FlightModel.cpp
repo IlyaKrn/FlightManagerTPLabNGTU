@@ -1,4 +1,7 @@
-#include "../../header/models/FlightModel.h"
+#include "../../include/models/FlightModel.h"
+
+using namespace src;
+using namespace std;
 
 FlightModel::FlightModel(long int id, long int timestampstart, long int timestampend, long int dispatcherId, long int planeId, long int airportId)
 {

@@ -1,6 +1,9 @@
-#include "../../header/models/PlaneModelResponse.h"
+#include "../../include/models/PlaneModelResponse.h"
 
-PlaneModelResponse::PlaneModelResponse(int id, std::string name, std::string pilot, int builtYear, int brokenPercentage, int speed, int minAirportSize, double x, double y)
+using namespace src;
+using namespace std;
+
+PlaneModelResponse::PlaneModelResponse(int id, string name, string pilot, int builtYear, int brokenPercentage, int speed, int minAirportSize, double x, double y)
 {
     _id = id;
     _name = name;
@@ -17,11 +20,11 @@ long int PlaneModelResponse::getId()
 {
     return _id;
 }
-std::string PlaneModelResponse::getName()
+string PlaneModelResponse::getName()
 {
     return _name;
 }
-std::string PlaneModelResponse::getPilot()
+string PlaneModelResponse::getPilot()
 {
     return _pilot;
 }
@@ -54,11 +57,11 @@ void PlaneModelResponse::setId(long int id)
 {
     _id = id;
 }
-void PlaneModelResponse::setName(std::string name)
+void PlaneModelResponse::setName(string name)
 {
     _name = name;
 }
-void PlaneModelResponse::setPilot(std::string pilot)
+void PlaneModelResponse::setPilot(string pilot)
 {
     _pilot = pilot;
 }

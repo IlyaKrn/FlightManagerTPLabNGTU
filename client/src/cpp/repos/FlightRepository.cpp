@@ -1,10 +1,12 @@
-#include "../../header/repos/FlightRepository.h"
+#include "../../include/repos/FlightRepository.h"
 
 #include <httplib.h>
 #include <nlohmann/json.hpp>
 
-#include "../../Config.h"
+#include "../../include/Config.h"
+
 using namespace std;
+using namespace src;
 using namespace httplib;
 using namespace nlohmann;
 
@@ -13,7 +15,7 @@ list<FlightModel> FlightRepository::getAllFlights(string token)
     Client cli(GATEWAY_HOST_PORT);
 
     Headers headers = {
-        { AUTH_TOKEN_NAME, token }
+        {AUTH_TOKEN_NAME, token}
     };
 
     auto res = cli.Get(FLIGHT_GET_ALL_MAPPING, headers);
@@ -23,7 +25,8 @@ list<FlightModel> FlightRepository::getAllFlights(string token)
         list<FlightModel> flights;
         for (auto item : flights_json)
         {
-            FlightModel flight(item["id"], item["timestampStart"], item["timestampEnd"], item["dispatcherId"], item["planeId"], item["airportId"]);
+            FlightModel flight(item["id"], item["timestampStart"], item["timestampEnd"], item["dispatcherId"],
+                               item["planeId"], item["airportId"]);
             flights.push_back(flight);
         }
         return flights;
@@ -36,7 +39,7 @@ FlightModel FlightRepository::createFlight(FlightModel flight, string token)
     Client cli(GATEWAY_HOST_PORT);
 
     Headers headers = {
-        { AUTH_TOKEN_NAME, token }
+        {AUTH_TOKEN_NAME, token}
     };
     json flight_json;
     flight_json["timestampStart"] = flight.getTimestampStart();
@@ -49,7 +52,8 @@ FlightModel FlightRepository::createFlight(FlightModel flight, string token)
     {
         json flights_json = json::parse(res->body);
 
-        FlightModel flight(flights_json["id"], flights_json["timestampStart"], flights_json["timestampEnd"], flights_json["dispatcherId"], flights_json["planeId"], flights_json["airportId"]);
+        FlightModel flight(flights_json["id"], flights_json["timestampStart"], flights_json["timestampEnd"],
+                           flights_json["dispatcherId"], flights_json["planeId"], flights_json["airportId"]);
 
         return flight;
     }

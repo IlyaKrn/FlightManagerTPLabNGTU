@@ -1,11 +1,9 @@
-#include "../../header/presentation/AirportPresenter.h"
-#include <list>
-#include <set>
-#include "../../header/models/AirportModel.h"
-#include "../../header/repos/AirportRepository.h"
-#include <iomanip> // Для setw
-#include "../../header/repos/TokenRepository.h"
-#include "iostream"
+#include "../../include/presentation/AirportPresenter.h"
+#include "../../include/repos/AirportRepository.h"
+#include "../../include/repos/TokenRepository.h"
+#include <iomanip>
+
+using namespace src;
 using namespace std;
 
 void AirportPresenter::getAirports() {

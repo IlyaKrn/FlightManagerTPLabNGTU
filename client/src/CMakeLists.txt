@@ -20,35 +20,34 @@ add_library(src
         cpp/repos/PlaneRepository.cpp
         cpp/repos/TimeRepository.cpp
         cpp/repos/TokenRepository.cpp
-        header/models/AirportModel.h
-        header/models/DispatcherModel.h
-        header/models/FlightModel.h
-        header/models/PlaneModel.h
-        header/models/PlaneModelResponse.h
-        header/models/RoleModel.h
-        header/presentation/AirportPresenter.h
-        header/presentation/DispatcherPresenter.h
-        header/presentation/FlightPresenter.h
-        header/presentation/IdentityPresenter.h
-        header/presentation/IPresenter.h
-        header/presentation/PlanePresenter.h
-        header/presentation/TimePresenter.h
-        header/repos/AirportRepository.h
-        header/repos/DispatcherRepository.h
-        header/repos/FlightRepository.h
-        header/repos/IdentityRepository.h
-        header/repos/PlaneRepository.h
-        header/repos/TimeRepository.h
-        header/repos/TokenRepository.h
-        Config.h
+        include/models/AirportModel.h
+        include/models/DispatcherModel.h
+        include/models/FlightModel.h
+        include/models/PlaneModel.h
+        include/models/PlaneModelResponse.h
+        include/models/RoleModel.h
+        include/presentation/AirportPresenter.h
+        include/presentation/DispatcherPresenter.h
+        include/presentation/FlightPresenter.h
+        include/presentation/IdentityPresenter.h
+        include/presentation/IPresenter.h
+        include/presentation/PlanePresenter.h
+        include/presentation/TimePresenter.h
+        include/repos/AirportRepository.h
+        include/repos/DispatcherRepository.h
+        include/repos/FlightRepository.h
+        include/repos/IdentityRepository.h
+        include/repos/PlaneRepository.h
+        include/repos/TimeRepository.h
+        include/repos/TokenRepository.h
+        include/Config.h
+        include/srclib.h
 )
 
 target_link_libraries(src nlohmann_json httplib)
+if (WIN32)
+    target_link_libraries(src wsock32 ws2_32)
+endif ()
 
 add_executable(client main.cpp)
-
 target_link_libraries(client src)
-
-if(WIN32)
-    target_link_libraries(client wsock32 ws2_32)
-endif()
