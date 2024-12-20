@@ -1,9 +1,7 @@
-project(tests)
+cmake_minimum_required(VERSION 3.5)
+project(test)
 
-install(
-        DIRECTORY /
-        DESTINATION ${CMAKE_BINARY_DIR}/tests
-        FILES_MATCHING PATTERN "*.py"
-)
-include(FindPythonInterp)
-add_test(NAME TestExecutableRunning COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/tests/test1.py)
+add_executable(test1 test1.cpp)
+target_link_libraries(test1 src)
+
+add_test(NAME TestRepos COMMAND test1)

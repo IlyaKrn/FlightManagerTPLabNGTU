@@ -1,5 +1,9 @@
-#include "../../header/models/PlaneModel.h"
-PlaneModel::PlaneModel(long int id, std::string name, std::string pilot, int builtYear, int brokenPercentage, int speed, int minAirportSize)
+#include "../../include/models/PlaneModel.h"
+
+using namespace src;
+using namespace std;
+
+PlaneModel::PlaneModel(long int id, string name, string pilot, int builtYear, int brokenPercentage, int speed, int minAirportSize)
 {
     _id = id;
     _name = name;
@@ -14,11 +18,11 @@ long int PlaneModel::getId()
 {
     return _id;
 }
-std::string PlaneModel::getName()
+string PlaneModel::getName()
 {
     return _name;
 }
-std::string PlaneModel::getPilot()
+string PlaneModel::getPilot()
 {
     return _pilot;
 }
@@ -43,11 +47,11 @@ void PlaneModel::setId(long int id)
 {
     _id = id;
 }
-void PlaneModel::setName(std::string name)
+void PlaneModel::setName(string name)
 {
     _name = name;
 }
-void PlaneModel::setPilot(std::string pilot)
+void PlaneModel::setPilot(string pilot)
 {
     _pilot = pilot;
 }

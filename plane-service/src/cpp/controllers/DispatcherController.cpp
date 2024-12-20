@@ -80,6 +80,7 @@ void DispatcherController::configure(Server* server)
                 if (!item.empty())
                     updates.insert(item);
             }
+            cout << fields << endl;
             json request;
             try
             {
@@ -119,6 +120,11 @@ void DispatcherController::configure(Server* server)
                 throw 400;
             }
             DispatcherModel dispatcher(request["id"], firstName, lastName, email, password, isBanned, roles);
+            cout << dispatcher.getFirstname() << endl;
+            cout << dispatcher.getLastname() << endl;
+            cout << dispatcher.getEmail() << endl;
+            cout << dispatcher.getPassword() << endl;
+            cout << dispatcher.getIsBanned() << endl;
             DispatcherModel updated = serv.updateDispatcher(dispatcher, updates, header);
             updates.clear();
             json dispatcher_json;

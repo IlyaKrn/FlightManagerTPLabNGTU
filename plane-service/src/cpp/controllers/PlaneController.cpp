@@ -131,7 +131,7 @@ void PlaneController::configure(Server* server)
                     throw 400;
             }
             string name, pilot;
-            int builtYear, brokenPercentage, speed, minAirportSize;
+            int builtYear, speed, minAirportSize;
             try
             {
                 if (!request["name"].is_null()) name = request["name"]; else name = "string";

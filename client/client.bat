@@ -17,17 +17,18 @@ echo [script] building %service_name% exec ...
 call cmake -G "MinGW Makefiles" -B ./build
 cd build/
 call mingw32-make
-call mingw32-make install
 cd ../
 echo [script] building %service_name% exec finished
 goto end
 
 :test
-echo [script] testing %service_name% exec ...
+echo [script] building and testing %service_name% exec ...
+call cmake -G "MinGW Makefiles" -B ./build
 cd build/
+call mingw32-make
 call mingw32-make test
 cd ../
-echo [script] testing %service_name% exec finished
+echo [script] building and testing %service_name% exec finished
 goto end
 
 

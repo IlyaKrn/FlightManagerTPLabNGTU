@@ -1,33 +1,35 @@
-#include "../../header/repos/TimeRepository.h"
+#include "../../include/repos/TimeRepository.h"
+#include "../../include/Config.h"
 
-#include <cpp-httplib/httplib.h>
-#include <json/single_include/nlohmann/json.hpp>
+#include <httplib.h>
+#include <nlohmann/json.hpp>
 
-#include "../../Config.h"
 using namespace std;
+using namespace src;
 using namespace httplib;
 using namespace nlohmann;
 
-long int TimeRepository::getCurrentTime(string token) {
+string TimeRepository::getCurrentTime(string token)
+{
     Client cli(GATEWAY_HOST_PORT);
 
     Headers headers = {
-        { AUTH_TOKEN_NAME, token }
+        {AUTH_TOKEN_NAME, token}
     };
     auto res = cli.Get(TIME_GET_MAPPING, headers);
-    if (res->status >= 200 && res->status < 300) {
-        json zalupka = json::parse(res->body);
-        long int time = zalupka["time"];
+    if (res->status >= 200 && res->status < 300)
+    {
+        auto time = res->body;
         return time;
     }
-
     throw res->status;
 }
 
-bool TimeRepository::addTime(long int time, string token) {
+bool TimeRepository::addTime(long int time, string token)
+{
     Client cli(GATEWAY_HOST_PORT);
     Headers headers = {
-        { AUTH_TOKEN_NAME, token }
+        {AUTH_TOKEN_NAME, token}
     };
 
     Params params = {

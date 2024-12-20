@@ -1,20 +1,23 @@
-#include "../../header/repos/IdentityRepository.h"
+#include "../../include/repos/IdentityRepository.h"
+#include "../../include/Config.h"
 
-#include <cpp-httplib/httplib.h>
-#include <json/single_include/nlohmann/json.hpp>
+#include <httplib.h>
+#include <nlohmann/json.hpp>
 
-#include "../../Config.h"
 using namespace std;
+using namespace src;
 using namespace httplib;
 using namespace nlohmann;
 
-set<string> IdentityRepository::login(string email, string password) {
+set<string> IdentityRepository::login(string email, string password)
+{
     Client cli(GATEWAY_HOST_PORT);
     json j;
     j["email"] = email;
     j["password"] = password;
     auto res = cli.Post(LOGIN_MAPPING, j.dump(), "application/json");
-    if (res->status >= 200 && res->status < 300) {
+    if (res->status >= 200 && res->status < 300)
+    {
         json jopa = json::parse(res->body);
         set<string> login;
         login.insert(to_string(jopa["id"]));
@@ -24,7 +27,8 @@ set<string> IdentityRepository::login(string email, string password) {
     throw res->status;
 }
 
-set<string> IdentityRepository::regist(DispatcherModel dispatcher) {
+set<string> IdentityRepository::regist(DispatcherModel dispatcher)
+{
     Client cli(GATEWAY_HOST_PORT);
     json dispatcher_json;
     dispatcher_json["id"] = dispatcher.getId();
@@ -38,18 +42,19 @@ set<string> IdentityRepository::regist(DispatcherModel dispatcher) {
     {
         switch (role)
         {
-            case RoleModel::ADMIN: dispatcher_json["roles"].push_back("ADMIN");
-                break;
-            case RoleModel::DISPATCHER: dispatcher_json["roles"].push_back("DISPATCHER");
-                break;
+        case RoleModel::ADMIN: dispatcher_json["roles"].push_back("ADMIN");
+            break;
+        case RoleModel::DISPATCHER: dispatcher_json["roles"].push_back("DISPATCHER");
+            break;
         }
     }
     auto res = cli.Post(REGISTER_MAPPING, dispatcher_json.dump(), "application/json");
-    if (res->status >= 200 && res->status < 300) {
+    if (res->status >= 200 && res->status < 300)
+    {
         json jopa = json::parse(res->body);
         set<string> reg;
         reg.insert(to_string(jopa["id"]));
-        reg.insert(to_string(jopa["token"]));
+        reg.insert(jopa["token"]);
         return reg;
     }
     throw res->status;

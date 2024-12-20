@@ -1,210 +1,331 @@
-#include "../../header/presentation/PlanePresenter.h"
-#include <iostream>
-#include "../../header/repos/TokenRepository.h" // Include TokenRepository header
+#include "../../include/presentation/PlanePresenter.h"
+#include "../../include/repos/PlaneRepository.h"
+#include "../../include/repos/TokenRepository.h"
+#include <iomanip>
 
+using namespace src;
 using namespace std;
 
-void PlanePresenter::getPlanes() {
+void PlanePresenter::getPlanes()
+{
     PlaneRepository planeRepo;
     string token = TokenRepository().getToken(); // Получаем токен авторизации
 
-    try {
+    try
+    {
         list<PlaneModelResponse> planes = planeRepo.getPlanes(token);
-        *_output << "Planes: " << std::endl;
+        if (planes.empty())
+        {
+            *_output << "No planes found." << endl;
+            return;
+        }
+        *_output << "Planes: " << endl;
+        *_output << setw(10) << "ID"
+            << setw(10) << "Name"
+            << setw(10) << "Pilot"
+            << setw(20) << "Built Year"
+            << setw(20) << "Broken Percentage"
+            << setw(10) << "Speed"
+            << setw(25) << "Min Airport Size"
+            << setw(10) << "Coordinates" << endl;
 
-        for (auto& plane : planes) {
-            *_output << "ID: " << plane.getId()
-                     << ", Name: " << plane.getName()
-                     << ", Pilot: " << plane.getPilot()
-                     << ", Built Year: " << plane.getBuiltYear()
-                     << ", Broken Percentage: " << plane.getBrokenPercentage()
-                     << ", Speed: " << plane.getSpeed()
-                     << ", Min Airport Size: " << plane.getMinAirportSize()
-                     << std::endl;
+        for (auto& plane : planes)
+        {
+            *_output << setw(10) << plane.getId()
+                << setw(10) << plane.getName()
+                << setw(10) << plane.getPilot()
+                << setw(20) << plane.getBuiltYear()
+                << setw(20) << plane.getBrokenPercentage()
+                << setw(10) << plane.getSpeed()
+                << setw(25) << plane.getMinAirportSize()
+                << setw(10) << "(" << plane.getX() << "," << plane.getY() << ")" << endl;
         }
-    } catch (const int& status) {
-        *_output << "Error fetching planes. Status: " << status << std::endl;
-        if (status == 500) {
-            *_output << "Internal server error. Please try again later." << std::endl;
-        } else if (status == 400) {
-            *_output << "Bad request. Please check your input." << std::endl;
-        } else if (status == 403) {
-            *_output << "Forbidden access. You do not have permission." << std::endl;
-        } else if (status == 401) {
-            *_output << "Unauthorized access. Please log in." << std::endl;
+    }
+    catch (const int& status)
+    {
+        *_output << "Error fetching planes. Status: " << status << endl;
+        if (status == 500)
+        {
+            *_output << "Internal server error. Please try again later." << endl;
         }
+        else if (status == 400)
+        {
+            *_output << "Bad request. Please check your input." << endl;
+        }
+        else if (status == 403)
+        {
+            *_output << "Forbidden access. You do not have permission." << endl;
+        }
+        else if (status == 401)
+        {
+            *_output << "Unauthorized access. Please log in." << endl;
+        }
+    } catch (...)
+    {
+        *_output << "Unknown error. Call to support" << endl;
     }
 }
 
-void PlanePresenter::createPlane() {
-    long int id;
-    string name, pilot;
-    int builtYear, brokenPercentage, speed, minAirportSize;
+void PlanePresenter::createPlane()
+{
+    try
+    {
+        string name, pilot;
+        int builtYear, speed, minAirportSize;
+        try
+        {
+            *_output << "Enter plane name: ";
+            *_input >> name;
 
-    *_output << "Enter plane ID: ";
-    *_input >> id;
+            *_output << "Enter pilot name: ";
+            *_input >> pilot;
 
-    *_output << "Enter plane name: ";
-    *_input >> name;
+            string builtYear1, speed1, minAirportSize1;
+            *_output << "Enter built year: ";
+            *_input >> builtYear1;
+            builtYear = stoi(builtYear1);
 
-    *_output << "Enter pilot name: ";
-    *_input >> pilot;
+            *_output << "Enter speed: ";
+            *_input >> speed1;
+            speed = stoi(speed1);
 
-    *_output << "Enter built year: ";
-    *_input >> builtYear;
+            *_output << "Enter minimum airport size: ";
+            *_input >> minAirportSize1;
+            minAirportSize = stoi(minAirportSize1);
+        }
+        catch (...)
+        {
+            throw 400;
+        }
+        PlaneModel newPlane(0, name, pilot, builtYear, 0, speed, minAirportSize);
+        PlaneRepository planeRepo;
+        string token = TokenRepository().getToken(); // Получаем токен авторизации
 
-    *_output << "Enter broken percentage: ";
-    *_input >> brokenPercentage;
-
-    *_output << "Enter speed: ";
-    *_input >> speed;
-
-    *_output << "Enter minimum airport size: ";
-    *_input >> minAirportSize;
-
-    PlaneModel newPlane(id, name, pilot, builtYear, brokenPercentage, speed, minAirportSize);
-    PlaneRepository planeRepo;
-    string token = TokenRepository().getToken(); // Получаем токен авторизации
-
-    try {
         // Отправляем новый объект самолета на сервер и получаем результат
         PlaneModel result = planeRepo.createPlane(newPlane, token);
 
         // Проверяем, был ли самолет успешно создан, например, по ID или другим критериям
-        if (result.getId() != 0) { // Предполагаем, что 0 - это значение, которое указывает на неудачу
-            *_output << "Plane created successfully!" << std::endl;
-            *_output << "Plane ID: " << result.getId() << std::endl; // Выводим ID созданного самолета
-        } else {
-            *_output << "Error creating plane!" << std::endl;
+        *_output << "Plane created successfully!" << endl;
+        *_output << setw(10) << "ID"
+            << setw(10) << "Name"
+            << setw(10) << "Pilot"
+            << setw(20) << "Built Year"
+            << setw(20) << "Broken Percentage"
+            << setw(10) << "Speed"
+            << setw(20) << "Min Airport Size" << endl;
+
+
+        *_output << setw(10) << result.getId()
+            << setw(10) << result.getName()
+            << setw(10) << result.getPilot()
+            << setw(20) << result.getBuiltYear()
+            << setw(20) << result.getBrokenPercentage()
+            << setw(10) << result.getSpeed()
+            << setw(20) << result.getMinAirportSize() << endl;
+    }
+    catch (const int& status)
+    {
+        *_output << "Error creating plane. Status: " << status << endl;
+        if (status == 500)
+        {
+            *_output << "Internal server error. Please try again later." << endl;
         }
-    } catch (const int& status) {
-        *_output << "Error creating plane. Status: " << status << std::endl;
-        if (status == 500) {
-            *_output << "Internal server error. Please try again later." << std::endl;
-        } else if (status == 400) {
-            *_output << "Bad request. Please check your input." << std::endl;
-        } else if (status == 403) {
-            *_output << "Forbidden access. You do not have permission." << std::endl;
-        } else if (status == 409) {
-            *_output << "Conflict! A plane with this ID might already exist." << std::endl;
-        } else if (status == 401) {
-            *_output << "Unauthorized access. Please log in." << std::endl;
+        else if (status == 400)
+        {
+            *_output << "Bad request. Please check your input." << endl;
         }
+        else if (status == 403)
+        {
+            *_output << "Forbidden access. You do not have permission." << endl;
+        }
+        else if (status == 409)
+        {
+            *_output << "Conflict. Plane size is to big for start airport" << endl;
+        }
+        else if (status == 401)
+        {
+            *_output << "Unauthorized access" << endl;
+        }
+    } catch (...)
+    {
+        *_output << "Unknown error. Call to support" << endl;
     }
 }
 
-void PlanePresenter::updatePlane() {
-    long int id;
-    *_output << "Enter plane ID to update: ";
-    *_input >> id;
+void PlanePresenter::updatePlane()
+{
+    try
+    {
+        long int id;
+        string name, pilot;
+        int builtYear, speed, minAirportSize;
+        set<string> updates;
+        try
+        {
+            string id1, name1, pilot1;
+            *_output << "Enter plane ID to update: ";
+            *_input >> id1;
+            id = stol(id1);
 
-    string name, pilot;
-    int builtYear = 0, brokenPercentage = 0, speed = 0, minAirportSize = 0; // Initialize variables
-    set<string> updates;
+            *_output << "Enter new plane name (leave - to keep current): ";
+            *_input >> name1;
+            if (name1 != "-")
+            {
+                name = name1;
+                updates.insert("name");
+            }
+            else
+                name = "";
+            *_output << "Enter new pilot name (leave - to keep current): ";
+            *_input >> pilot1;
+            if (pilot1 != "-")
+            {
+                pilot = pilot1;
+                updates.insert("pilot");
+            }
+            else
+                pilot = "";
 
-    *_output << "Enter new plane name (leave blank to keep current): ";
-    *_input >> name;
-    if (!name.empty()) updates.insert("name");
+            *_output << "Enter new built year (leave - to keep current): ";
+            string builtYearInput;
+            *_input >> builtYearInput;
+            if (builtYearInput != "-")
+            {
+                builtYear = stoi(builtYearInput);
+                updates.insert("builtYear");
+            }
+            else
+                builtYear = -1;
 
-    *_output << "Enter new pilot name (leave blank to keep current): ";
-    *_input >> pilot;
-    if (!pilot.empty()) updates.insert("pilot");
+            *_output << "Enter new speed (leave - to keep current): ";
+            string speedInput;
+            *_input >> speedInput;
+            if (speedInput != "-")
+            {
+                speed = stoi(speedInput);
+                updates.insert("speed");
+            }
+            else
+                speed = -1;
 
-    *_output << "Enter new built year (leave blank to keep current): ";
-    string builtYearInput;
-    *_input >> builtYearInput;
-    if (!builtYearInput.empty()) {
-        builtYear = stoi(builtYearInput);
-        updates.insert("builtYear");
-    }
-
-    *_output << "Enter new broken percentage (leave blank to keep current): ";
-    string brokenPercentageInput;
-    *_input >> brokenPercentageInput;
-    if (!brokenPercentageInput.empty()) {
-        brokenPercentage = stoi(brokenPercentageInput);
-        updates.insert("brokenPercentage");
-    }
-
-    *_output << "Enter new speed (leave blank to keep current): ";
-    string speedInput;
-    *_input >> speedInput;
-    if (!speedInput.empty()) {
-        speed = stoi(speedInput);
-        updates.insert("speed");
-    }
-
-    *_output << "Enter new minimum airport size (leave blank to keep current): ";
-    string minAirportSizeInput;
-    *_input >> minAirportSizeInput;
-    if (!minAirportSizeInput.empty()) {
-        minAirportSize = stoi(minAirportSizeInput);
-        updates.insert("minAirportSize");
-    }
-
-    PlaneModel updatedPlane(id,
-                            !name.empty() ? name : "", // If empty, keep current value
-                            !pilot.empty() ? pilot : "",
-                            builtYear,
-                            brokenPercentage,
-                            speed,
-                            minAirportSize);
-    PlaneRepository planeRepo;
-    string token = TokenRepository().getToken(); // Получаем токен авторизации
-
-    try {
-        // Отправляем обновленный объект самолета на сервер и получаем результат
+            *_output << "Enter new minimum airport size (leave blank to keep current): ";
+            string minAirportSizeInput;
+            *_input >> minAirportSizeInput;
+            if (minAirportSizeInput != "-")
+            {
+                minAirportSize = stoi(minAirportSizeInput);
+                updates.insert("minAirportSize");
+            }
+            else
+                minAirportSize = -1;
+        }
+        catch (...)
+        {
+            throw 400;
+        }
+        PlaneModel updatedPlane(id, name, pilot, builtYear, 0, speed, minAirportSize);
+        PlaneRepository planeRepo;
+        string token = TokenRepository().getToken();
         PlaneModel result = planeRepo.updatePlane(updatedPlane, updates, token);
 
-        // Проверяем, был ли самолет успешно обновлен, например, по ID или другим критериям
-        if (result.getId() == id) { // Предполагаем, что ID совпадает с обновленным
-            *_output << "Plane updated successfully!" << std::endl;
-        } else {
-            *_output << "Error updating plane!" << std::endl;
+        *_output << "Plane updated successfully!" << endl;
+        *_output << setw(10) << "ID"
+            << setw(10) << "Name"
+            << setw(10) << "Pilot"
+            << setw(20) << "Built Year"
+            << setw(20) << "Broken Percentage"
+            << setw(10) << "Speed"
+            << setw(20) << "Min Airport Size" << endl;
+
+
+        *_output << setw(10) << result.getId()
+            << setw(10) << result.getName()
+            << setw(10) << result.getPilot()
+            << setw(20) << result.getBuiltYear()
+            << setw(20) << result.getBrokenPercentage()
+            << setw(10) << result.getSpeed()
+            << setw(20) << result.getMinAirportSize() << endl;
+    }
+    catch (const int& status)
+    {
+        *_output << "Error updating plane. Status: " << status << endl;
+        if (status == 500)
+        {
+            *_output << "Internal server error. Please try again later." << endl;
         }
-    } catch (const int& status) {
-        *_output << "Error updating plane. Status: " << status << std::endl;
-        if (status == 500) {
-            *_output << "Internal server error. Please try again later." << std::endl;
-        } else if (status == 400) {
-            *_output << "Bad request. Please check your input." << std::endl;
-        } else if (status == 403) {
-            *_output << "Forbidden access. You do not have permission." << std::endl;
-        } else if (status == 404) {
-            *_output << "Plane not found. Please check the ID." << std::endl;
-        } else if (status == 401) {
-            *_output << "Unauthorized access. Please log in." << std::endl;
+        else if (status == 400)
+        {
+            *_output << "Bad request. Please check your input." << endl;
         }
+        else if (status == 403)
+        {
+            *_output << "Forbidden access. You do not have permission." << endl;
+        }
+        else if (status == 401)
+        {
+            *_output << "Unauthorized access" << endl;
+        }
+    } catch (...)
+    {
+        *_output << "Unknown error. Call to support" << endl;
     }
 }
 
-void PlanePresenter::deletePlane() {
+void PlanePresenter::deletePlane()
+{
     long int id;
-    *_output << "Enter plane ID to delete: ";
-    *_input >> id;
+    try
+    {
+        string id1;
+        *_output << "Enter plane ID to delete: ";
+        *_input >> id1;
+        id = stol(id1);
+    }
+    catch (...)
+    {
+        throw 400;
+    }
 
     PlaneRepository planeRepo;
     string token = TokenRepository().getToken(); // Получаем токен авторизации
 
-    try {
+    try
+    {
         bool result = planeRepo.deletePlane(id, token);
-        if (result) {
-            *_output << "Plane deleted successfully!" << std::endl;
-        } else {
-            *_output << "Error deleting plane!" << std::endl;
+        if (result)
+        {
+            *_output << "Plane deleted successfully!" << endl;
         }
-    } catch (const int& status) {
-        *_output << "Error deleting plane. Status: " << status << std::endl;
-        if (status == 500) {
-            *_output << "Internal server error. Please try again later." << std::endl;
-        } else if (status == 400) {
-            *_output << "Bad request. Please check your input." << std::endl;
-        } else if (status == 403) {
-            *_output << "Forbidden access. You do not have permission." << std::endl;
-        } else if (status == 404) {
-            *_output << "Plane not found. Please check the ID." << std::endl;
-        } else if (status == 401) {
-            *_output << "Unauthorized access. Please log in." << std::endl;
+        else
+        {
+            *_output << "Error deleting plane!" << endl;
         }
+    }
+    catch (const int& status)
+    {
+        *_output << "Error deleting plane. Status: " << status << endl;
+        if (status == 500)
+        {
+            *_output << "Internal server error. Please try again later." << endl;
+        }
+        else if (status == 400)
+        {
+            *_output << "Bad request. Please check your input." << endl;
+        }
+        else if (status == 403)
+        {
+            *_output << "Forbidden access. You do not have permission." << endl;
+        }
+        else if (status == 404)
+        {
+            *_output << "Plane not found. Please check the ID." << endl;
+        }
+        else if (status == 401)
+        {
+            *_output << "Unauthorized access" << endl;
+        }
+    } catch (...)
+    {
+        *_output << "Unknown error. Call to support" << endl;
     }
 }

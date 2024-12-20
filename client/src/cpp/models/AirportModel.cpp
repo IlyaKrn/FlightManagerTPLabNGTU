@@ -1,5 +1,9 @@
-#include "../../header/models/AirportModel.h"
-AirportModel::AirportModel(long int id, std::string name, int size, double x, double y)
+#include "../../include/models/AirportModel.h"
+
+using namespace src;
+using namespace std;
+
+AirportModel::AirportModel(long int id, string name, int size, double x, double y)
 {
     _id = id;
     _name = name;
@@ -12,7 +16,7 @@ long int AirportModel::getId()
 {
     return _id;
 }
-std::string AirportModel::getName()
+string AirportModel::getName()
 {
     return _name;
 }
@@ -33,7 +37,7 @@ void AirportModel::setId(long int id)
 {
     _id = id;
 }
-void AirportModel::setName(std::string name)
+void AirportModel::setName(string name)
 {
     _name = name;
 }
