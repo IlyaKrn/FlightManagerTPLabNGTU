@@ -20,6 +20,7 @@ add_library(src
         cpp/repos/PlaneRepository.cpp
         cpp/repos/TimeRepository.cpp
         cpp/repos/TokenRepository.cpp
+        cpp/utils/ClientLogger.cpp
         include/models/AirportModel.h
         include/models/DispatcherModel.h
         include/models/FlightModel.h
@@ -40,6 +41,7 @@ add_library(src
         include/repos/PlaneRepository.h
         include/repos/TimeRepository.h
         include/repos/TokenRepository.h
+        include/utils/ClientLogger.h
         include/Config.h
         include/srclib.h
 )

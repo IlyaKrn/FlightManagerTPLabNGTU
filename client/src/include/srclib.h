@@ -20,4 +20,5 @@
 #include "repos/PlaneRepository.h"
 #include "repos/TimeRepository.h"
 #include "repos/TokenRepository.h"
+#include "utils/ClientLogger.h"
 #include "Config.h"
