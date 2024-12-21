@@ -6,7 +6,7 @@ using namespace src;
 
 int main(int argc, char* argv[])
 {
-    IdentityRepository().regist(DispatcherModel(0, "fn", "ln", "email", "pass", true, set<RoleModel>()));
+    IdentityRepository().regist(DispatcherModel(0, "fn", "ln", "email", "pass", false, set<RoleModel>()));
     return 0;
 }
 

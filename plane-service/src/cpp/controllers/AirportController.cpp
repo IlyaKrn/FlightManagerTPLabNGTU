@@ -3,6 +3,7 @@
 #include <json/single_include/nlohmann/json.hpp>
 #include <string>
 #include <sstream>
+
 using namespace nlohmann;
 using namespace httplib;
 using namespace std;
@@ -17,6 +18,7 @@ void AirportController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
+                log.warn("get airports failed: forbidden access [code 403]");
                 throw 403;
             list<AirportModel> airports = serv.getAllAirports(header);
             json airports_json = json::array();
@@ -31,14 +33,19 @@ void AirportController::configure(Server* server)
             }
             res.status = 200;
             res.set_content(airports_json.dump(), "application/json");
-            log.info("get airports successful");
+            log.info("get airports successful (" + to_string(airports_json.size()) + " entities) [code 200]");
         } catch (int& e)
         {
-            log.warn("exception occured: " + to_string(e));
+            log.warn("get airports failed: [code " + to_string(e) + "]");
             res.status = e;
         } catch (const exception& e)
         {
-            cout << "exception occured" << e.what() << endl;
+            string str(e.what());
+            log.warn("get airports failed: " + str + " [code 500]");
+            res.status = 500;
+        } catch (...)
+        {
+            log.error("unknown error occured");
             res.status = 500;
         }
     });
@@ -50,6 +57,7 @@ void AirportController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
+                log.warn("create airport failed: forbidden access [code 403]");
                 throw 403;
             json request;
             try
@@ -57,6 +65,7 @@ void AirportController::configure(Server* server)
                 request = json::parse(req.body);
             } catch (...)
             {
+                log.warn("create airport failed: invalid data [code 400]");
                 throw 400;
             }
             string name;
@@ -70,6 +79,7 @@ void AirportController::configure(Server* server)
                 y = request["y"];
             } catch (...)
             {
+                log.warn("create airport failed: invalid data [code 400]");
                 throw 400;
             }
             AirportModel created = serv.createAirport(AirportModel(0, name, size, x, y), header);
@@ -81,13 +91,19 @@ void AirportController::configure(Server* server)
             airport_json["y"] = created.getY();
             res.status = 201;
             res.set_content(airport_json.dump(), "application/json");
+            log.info("create airport successful: id=" + to_string(airport_json["id"]) + " [code 200]");
         }  catch (int& e)
         {
-            cout << "exception occured " << e << endl;
+            log.warn("create airport failed: [code " + to_string(e) + "]");
             res.status = e;
         } catch (const exception& e)
         {
-            cout << "exception occured" << e.what() << endl;
+            string str(e.what());
+            log.warn("create airport failed: " + str + " [code 500]");
+            res.status = 500;
+        } catch (...)
+        {
+            log.error("unknown error occured");
             res.status = 500;
         }
     });
@@ -97,11 +113,18 @@ void AirportController::configure(Server* server)
         try
         {
             auto header = req.get_header_value("Authorization");
-            string fields = req.get_param_value("update");
-            if (fields.empty())
+            string fields;
+            try
+            {
+                fields = req.get_param_value("update");
+            } catch (...)
+            {
+                log.warn("update failed: invalid parameter 'update' [code 400]");
                 throw 400;
+            }
             string service_token = req.get_header_value("Service-Token");
             if (service_token != SERVICE_TOKEN_VALUE)
+                log.warn("update airport failed: forbidden access [code 403]");
                 throw 403;
             stringstream ss(fields);
             string item;
@@ -119,12 +142,22 @@ void AirportController::configure(Server* server)
                 request = json::parse(req.body);
             } catch (...)
             {
+                log.warn("update airport failed: invalid data [code 400]");
                 throw 400;
             }
             for (auto update : updates)
             {
-                if (request[update].is_null() || request["id"].is_null())
+                if (request[update].is_null())
+                {
+                    log.warn("update airport failed: fields to update not provided [code 400]");
                     throw 400;
+                }
+                if (request["id"].is_null())
+                {
+                    log.warn("update airport failed: id not provided [code 400]");
+                    throw 400;
+                }
+
             }
             string name;
             int size;
@@ -137,6 +170,7 @@ void AirportController::configure(Server* server)
                 if (!request["y"].is_null()) y = request["y"]; else y = 0;
             } catch (...)
             {
+                log.warn("update airport failed: invalid data [code 400]");
                 throw 400;
             }
             AirportModel airport(request["id"], name, size, x, y);
@@ -150,13 +184,19 @@ void AirportController::configure(Server* server)
             airport_json["y"] = updated.getY();
             res.status = 201;
             res.set_content(airport_json.dump(), "application/json");
+            log.info("update airport successful: id=" + to_string(airport_json["id"]) + " [code 200]");
         } catch (int& e)
         {
-            cout << "exception occured " << e << endl;
+            log.warn("update airport failed: [code " + to_string(e) + "]");
             res.status = e;
         } catch (const exception& e)
         {
-            cout << "exception occured" << e.what() << endl;
+            string str(e.what());
+            log.warn("update airport failed: " + str + " [code 500]");
+            res.status = 500;
+        } catch (...)
+        {
+            log.error("unknown error occured");
             res.status = 500;
         }
     });
@@ -168,6 +208,7 @@ void AirportController::configure(Server* server)
         auto header = req.get_header_value("Authorization");
         string service_token = req.get_header_value("Service-Token");
         if (service_token != SERVICE_TOKEN_VALUE)
+            log.warn("update airport failed: forbidden access [code 403]");
             throw 403;
         long int id;
         try
@@ -175,19 +216,25 @@ void AirportController::configure(Server* server)
             id = stol(req.get_param_value("id"));
         } catch (...)
         {
+            log.warn("update airport failed: invalid data [code 400]");
             throw 400;
         }
 
-        bool deleted = serv.deleteAirport(id, header);
-        if (deleted)
-            res.status = 200;
+        serv.deleteAirport(id, header);
+        res.status = 200;
+        log.info("airport delete successful: id=" + to_string(id) + " [code 200]");
     }  catch (int& e)
     {
-        cout << "exception occured " << e << endl;
+        log.warn("get airport failed: [code " + to_string(e) + "]");
         res.status = e;
     } catch (const exception& e)
     {
-        cout << "exception occured" << e.what() << endl;
+        string str(e.what());
+        log.warn("get airport failed: " + str + " [code 500]");
+        res.status = 500;
+    } catch (...)
+    {
+        log.error("unknown error occured");
         res.status = 500;
     }
 });
