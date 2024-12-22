@@ -1,6 +1,7 @@
 #!/bin/bash
-sudo docker compose down
+
 function docker_compose {
+    sudo docker compose down
     echo "[script] Building database-service ..."
     cd database-service
     sudo chmod +x service.bash
@@ -32,6 +33,26 @@ function docker_compose {
 function docker_less {
     echo "not realized yet"
 }
+function client {
+    while read LINE
+      do export $LINE
+    done < docker-less.env
+    cd client
+    sudo chmod +x client
+    ./client.bash -b
+    cd build/src
+    ./client
+}
+function test {
+    while read LINE
+      do export $LINE
+    done < docker-less.env
+    cd client
+    sudo chmod +x client
+    ./client.bash -t
+    cd build/src
+    ./client
+}
 
 case "$1" in
     -d)
@@ -39,6 +60,12 @@ case "$1" in
       ;;
     -dl)
       docker_less
+      ;;
+    -cli)
+      client
+      ;;
+    -t)
+      test
       ;;
     *)
       echo "Usage: $0 {-d|-dl}"

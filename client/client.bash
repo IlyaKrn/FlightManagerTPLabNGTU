@@ -17,7 +17,7 @@ function build {
     cd ..
     echo "[script] building $service_name exec finished"
 }
-function test() {
+function test {
     echo "[script] building $service_name exec ..."
     mkdir build
     cmake -G "Unix Makefiles" -B ./build
