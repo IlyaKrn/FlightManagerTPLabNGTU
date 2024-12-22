@@ -14,9 +14,10 @@ void PlaneController::configure(Server* server)
         {
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
-            if (service_token != SERVICE_TOKEN_VALUE)
+            if (service_token != SERVICE_TOKEN_VALUE) {
                 log.warn("get planes failed: forbidden access [code 403]");
                 throw 403;
+            }
             list<PlaneModelResponse> planes = serv.getAllPlanes(header);
             json planes_json = json::array();
             for (auto plane : planes)
@@ -58,9 +59,10 @@ void PlaneController::configure(Server* server)
         {
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
-            if (service_token != SERVICE_TOKEN_VALUE)
+            if (service_token != SERVICE_TOKEN_VALUE) {
                 log.warn("get planes failed: forbidden access [code 403]");
                 throw 403;
+            }
             json request;
             try
             {
@@ -118,9 +120,10 @@ void PlaneController::configure(Server* server)
         {
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
-            if (service_token != SERVICE_TOKEN_VALUE)
-                log.warn("update plane successful: forbidden access [code 403]");
+            if (service_token != SERVICE_TOKEN_VALUE) {
+                log.warn("update plane failed: forbidden access [code 403]");
                 throw 403;
+            }
             string fields;
             try
             {
@@ -212,9 +215,10 @@ void PlaneController::configure(Server* server)
         {
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
-            if (service_token != SERVICE_TOKEN_VALUE)
+            if (service_token != SERVICE_TOKEN_VALUE) {
                 log.warn("delete plane failed: forbidden access [code 403]");
                 throw 403;
+            }
             long int id;
             try
             {

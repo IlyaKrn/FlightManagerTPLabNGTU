@@ -18,8 +18,10 @@ void FlightController::configure(Server* server)
         {
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
-            if (service_token != SERVICE_TOKEN_VALUE)
+            if (service_token != SERVICE_TOKEN_VALUE) {
+                log.warn("get flights failed: forbidden access [code 403]");
                 throw 403;
+            }
             list<FlightModel> flights = serv.getAllFlights(header);
             json flights_json = json::array();
             for (auto flight : flights)
@@ -35,6 +37,7 @@ void FlightController::configure(Server* server)
             }
             res.status = 200;
             res.set_content(flights_json.dump(), "application/json");
+            log.info("get flights successful: (" + to_string(flights_json.size()) + " entities) [code 200]");
         } catch (int& e)
         {
             log.warn("get flights failed: [code " + to_string(e) + "]");
@@ -56,9 +59,10 @@ void FlightController::configure(Server* server)
         {
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
-            if (service_token != SERVICE_TOKEN_VALUE)
+            if (service_token != SERVICE_TOKEN_VALUE) {
                 log.warn("create flight failed: forbidden access [code 403]");
                 throw 403;
+            }
             json request;
             try
             {

@@ -17,9 +17,10 @@ void AirportController::configure(Server* server)
         {
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
-            if (service_token != SERVICE_TOKEN_VALUE)
+            if (service_token != SERVICE_TOKEN_VALUE) {
                 log.warn("get airports failed: forbidden access [code 403]");
                 throw 403;
+            }
             list<AirportModel> airports = serv.getAllAirports(header);
             json airports_json = json::array();
             for (auto airport : airports) {
@@ -56,9 +57,10 @@ void AirportController::configure(Server* server)
         {
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
-            if (service_token != SERVICE_TOKEN_VALUE)
+            if (service_token != SERVICE_TOKEN_VALUE) {
                 log.warn("create airport failed: forbidden access [code 403]");
                 throw 403;
+            }
             json request;
             try
             {
@@ -123,9 +125,10 @@ void AirportController::configure(Server* server)
                 throw 400;
             }
             string service_token = req.get_header_value("Service-Token");
-            if (service_token != SERVICE_TOKEN_VALUE)
+            if (service_token != SERVICE_TOKEN_VALUE) {
                 log.warn("update airport failed: forbidden access [code 403]");
                 throw 403;
+            }
             stringstream ss(fields);
             string item;
             set<string> updates;
@@ -207,9 +210,10 @@ void AirportController::configure(Server* server)
     {
         auto header = req.get_header_value("Authorization");
         string service_token = req.get_header_value("Service-Token");
-        if (service_token != SERVICE_TOKEN_VALUE)
+        if (service_token != SERVICE_TOKEN_VALUE) {
             log.warn("update airport failed: forbidden access [code 403]");
             throw 403;
+        }
         long int id;
         try
         {
@@ -219,7 +223,6 @@ void AirportController::configure(Server* server)
             log.warn("update airport failed: invalid data [code 400]");
             throw 400;
         }
-
         serv.deleteAirport(id, header);
         res.status = 200;
         log.info("airport delete successful: id=" + to_string(id) + " [code 200]");

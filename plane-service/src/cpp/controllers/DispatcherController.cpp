@@ -18,9 +18,10 @@ void DispatcherController::configure(Server* server)
         {
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
-            if (service_token != SERVICE_TOKEN_VALUE)
+            if (service_token != SERVICE_TOKEN_VALUE) {
                 log.warn("get dispatchers failed: forbidden access [code 403]");
                 throw 403;
+            }
             list<DispatcherModel> dispatchers = serv.getAllDispatchers(header);
             json dispatchers_json = json::array();
             for (auto dispatcher : dispatchers)
@@ -67,9 +68,10 @@ void DispatcherController::configure(Server* server)
         {
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
-            if (service_token != SERVICE_TOKEN_VALUE)
+            if (service_token != SERVICE_TOKEN_VALUE) {
                 log.warn("update dispatcher failed: forbidden access [code 403]");
                 throw 403;
+            }
             string fields;
             try
             {
@@ -79,7 +81,6 @@ void DispatcherController::configure(Server* server)
                 log.warn("update dispatcher failed: wrong parameter 'update' [code 400]");
                 throw 400;
             }
-
             stringstream ss(fields);
             string item;
             set<string> updates;
@@ -141,11 +142,6 @@ void DispatcherController::configure(Server* server)
                 throw 400;
             }
             DispatcherModel dispatcher(request["id"], firstName, lastName, email, password, isBanned, roles);
-            cout << dispatcher.getFirstname() << endl;
-            cout << dispatcher.getLastname() << endl;
-            cout << dispatcher.getEmail() << endl;
-            cout << dispatcher.getPassword() << endl;
-            cout << dispatcher.getIsBanned() << endl;
             DispatcherModel updated = serv.updateDispatcher(dispatcher, updates, header);
             updates.clear();
             json dispatcher_json;
@@ -185,9 +181,10 @@ void DispatcherController::configure(Server* server)
             auto header = req.get_header_value("Authorization");
             string service_token = req.get_header_value("Service-Token");
             auto isPrivate = req.get_param_value("private");
-            if (service_token != SERVICE_TOKEN_VALUE)
+            if (service_token != SERVICE_TOKEN_VALUE) {
                 log.warn("get dispatcher failed: forbidden access [code 403]");
                 throw 403;
+            }
             long int id;
             try
             {
