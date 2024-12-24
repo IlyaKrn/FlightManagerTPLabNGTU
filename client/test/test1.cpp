@@ -7,6 +7,7 @@ using namespace src;
 int main(int argc, char* argv[])
 {
     auto token = *(++IdentityRepository().login("email", "pass").begin());
+    auto long int currentId = stol(*(++IdentityRepository().login("email", "pass").end()));
     AirportModel airport = AirportRepository().createAirport(AirportModel(0, "name", 10, 0, 0), token);
     AirportModel airport1 = AirportRepository().createAirport(AirportModel(0, "fame", 10, 10000, 10000), token);
     set<string> updateAir;
@@ -14,11 +15,11 @@ int main(int argc, char* argv[])
     updateAir.insert("name");
     AirportRepository().updateAirport(AirportModel(airport.getId(), "name1", 100, 0, 0), updateAir, token);
     AirportRepository().getAllAirports(token);
-    DispatcherRepository().getDispatcherById(1, token);
+    DispatcherRepository().getDispatcherById(currentId, token);
     set<string> updateDisp;
     updateDisp.insert("firstName");
     updateDisp.insert("lastName");
-    DispatcherRepository().updateDispatchers(DispatcherModel(1, "a", "a", "email", "pass", false, set<RoleModel>()), updateDisp, token);
+    DispatcherRepository().updateDispatchers(DispatcherModel(currentId, "a", "a", "email", "pass", false, set<RoleModel>()), updateDisp, token);
     PlaneModel plane = PlaneRepository().createPlane(PlaneModel(0, "a", "b", 2005, 0, 10, 5), token);
     set<string> updatePlane;
     updatePlane.insert("pilot");

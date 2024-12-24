@@ -36,7 +36,7 @@ namespace src
     const std::string TOKEN_FILE_PATH = std::string(std::getenv("CLIENT_CREDENTIALS_PATH"));
     const std::string LOGS_FILE_PATH = std::string(std::getenv("LOGS_FILE_PATH"));
 
-    static bool logsEnable = false;
-    static bool isFile = false;
-    static bool isConsole = false;
+    const bool LOGS_ENABLED = std::string(std::getenv("LOGS_ENABLED")) == "true";
+    const bool LOGGER_FILE = std::string(std::getenv("LOGGER_FILE")) == "true";
+    const bool LOGGER_CONSOLE = std::string(std::getenv("LOGGER_CONSOLE")) == "true";
 }
