@@ -30,16 +30,10 @@ bool IdentityPresenter::login()
 
         // Сохраняем токен и ID пользователя для дальнейшего использования
         TokenRepository tokenRepo;
-        if (tokenRepo.setTokenAndUserId(token, stol(userId)))
-        {
-            *_output << "Token and User ID saved successfully." << endl;
-            return true; // Успешный вход
-        }
-        else
-        {
-            *_output << "Failed to save token and User ID." << endl;
-            return false; // Неудачный вход
-        }
+        tokenRepo.setTokenAndUserId(token, stol(userId));
+        log.info("login successful: id=" + userId + " [code 200]");
+        *_output << "Token and User ID saved successfully." << endl;
+        return true; // Успешный вход
     }
     catch (const int& status)
     {
@@ -47,18 +41,23 @@ bool IdentityPresenter::login()
         switch (status)
         {
         case 500:
+            log.warn("login failed: internal server error [code 500]");
             *_output << "Internal server error. Please try again later." << endl;
             break;
         case 400:
+            log.warn("login failed: ad request [code 400]");
             *_output << "Wrong request. Please check your input." << endl;
             break;
         case 403:
+            log.warn("login failed: forbidden access [code 403]");
             *_output << "Forbidden access. You do not have permission." << endl;
             break;
         case 401:
+            log.warn("login failed: unauthorized access [code 401]");
             *_output << "Unauthorized access. Check your credentials." << endl;
             break;
         default:
+            log.error("unknown error");
             *_output << "An unexpected error occurred. Please contact support." << endl;
             break;
         }
@@ -99,16 +98,10 @@ bool IdentityPresenter::registerDispatcher()
 
         //Сохраняем токен и ID пользователя для дальнейшего использования
         TokenRepository tokenRepo;
-        if (tokenRepo.setTokenAndUserId(token, stol(userId)))
-        {
-            *_output << "Token and User ID saved successfully." << endl;
-            return true; // Успешная регистрация
-        }
-        else
-        {
-            *_output << "Failed to save token and User ID." << endl;
-            return false; // Неудачная регистрация
-        }
+        tokenRepo.setTokenAndUserId(token, stol(userId));
+        log.info("register successful: id=" + userId + " [code 200]");
+        *_output << "Token and User ID saved successfully." << endl;
+        return true; // Успешная регистрация
     }
     catch (const int& status)
     {
@@ -116,21 +109,27 @@ bool IdentityPresenter::registerDispatcher()
         switch (status)
         {
         case 500:
+            log.warn("register failed: internal server error [code 500]");
             *_output << "Internal server error. Please try again later." << endl;
             break;
         case 400:
+            log.warn("register failed: bad request [code 400]");
             *_output << "Wrong request. Please check your input." << endl;
             break;
         case 403:
+            log.warn("register failed: forbidden access [code 403]");
             *_output << "Forbidden access. You do not have permission." << endl;
             break;
         case 409:
+            log.warn("register failed: conflict [code 409]");
             *_output << "Conflict! This dispatcher ID may already exist." << endl;
             break;
         case 401:
+            log.warn("register failed: unauthorized access [code 401]");
             *_output << "Unauthorized access. Check your credentials." << endl;
             break;
         default:
+            log.warn("unknown error");
             *_output << "An unexpected error occurred. Please contact support." << endl;
             break;
         }

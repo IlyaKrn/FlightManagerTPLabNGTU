@@ -3,6 +3,7 @@
 class ClientLogger
 {
 public:
+
     void info(std::string inf);
     void debug(std::string debug);
     void warn(std::string warn);

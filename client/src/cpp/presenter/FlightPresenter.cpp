@@ -15,6 +15,7 @@ void FlightPresenter::getAllFlights()
         FlightRepository flightRepo;
         string token = TokenRepository().getToken(); // Получаем токен
         list<FlightModel> flights = flightRepo.getAllFlights(token); // Получаем рейсы из репозитория
+        log.info("flights get successful: (" + to_string(flights.size()) + " entities) [code 200]");
         if (flights.empty())
         {
             *_output << "No flights found." << endl;
@@ -39,22 +40,27 @@ void FlightPresenter::getAllFlights()
         *_output << "Error getting flights. Status: " << status << endl;
         if (status == 500)
         {
+            log.warn("flights get failed: internal server error [code 500]");
             *_output << "Internal server error. Please try again later." << endl;
         }
         else if (status == 400)
         {
+            log.warn("flights get failed: bad request [code 400]");
             *_output << "Bad request. Please check your input." << endl;
         }
         else if (status == 403)
         {
+            log.warn("flights get failed: forbidden access [code 403]");
             *_output << "Forbidden access. You do not have permission." << endl;
         }
         else if (status == 401)
         {
+            log.warn("flights get failed: unauthorized access [code 401]");
             *_output << "Unauthorized access. Please log in." << endl;
         }
     } catch (...)
     {
+        log.error("unknown error");
         *_output << "Unknown error. Call to support" << endl;
     }
 }
@@ -106,26 +112,32 @@ void FlightPresenter::createFlight()
         *_output << "Error getting plane. Status: " << status << endl;
         if (status == 500)
         {
+            log.warn("flights get failed: internal server error [code 500]");
             *_output << "Internal server error. Please try again later." << endl;
         }
         else if (status == 400)
         {
+            log.warn("flights create failed: bad request [code 400]");
             *_output << "Bad request. Please check your input." << endl;
         }
         else if (status == 403)
         {
+            log.warn("flights create failed: forbidden access [code 403]");
             *_output << "Forbidden access. You do not have permission." << endl;
         }
         else if (status == 409)
         {
+            log.warn("flights create failed: conflict [code 409]");
             *_output << "Conflict. This plane can be in flight or params of airport are unsuitable" << endl;
         }
         else if (status == 401)
         {
+            log.warn("flights create failed: unauthorized access [code 401]");
             *_output << "Unauthorized access. Please log in." << endl;
         }
     } catch (...)
     {
+        log.error("unknown error");
         *_output << "Unknown error. Call to support" << endl;
     }
 }

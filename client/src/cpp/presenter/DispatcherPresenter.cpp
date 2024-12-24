@@ -9,15 +9,18 @@ using namespace std;
 void DispatcherPresenter::getDispatchers()
 {
     try {
+        ClientLogger log;
         *_output << "Dispatchers: " << endl;
 
         DispatcherRepository dispatcherRepo;
         string token = TokenRepository().getToken(); // Получаем токен
         list<DispatcherModel> dispatchers = dispatcherRepo.getDispatchers(token); // Получаем диспетчеров из репозитория
+        log.info("dispatchers get successful: (" + to_string(dispatchers.size()) + " entities) [code 200]");
         if (dispatchers.empty()) {
             *_output << "No dispatchers found." << endl;
             return;
         }
+
         // Выводим список диспетчеров
         *_output << setw(10) << "ID"
                  << setw(10) << "FirstName"
@@ -36,21 +39,27 @@ void DispatcherPresenter::getDispatchers()
     } catch (const int& status) {
         *_output << "Error getting dispatchers. Status: " << status << endl;
         if (status == 500) {
+            log.warn("dispatchers get failed: internal server error [code 500]");
             *_output << "Internal server error. Please try again later." << endl;
         } else if (status == 400) {
+            log.warn("dispatchers get failed: bad request [code 400]");
             *_output << "Bad request. Please check your input." << endl;
         } else if (status == 403) {
+            log.warn("dispatchers get failed: forbidden access [code 403]");
             *_output << "Forbidden access. You do not have permission." << endl;
         } else if (status == 401) {
+            log.warn("dispatchers get failed: unauthorized access [code 401]");
             *_output << "Unauthorized access" << endl;
         }
     } catch (...) {
+        log.error("unknown error");
         *_output << "Unknown error. Call to support" << endl;
     }
 }
 
 void DispatcherPresenter::updateDispatcher() {
     try {
+        ClientLogger log;
         long int dispatcherId;
         try {
             string id1;
@@ -105,7 +114,7 @@ void DispatcherPresenter::updateDispatcher() {
 
         // Отправляем обновленного диспетчера на сервер
         DispatcherModel result = dispatcherRepo.updateDispatchers(updatedDispatcher, updateFields, token);
-
+        log.info("dispatcher update successful: id=" + to_string(result.getId()) + " [code 200]");
         // Проверяем, был ли обновлён диспетчер, например, по ID или другим критериям
         *_output << "Dispatcher updated successfully!" << endl;
         *_output << left;
@@ -125,21 +134,27 @@ void DispatcherPresenter::updateDispatcher() {
     } catch (const int& status) {
         *_output << "Error updating dispatcher. Status: " << status << endl;
         if (status == 500) {
+            log.warn("dispatcher update failed: internal server error [code 500]");
             *_output << "Internal server error. Please try again later." << endl;
         } else if (status == 400) {
+            log.warn("dispatcher update failed: bad request [code 400]");
             *_output << "Bad request. Please check your input." << endl;
         } else if (status == 403) {
+            log.warn("dispatcher update failed: forbidden access [code 403]");
             *_output << "Forbidden access. You do not have permission." << endl;
         } else if (status == 401) {
+            log.warn("dispatcher update failed: unauthorized access [code 401]");
             *_output << "Unauthorized access" << endl;
         }
     } catch (...) {
+        log.error("unknown error");
         *_output << "Unknown error. Call to support" << endl;
     }
 }
 
 void DispatcherPresenter::getDispatcherById() {
     try {
+        ClientLogger log;
         long int id;
         try {
             string id1;
@@ -152,6 +167,7 @@ void DispatcherPresenter::getDispatcherById() {
         DispatcherRepository dispatcherRepo;
         string token = TokenRepository().getToken(); // Получаем токен
         DispatcherModel dispatcher = dispatcherRepo.getDispatcherById(id, token);
+        log.info("dispatcher get successsful: id=" + to_string(id) + " [code 200]");
         *_output << "ID: " << dispatcher.getId()
                  << ", First Name: " << dispatcher.getFirstname()
                  << ", Last Name: " << dispatcher.getLastname()
@@ -161,15 +177,20 @@ void DispatcherPresenter::getDispatcherById() {
     } catch (const int& status) {
         *_output << "Error getting dispatcher. Status: " << status << endl;
         if (status == 500) {
+            log.warn("dispatcher get failed: internal server error [code 500]");
             *_output << "Internal server error. Please try again later." << endl;
         } else if (status == 400) {
+            log.warn("dispatcher get failed: bad request [code 400]");
             *_output << "Bad request. Please check your input." << endl;
         } else if (status == 403) {
+            log.warn("dispatcher get failed: forbidden access [code 403]");
             *_output << "Forbidden access. You do not have permission." << endl;
         } else if (status == 401) {
+            log.warn("dispatcher get failed: unauthorized access [code 401]");
             *_output << "Unauthorized access" << endl;
         }
     } catch (...) {
+        log.error("unknown error");
         *_output << "Unknown error. Call to support" << endl;
     }
 }

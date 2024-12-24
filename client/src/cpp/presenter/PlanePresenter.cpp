@@ -14,6 +14,7 @@ void PlanePresenter::getPlanes()
     try
     {
         list<PlaneModelResponse> planes = planeRepo.getPlanes(token);
+        log.info("planes get successful: (" + to_string(planes.size()) + " entities) [code 200]");
         if (planes.empty())
         {
             *_output << "No planes found." << endl;
@@ -41,27 +42,23 @@ void PlanePresenter::getPlanes()
                 << setw(10) << "(" << plane.getX() << "," << plane.getY() << ")" << endl;
         }
     }
-    catch (const int& status)
-    {
-        *_output << "Error fetching planes. Status: " << status << endl;
-        if (status == 500)
-        {
+    catch (const int& status) {
+        *_output << "Error getting planes. Status: " << status << endl;
+        if (status == 500) {
+            log.warn("planes get failed: internal server error [code 500]");
             *_output << "Internal server error. Please try again later." << endl;
-        }
-        else if (status == 400)
-        {
+        } else if (status == 400) {
+            log.warn("planes get failed: bad request [code 400]");
             *_output << "Bad request. Please check your input." << endl;
-        }
-        else if (status == 403)
-        {
+        } else if (status == 403) {
+            log.warn("planes get failed: forbidden access [code 403]");
             *_output << "Forbidden access. You do not have permission." << endl;
-        }
-        else if (status == 401)
-        {
+        } else if (status == 401) {
+            log.warn("planes get failed: unauthorized access [code 401]");
             *_output << "Unauthorized access. Please log in." << endl;
         }
-    } catch (...)
-    {
+    } catch (...) {
+        log.error("unknown error");
         *_output << "Unknown error. Call to support" << endl;
     }
 }
@@ -103,7 +100,7 @@ void PlanePresenter::createPlane()
 
         // Отправляем новый объект самолета на сервер и получаем результат
         PlaneModel result = planeRepo.createPlane(newPlane, token);
-
+        log.info("plane create successful: id=" + to_string(result.getId()) + " [code 200]");
         // Проверяем, был ли самолет успешно создан, например, по ID или другим критериям
         *_output << "Plane created successfully!" << endl;
         *_output << setw(10) << "ID"
@@ -123,31 +120,26 @@ void PlanePresenter::createPlane()
             << setw(10) << result.getSpeed()
             << setw(20) << result.getMinAirportSize() << endl;
     }
-    catch (const int& status)
-    {
-        *_output << "Error creating plane. Status: " << status << endl;
-        if (status == 500)
-        {
+    catch (const int& status) {
+        *_output << "Error creating planes. Status: " << status << endl;
+        if (status == 500) {
+            log.warn("planes create failed: internal server error [code 500]");
             *_output << "Internal server error. Please try again later." << endl;
-        }
-        else if (status == 400)
-        {
+        } else if (status == 400) {
+            log.warn("planes create failed: bad request [code 400]");
             *_output << "Bad request. Please check your input." << endl;
-        }
-        else if (status == 403)
-        {
+        } else if (status == 409) {
+            log.warn("planes create failed: conflict [code 409]");
+            *_output << "Conflict" << endl;
+        } else if (status == 403) {
+            log.warn("planes create failed: forbidden access [code 403]");
             *_output << "Forbidden access. You do not have permission." << endl;
+        } else if (status == 401) {
+            log.warn("planes create failed: unauthorized access [code 401]");
+            *_output << "Unauthorized access. Please log in." << endl;
         }
-        else if (status == 409)
-        {
-            *_output << "Conflict. Plane size is to big for start airport" << endl;
-        }
-        else if (status == 401)
-        {
-            *_output << "Unauthorized access" << endl;
-        }
-    } catch (...)
-    {
+    } catch (...) {
+        log.error("unknown error");
         *_output << "Unknown error. Call to support" << endl;
     }
 }
@@ -227,7 +219,7 @@ void PlanePresenter::updatePlane()
         PlaneRepository planeRepo;
         string token = TokenRepository().getToken();
         PlaneModel result = planeRepo.updatePlane(updatedPlane, updates, token);
-
+        log.info("plane update successful: id=" + to_string(result.getId()) + " [code 200]");
         *_output << "Plane updated successfully!" << endl;
         *_output << setw(10) << "ID"
             << setw(10) << "Name"
@@ -246,86 +238,75 @@ void PlanePresenter::updatePlane()
             << setw(10) << result.getSpeed()
             << setw(20) << result.getMinAirportSize() << endl;
     }
-    catch (const int& status)
-    {
-        *_output << "Error updating plane. Status: " << status << endl;
-        if (status == 500)
-        {
+    catch (const int& status) {
+        *_output << "Error updating planes. Status: " << status << endl;
+        if (status == 500) {
+            log.warn("planes update failed: internal server error [code 500]");
             *_output << "Internal server error. Please try again later." << endl;
-        }
-        else if (status == 400)
-        {
+        } else if (status == 400) {
+            log.warn("planes update failed: bad request [code 400]");
             *_output << "Bad request. Please check your input." << endl;
-        }
-        else if (status == 403)
-        {
+        } else if (status == 409) {
+            log.warn("planes update failed: conflict [code 409]");
+            *_output << "Conflict" << endl;
+        } else if (status == 403) {
+            log.warn("planes update failed: forbidden access [code 403]");
             *_output << "Forbidden access. You do not have permission." << endl;
+        } else if (status == 401) {
+            log.warn("planes update failed: unauthorized access [code 401]");
+            *_output << "Unauthorized access. Please log in." << endl;
         }
-        else if (status == 401)
-        {
-            *_output << "Unauthorized access" << endl;
-        }
-    } catch (...)
-    {
+    } catch (...) {
+        log.error("unknown error");
         *_output << "Unknown error. Call to support" << endl;
     }
 }
 
 void PlanePresenter::deletePlane()
 {
-    long int id;
     try
     {
-        string id1;
-        *_output << "Enter plane ID to delete: ";
-        *_input >> id1;
-        id = stol(id1);
-    }
-    catch (...)
-    {
-        throw 400;
-    }
-
-    PlaneRepository planeRepo;
-    string token = TokenRepository().getToken(); // Получаем токен авторизации
-
-    try
-    {
-        bool result = planeRepo.deletePlane(id, token);
-        if (result)
+        long int id;
+        try
         {
-            *_output << "Plane deleted successfully!" << endl;
+            string id1;
+            *_output << "Enter plane ID to delete: ";
+            *_input >> id1;
+            id = stol(id1);
         }
-        else
+        catch (...)
         {
-            *_output << "Error deleting plane!" << endl;
+            throw 400;
         }
+
+        PlaneRepository planeRepo;
+        string token = TokenRepository().getToken(); // Получаем токен авторизации
+
+
+        planeRepo.deletePlane(id, token);
+        log.info("plane delete successful: id=" + to_string(id) + " [code 200]");
+        *_output << "Plane deleted successfully!" << endl;
     }
-    catch (const int& status)
-    {
-        *_output << "Error deleting plane. Status: " << status << endl;
-        if (status == 500)
-        {
+    catch (const int& status) {
+        *_output << "Error deleting planes. Status: " << status << endl;
+        if (status == 500) {
+            log.warn("planes delete failed: internal server error [code 500]");
             *_output << "Internal server error. Please try again later." << endl;
-        }
-        else if (status == 400)
-        {
+        } else if (status == 400) {
+            log.warn("planes delete failed: bad request [code 400]");
             *_output << "Bad request. Please check your input." << endl;
-        }
-        else if (status == 403)
-        {
+        } else if (status == 409) {
+            log.warn("planes delete failed: conflict [code 409]");
+            *_output << "Conflict" << endl;
+        } else if (status == 403) {
+            log.warn("planes delete failed: forbidden access [code 403]");
             *_output << "Forbidden access. You do not have permission." << endl;
+        } else if (status == 401) {
+            log.warn("planes delete failed: unauthorized access [code 401]");
+            *_output << "Unauthorized access. Please log in." << endl;
         }
-        else if (status == 404)
-        {
-            *_output << "Plane not found. Please check the ID." << endl;
-        }
-        else if (status == 401)
-        {
-            *_output << "Unauthorized access" << endl;
-        }
-    } catch (...)
-    {
+    } catch (...) {
+        log.error("unknown error");
         *_output << "Unknown error. Call to support" << endl;
     }
 }
