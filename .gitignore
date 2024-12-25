@@ -1,3 +1,6 @@
 /.idea/
 */.gradle/
 */build/
+*/cmake-build-debug/
+*/docker-less.env/
+/credentials.txt
